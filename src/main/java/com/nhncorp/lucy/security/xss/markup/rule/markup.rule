@@ -1,0 +1,11 @@
+
+contents	::= (startTag | endTag | comment | text)+
+comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
+startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* ([/#x20#x9#xD#xA]* '>')?
+endTag		::= '</' [#x20#x9#xD#xA]* tagName [#x20#x9#xD#xA]* '>'
+tagName		::= [^?!'"/<>#x20#x9#xD#xA]+
+attribute	::= attName ([#x20#x9#xD#xA]* '=' [#x20#x9#xD#xA]* attValue)?
+attName		::= [^=<>#x20#x9#xD#xA]+
+attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
+				|([^"'`<>#x20#x9#xD#xA]+ ["'`]?)|[^<>#x20#x9#xD#xA]*
+text		::= [^<]* | ('<' [^<]*)

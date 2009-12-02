@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.1//EN" "http://www.puppycrawl.com/dtds/configuration_1_1.dtd">
+
+<!-- commons math customization of default Checkstyle behavior -->
+<module name="Checker">
+	<property name="localeLanguage" value="en" />
+	<module name="SuppressionFilter">
+		<property name="file" value="checkstyle-suppressions.xml" />
+	</module>
+	<module name="TreeWalker">
+		<property name="charset" value="UTF-8" />
+		<module name="UnusedImports">
+			<property name="severity" value="info" />
+		</module>
+		<module name="RedundantImport">
+			<property name="severity" value="info" />
+		</module>
+		<module name="ArrayTypeStyle">
+			<property name="severity" value="info" />
+		</module>
+		<module name="DefaultComesLast">
+			<property name="severity" value="info" />
+		</module>
+		<module name="MissingSwitchDefault">
+			<property name="severity" value="warning" />
+		</module>
+		<module name="FallThrough" />
+		<module name="TodoComment">
+			<property name="format" value="TODO"/>
+			<property name="severity" value="info" />
+		</module>
+		<module name="ParameterNumber">
+			<property name="max" value="7" />
+			<property name="tokens" value="METHOD_DEF" />
+		</module>
+		<module name="GenericIllegalRegexp">
+			<property name="format" value="System\.out\.println" />
+			<property name="ignoreComments" value="true"/>
+		</module>
+		<module name="MultipleStringLiterals">
+			<property name="allowedDuplicates" value="3" />
+			<property name="severity" value="info" />
+		</module>
+		<module name="UncommentedMain">
+			<property name="excludedClasses" value="\.Main$" />
+		</module>
+		<module name="UpperEll" />
+		<module name="UnnecessaryParentheses">
+			<property name="severity" value="info" />
+		</module>
+		<!--
+			<module name="StringLiteralEquality"/>
+		-->
+		<module name="SimplifyBooleanReturn">
+			<property name="severity" value="info" />
+		</module>
+		<module name="SimplifyBooleanExpression">
+			<property name="severity" value="info" />
+		</module>
+		<module name="MethodLength">
+			<property name="tokens" value="METHOD_DEF" />
+			<property name="max" value="150" />
+			<property name="countEmpty" value="false" />
+			<property name="severity" value="warning" />
+		</module>
+		<module name="IllegalInstantiation">
+			<property name="classes"
+				value="java.lang.Boolean, java.lang.String" />
+			<property name="severity" value="info" />
+		</module>
+		<module name="IllegalImport">
+			<property name="illegalPkgs" value="sun" />
+			<property name="severity" value="warning" />
+		</module>
+		<!--
+			<module name="HideUtilityClassConstructor">
+			<property name="severity" value="info"/>
+			</module>
+		-->
+		<module name="DoubleCheckedLocking" />
+		<module name="FileLength">
+			<property name="max" value="1500" />
+			<property name="severity" value="warning" />
+		</module>
+		<module name="AbstractClassName" />
+		<module name="ConstantName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="LocalFinalVariableName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="LocalVariableName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="MemberName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="MethodName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="PackageName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="ParameterName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="StaticVariableName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="TypeName">
+			<property name="severity" value="info" />
+		</module>
+		<module name="ModifierOrder">
+			<property name="severity" value="info" />
+		</module>
+		<module name="NPathComplexity">
+			<property name="max" value="200" />
+		</module>
+		<module name="CyclomaticComplexity">
+			<property name="max" value="10" />
+		</module>
+		<module name="BooleanExpressionComplexity">
+			<property name="max" value="3" />
+		</module>
+		<!-- 
+		<module name="ClassDataAbstractionCoupling">
+			<property name="max" value="7" />
+		</module>
+		 -->
+		<module name="CovariantEquals" />
+		<module name="AvoidNestedBlocks" />
+		<module name="FinalClass" />
+		<module name="IllegalCatch">
+			<property name="severity" value="warning" />
+		</module>
+		<module name="SimplifyBooleanExpression" />
+		<module name="EmptyStatement">
+			<property name="severity" value="info" />
+		</module>
+		<!-- 
+		<module name="ExplicitInitialization">
+			<property name="severity" value="info" />
+		</module>
+		 -->
+		<module name="InterfaceIsType"/>
+		<module name="NeedBraces"/>
+		<module name="ModifiedControlVariable"/>
+		<module name="SuperClone"/>
+		<module name="SuperFinalize"/>
+		<module name="MultipleVariableDeclarations"/>
+		<!-- 
+			<module name="EqualsHashCode" />
+			
+			<module name="FileContentsHolder" />
+			
+			<module name="ClassDataAbstractionCoupling" />
+			
+			<module name="RedundantModifier" />
+			<module name="NestedIfDepth">
+			<property name="max" value="3" />
+			</module>
+			<module name="ParameterAssignment" />
+			
+			
+			<module name="BooleanExpressionComplexity">
+			<property name="max" value="3" />
+			</module>
+		-->
+	</module>
+
+	<module name="StrictDuplicateCode">
+		<property name="min" value="15" />
+		<property name="severity" value="warning" />
+	</module>
+	<!-- -->
+</module>
