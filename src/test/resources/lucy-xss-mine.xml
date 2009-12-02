@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+	extends="lucy-xss-superset.xml">
+
+	<elementRule>
+		<element name="body" disable="true" />
+		
+		<element name="iframe" disable="true" />
+		<element name="meta" disable="true" />
+		
+		<element name="script" disable="true" />
+		<element name="style" disable="true" />
+		
+		<elementRule>
+		<element name="embed" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.EmbedListener</listener>
+		</element>
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListener</listener>
+		</element>
+		</elementRule>
+		
+		<element name="o:p"> <!-- add new tag, o:p -->
+			<elements>
+			<ref name="font"/>
+			<ref name="center"/>
+			</elements>
+		</element>
+		
+		<element name ="se1:time"/>
+
+		
+		<element name="img">
+			<attributes>	
+				<ref name="border"/>
+			</attributes>
+		</element>
+		
+		<attributeRule>
+	        <attribute name="target" override="true" disable="false">
+	            <allowedPattern><![CDATA[[\da-fA-F"][\da-fA-F"]+]]></allowedPattern>
+	        </attribute>
+    	</attributeRule>
+		
+		<element name="a">
+			<attributes>	
+				<ref name="target"/>
+			</attributes>
+			<elements>
+				<ref name="table"/>
+			</elements>
+		</element>
+		
+		 
+		
+		<element name="p">
+			<attributes>	
+				<ref name="align"/>
+			</attributes>
+			<elements>
+				<ref name="table"/>
+				<ref name="font"/>
+				<ref name="span"/>
+				<ref name="o:p"/>
+				<ref name="st1:time"/>
+			</elements>
+		</element>
+		
+		<element name="table">
+			<elements>
+				<ref name="center"/>
+				<ref name="p"/>
+				<ref name="td"/>
+			</elements>
+		</element>
+		
+		<element name="td">
+			<attributes>	
+				<ref name="width"/>
+				<ref name="height"/>
+			</attributes>
+			<elements>
+				<ref name="center"/>
+				<ref name="p"/>
+				<ref name="table"/>
+				<ref name="tr"/>
+			</elements>
+		</element>
+		
+		<element name="tr" endTag="true">
+			<elements>
+				<ref name="center"/>
+				<ref name="p"/>
+				<ref name="td"/>
+				<ref name="table"/>
+			</elements>
+		</element>
+		
+		<element name="tbody">
+			<elements>
+				<ref name="center"/>
+				<ref name="p"/>
+			</elements>
+		</element>
+		
+		<element name="div">
+			<elements>
+				<ref name="center"/>
+				<ref name="p"/>
+			</elements>
+		</element>
+		
+		<element name="font">
+			<attributes>	
+				<ref name="style"/>
+			</attributes>
+			<elements>
+				<ref name="div"/>
+				<ref name="center"/>
+				<ref name="p"/>
+			</elements>
+		</element>
+		
+		<element name="span">
+			<elements>
+				<ref name="div"/>
+				<ref name="p"/>
+				<ref name="o:p"/>
+				<ref name="st1:time"/>
+			</elements>
+		</element>
+		
+		<element name="center">
+			<elements>
+				<ref name="center"/>
+			</elements>
+		</element>
+		
+		<element name="strong">
+			<elements>
+				<ref name="div"/>
+			</elements>
+		</element>
+		
+		
+	</elementRule>
+
+</config>
