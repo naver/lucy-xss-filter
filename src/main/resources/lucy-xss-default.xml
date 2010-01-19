@@ -1,0 +1,1379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss">
+
+	<elementGroup name="Fontstyle">
+		<ref name="tt"/>
+		<ref name="i"/>
+		<ref name="b"/>
+		<ref name="u"/>
+		<ref name="s"/>
+		<ref name="strike"/>
+		<ref name="big"/>
+		<ref name="small"/>
+	</elementGroup>
+	
+	<elementGroup name="Phrase">
+		<ref name="em"/>
+		<ref name="strong"/>
+		<ref name="dfn"/>
+		<ref name="code"/>
+		<ref name="samp"/>
+		<ref name="kbd"/>
+		<ref name="var"/>
+		<ref name="cite"/>
+		<ref name="abbr"/>
+		<ref name="acronym"/>
+	</elementGroup>
+	
+	<elementGroup name="Special">
+		<ref name="a"/>
+		<ref name="img"/>
+		<ref name="applet"/>
+		<ref name="object"/>
+		<ref name="font"/>
+		<ref name="basefont"/>
+		<ref name="br"/>
+		<ref name="script"/>
+		<ref name="map"/>
+		<ref name="q"/>
+		<ref name="sub"/>
+		<ref name="sup"/>
+		<ref name="span"/>
+		<ref name="bdo"/>
+		<ref name="iframe"/>
+	</elementGroup>
+	
+	<elementGroup name="Formctrl">
+		<ref name="input"/>
+		<ref name="select"/>
+		<ref name="textarea"/>
+		<ref name="label"/>
+		<ref name="button"/>
+	</elementGroup>
+	
+	<elementGroup name="Inline">
+		<ref name="Fontstyle"/>
+		<ref name="Phrase"/>
+		<ref name="Special"/>
+		<ref name="Formctrl"/>
+	</elementGroup>
+	
+	<elementGroup name="Heading">
+		<ref name="h1"/>
+		<ref name="h2"/>
+		<ref name="h3"/>
+		<ref name="h4"/>
+		<ref name="h5"/>
+		<ref name="h6"/>
+	</elementGroup>
+	
+	<elementGroup name="List">
+		<ref name="ul"/>
+		<ref name="ol"/>
+	</elementGroup>
+	
+	<elementGroup name="Block">
+		<ref name="p"/>
+		<ref name="Heading"/>
+		<ref name="List"/>
+		<ref name="pre"/>
+		<ref name="dl"/>
+		<ref name="div"/>
+		<ref name="noscript"/>
+		<ref name="blockquote"/>
+		<ref name="form"/>
+		<ref name="hr"/>
+		<ref name="table"/>
+		<ref name="fieldset"/>
+		<ref name="address"/>
+	</elementGroup>
+	
+	<elementGroup name="Flow">
+		<ref name="Block"/>
+		<ref name="Inline"/>
+	</elementGroup>
+	
+	<attributeGroup name="Core">
+		<ref name="id"/>
+		<ref name="class"/>
+		<ref name="style"/>
+		<ref name="title"/>
+	</attributeGroup>
+	
+	<attributeGroup name="I18n">
+		<ref name="lang"/>
+		<ref name="dir"/>
+	</attributeGroup>
+	
+	<attributeGroup name="Attrs">
+		<ref name="Core"/>
+		<ref name="I18n"/>
+	</attributeGroup>
+	
+	<attributeGroup name="Cellhalign">
+		<ref name="align"/>
+		<ref name="char"/>
+		<ref name="charoff"/>
+	</attributeGroup>
+	
+	<attributeGroup name="Cellvalign">
+		<ref name="valign"/>
+	</attributeGroup>
+	
+
+	<elementRule>
+		<element name="a" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="charset"/>
+				<ref name="type"/>
+				<ref name="name"/>
+				<ref name="href"/>
+				<ref name="hreflang"/>
+				<ref name="rel"/>
+				<ref name="rev"/>
+				<ref name="accesskey"/>
+				<ref name="shape"/>
+				<ref name="coords"/>
+				<ref name="tabindex"/>
+			</attributes>
+			<elements>
+				<ref name="Inline">
+					<excludes>
+						<ref name="a"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="abbr" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="acronym" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="adress" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="applet" endTag="true">
+			<attributes>
+				<ref name="Core"/>
+				<ref name="codebase"/>
+				<ref name="archive"/>
+				<ref name="code"/>
+				<ref name="object"/>
+				<ref name="alt"/>
+				<ref name="name"/>
+				<ref name="width"/>
+				<ref name="height"/>
+				<ref name="align"/>
+				<ref name="hspace"/>
+				<ref name="vspace"/>
+			</attributes>
+			<elements>
+				<ref name="param"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="area">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="shape"/>
+				<ref name="coords"/>
+				<ref name="href"/>
+				<ref name="nohref"/>
+				<ref name="alt"/>
+				<ref name="tabindex"/>
+				<ref name="accesskey"/>
+			</attributes>
+		</element>
+
+		<element name="b" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="base">
+			<attributes>
+				<ref name="href"/>
+				<ref name="target"/>
+			</attributes>
+		</element>
+
+		<element name="basefont">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="size"/>
+				<ref name="color"/>
+				<ref name="face"/>
+			</attributes>
+		</element>
+
+		<element name="bdo" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="big" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="blockquote" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="cite"/>
+			</attributes>
+			<elements>
+				<ref name="Block"/>
+			</elements>
+		</element>
+
+		<element name="body">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="background"/>
+				<ref name="text"/>
+				<ref name="link"/>
+				<ref name="vlink"/>
+				<ref name="alink"/>
+				<ref name="bgcolor"/>
+			</attributes>
+			<elements>
+				<ref name="Block"/>
+				<ref name="ins"/>
+				<ref name="del"/>
+			</elements>
+		</element>
+
+		<element name="br">
+			<attributes>
+				<ref name="Core"/>
+				<ref name="clear"/>
+			</attributes>
+		</element>
+
+		<element name="button" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+				<ref name="value"/>
+				<ref name="type"/>
+				<ref name="disabled"/>
+				<ref name="tabindex"/>
+				<ref name="accesskey"/>
+			</attributes>
+			<elements>
+				<ref name="Flow">
+					<excludes>
+						<ref name="a"/>
+						<ref name="Formctrl"/>
+						<ref name="form"/>
+						<ref name="fieldset"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="caption" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="center" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="cite" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="code" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="col">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="span"/>
+				<ref name="width"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+			</attributes>
+		</element>
+
+		<element name="colgroup">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="span"/>
+				<ref name="width"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+			</attributes>
+			<elements>
+				<ref name="col"/>
+			</elements>
+		</element>
+
+		<element name="dd">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="del" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="cite"/>
+				<ref name="datetime"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="dfn" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="dir" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="compact"/>
+			</attributes>
+			<elements>
+				<ref name="li"/>
+			</elements>
+		</element>
+
+		<element name="div" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="dl" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="compact"/>
+			</attributes>
+			<elements>
+				<ref name="dt"/>
+				<ref name="dd"/>
+			</elements>
+		</element>
+
+		<element name="dt">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="em" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="embed">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+				<ref name="disabled"/>
+				<ref name="height"/>
+				<ref name="hidden"/>
+				<ref name="hspace"/>
+				<ref name="name"/>
+				<ref name="pluginspage"/>
+				<ref name="src"/>
+				<ref name="type"/>
+				<ref name="width"/>
+				<ref name="units"/>
+			</attributes>
+			<elements>
+				<ref name="param"/>
+			</elements>
+		</element>
+
+		<element name="fieldset" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="legend"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="font" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="size"/>
+				<ref name="color"/>
+				<ref name="face"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="form" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="action"/>
+				<ref name="method"/>
+				<ref name="enctype"/>
+				<ref name="accept"/>
+				<ref name="name"/>
+				<ref name="accept-charset"/>
+			</attributes>
+			<elements>
+				<ref name="Block">
+					<excludes>
+						<ref name="form"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="frame">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="longdesc"/>
+				<ref name="name"/>
+				<ref name="src"/>
+				<ref name="frameborder"/>
+				<ref name="marginwidth"/>
+				<ref name="marginheight"/>
+				<ref name="noresize"/>
+				<ref name="scrolling"/>
+			</attributes>
+		</element>
+
+		<element name="frameset" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="cols"/>
+				<ref name="rows"/>
+			</attributes>
+			<elements>
+				<ref name="frameset"/>
+				<ref name="frame"/>
+				<ref name="noframes"/>
+			</elements>
+		</element>
+
+		<element name="h1" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="h2" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="h3" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="h4" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="h5" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="h6" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="head">
+			<attributes>
+				<ref name="I18n"/>
+				<ref name="profile"/>
+			</attributes>
+			<elements>
+				<ref name="title"/>
+				<ref name="meta"/>
+				<ref name="style"/>
+				<ref name="link"/>
+				<ref name="base"/>
+				<ref name="object"/>
+			</elements>
+		</element>
+
+		<element name="hr">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+				<ref name="noshade"/>
+				<ref name="size"/>
+				<ref name="width"/>
+			</attributes>
+		</element>
+
+		<element name="html">
+			<attributes>
+				<ref name="I18n"/>
+				<ref name="version"/>
+			</attributes>
+			<elements>
+				<ref name="head"/>
+				<ref name="body"/>
+			</elements>
+		</element>
+
+		<element name="i" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="iframe" endTag="true">
+			<attributes>
+				<ref name="Core"/>
+				<ref name="longdesc"/>
+				<ref name="name"/>
+				<ref name="src"/>
+				<ref name="frameborder"/>
+				<ref name="marginwidth"/>
+				<ref name="marginheight"/>
+				<ref name="scrolling"/>
+				<ref name="align"/>
+				<ref name="height"/>
+				<ref name="width"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="img">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="src"/>
+				<ref name="alt"/>
+				<ref name="longdesc"/>
+				<ref name="name"/>
+				<ref name="height"/>
+				<ref name="width"/>
+				<ref name="usemap"/>
+				<ref name="ismap"/>
+			</attributes>
+		</element>
+
+		<element name="input">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="type"/>
+				<ref name="name"/>
+				<ref name="value"/>
+				<ref name="checked"/>
+				<ref name="disabled"/>
+				<ref name="readonly"/>
+				<ref name="size"/>
+				<ref name="maxlength"/>
+				<ref name="src"/>
+				<ref name="alt"/>
+				<ref name="usemap"/>
+				<ref name="ismap"/>
+				<ref name="tabindex"/>
+				<ref name="accesskey"/>
+				<ref name="accept"/>
+			</attributes>
+		</element>
+
+		<element name="ins" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="cite"/>
+				<ref name="datetime"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="isindex">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="prompt"/>
+			</attributes>
+		</element>
+
+		<element name="kbd" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="label" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="accesskey"/>
+				<ref name="for"/>
+			</attributes>
+			<elements>
+				<ref name="Inline">
+					<excludes>
+						<ref name="label"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="legend" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="accesskey"/>
+				<ref name="align"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="li">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="type"/>
+				<ref name="value"/>
+				<ref name="compact"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="link">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="charset"/>
+				<ref name="href"/>
+				<ref name="hreflang"/>
+				<ref name="type"/>
+				<ref name="rel"/>
+				<ref name="rev"/>
+				<ref name="media"/>
+			</attributes>
+		</element>
+
+		<element name="map" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+			</attributes>
+			<elements>
+				<ref name="Block"/>
+				<ref name="area"/>
+			</elements>
+		</element>
+
+		<element name="marquee" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="accesskey"/>
+				<ref name="disabled"/>
+				<ref name="tabindex"/>
+				<ref name="title"/>
+				<ref name="behavior"/>
+				<ref name="bgcolor"/>
+				<ref name="direction"/>
+				<ref name="height"/>
+				<ref name="hspace"/>
+				<ref name="loop"/>
+				<ref name="scrollamount"/>
+				<ref name="scrolldelay"/>
+				<ref name="width"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="menu" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="compact"/>
+			</attributes>
+			<elements>
+				<ref name="li"/>
+			</elements>
+		</element>
+
+		<element name="meta">
+			<attributes>
+				<ref name="I18n"/>
+				<ref name="content"/>
+				<ref name="http-equiv"/>
+				<ref name="name"/>
+				<ref name="scheme"/>
+			</attributes>
+		</element>
+
+		<element name="nobr" endTag="true">
+			<attributes>
+				<ref name="accesskey"/>
+				<ref name="disabled"/>
+				<ref name="tabindex"/>
+				<ref name="title"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="noframes" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Flow">
+					<excludes>
+						<ref name="noframes"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="noscript" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Block"/>
+			</elements>
+		</element>
+
+		<element name="object" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="archive"/>
+				<ref name="classid"/>
+				<ref name="codebase"/>
+				<ref name="codetype"/>
+				<ref name="data"/>
+				<ref name="declare"/>
+				<ref name="height"/>
+				<ref name="name"/>
+				<ref name="standby"/>
+				<ref name="tabindex"/>
+				<ref name="type"/>
+				<ref name="width"/>
+				<ref name="usemap"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+				<ref name="param"/>
+			</elements>
+		</element>
+
+		<element name="ol" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="type"/>
+				<ref name="start"/>
+				<ref name="compact"/>
+			</attributes>
+			<elements>
+				<ref name="li"/>
+			</elements>
+		</element>
+
+		<element name="optgroup" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="disabled"/>
+				<ref name="label"/>
+			</attributes>
+			<elements>
+				<ref name="option"/>
+			</elements>
+		</element>
+
+		<element name="option">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="selected"/>
+				<ref name="disabled"/>
+				<ref name="label"/>
+				<ref name="value"/>
+			</attributes>
+		</element>
+
+		<element name="p">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="param">
+			<attributes>
+				<ref name="id"/>
+				<ref name="name"/>
+				<ref name="type"/>
+				<ref name="value"/>
+				<ref name="valuetype"/>
+			</attributes>
+		</element>
+
+		<element name="pre" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="width"/>
+			</attributes>
+			<elements>
+				<ref name="Inline">
+					<excludes>
+						<ref name="img"/>
+						<ref name="object"/>
+						<ref name="big"/>
+						<ref name="small"/>
+						<ref name="sub"/>
+						<ref name="sup"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="q" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="cite"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="rt" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+				<ref name="rbspan"/>
+			</attributes>
+			<elements>
+				<ref name="Inline">
+					<excludes>
+						<ref name="ruby"/>
+					</excludes>
+				</ref>
+			</elements>
+		</element>
+
+		<element name="ruby" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+			</attributes>
+			<elements>
+				<ref name="rt"/>
+			</elements>
+		</element>
+
+		<element name="s" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="samp" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="script" endTag="true">
+			<attributes>
+				<ref name="charset"/>
+				<ref name="defer"/>
+				<ref name="src"/>
+				<ref name="type"/>
+			</attributes>
+		</element>
+
+		<element name="select" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+				<ref name="size"/>
+				<ref name="multiple"/>
+				<ref name="disabled"/>
+				<ref name="tabindex"/>
+			</attributes>
+			<elements>
+				<ref name="optgroup"/>
+				<ref name="option"/>
+			</elements>
+		</element>
+
+		<element name="small" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="span" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="strike" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="strong" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="style" endTag="true">
+			<attributes>
+				<ref name="I18n"/>
+				<ref name="type"/>
+				<ref name="media"/>
+				<ref name="title"/>
+			</attributes>
+		</element>
+
+		<element name="sub" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="sup" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="table" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="border"/>
+				<ref name="cellpadding"/>
+				<ref name="cellspacing"/>
+				<ref name="frame"/>
+				<ref name="rules"/>
+				<ref name="summary"/>
+				<ref name="width"/>
+				<ref name="bgcolor"/>
+			</attributes>
+			<elements>
+				<ref name="caption"/>
+				<ref name="col"/>
+				<ref name="colgroup"/>
+				<ref name="thead"/>
+				<ref name="tbody"/>
+				<ref name="tfoot"/>
+				<ref name="tr"/>
+			</elements>
+		</element>
+
+		<element name="tbody">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+			</attributes>
+			<elements>
+				<ref name="tr"/>
+			</elements>
+		</element>
+
+		<element name="td">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="abbr"/>
+				<ref name="axis"/>
+				<ref name="headers"/>
+				<ref name="scope"/>
+				<ref name="rowspan"/>
+				<ref name="colspan"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+				<ref name="bgcolor"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="textarea" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+				<ref name="rows"/>
+				<ref name="cols"/>
+				<ref name="disabled"/>
+				<ref name="readonly"/>
+				<ref name="tabindex"/>
+				<ref name="accesskey"/>
+			</attributes>
+		</element>
+
+		<element name="tfoot">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+			</attributes>
+			<elements>
+				<ref name="tr"/>
+			</elements>
+		</element>
+
+		<element name="th">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="abbr"/>
+				<ref name="axis"/>
+				<ref name="headers"/>
+				<ref name="scope"/>
+				<ref name="rowspan"/>
+				<ref name="colspan"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+				<ref name="bgcolor"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+
+		<element name="thead">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+			</attributes>
+			<elements>
+				<ref name="tr"/>
+			</elements>
+		</element>
+
+		<element name="title" endTag="true">
+			<attributes>
+				<ref name="I18n"/>
+			</attributes>
+		</element>
+
+		<element name="tr">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+				<ref name="Cellvalign"/>
+				<ref name="bgcolor"/>
+			</attributes>
+			<elements>
+				<ref name="td"/>
+				<ref name="th"/>
+			</elements>
+		</element>
+
+		<element name="tt" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="u" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="ul" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="compact"/>
+				<ref name="type"/>
+			</attributes>
+			<elements>
+				<ref name="li"/>
+			</elements>
+		</element>
+
+		<element name="var" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+
+		<element name="wbr">
+		</element>
+
+		<element name="xml" endTag="true">
+			<attributes>
+				<ref name="Core"/>
+			</attributes>
+		</element>
+
+		<element name="xmp" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="align"/>
+			</attributes>
+		</element>
+	</elementRule>
+
+	<attributeRule>
+		<attribute name="abbr"/>
+		<attribute name="accept"/>
+		<attribute name="accept-charset"/>
+		<attribute name="accesskey"/>
+		<attribute name="action"/>
+		<attribute name="align"/>
+		<attribute name="alink"/>
+		<attribute name="alt"/>
+		<attribute name="archive"/>
+		<attribute name="axis"/>
+		<attribute name="background"/>
+		<attribute name="bgcolor"/>
+		<attribute name="behavior"/>
+		<attribute name="border"/>
+		<attribute name="cellpadding"/>
+		<attribute name="cellspacing"/>
+		<attribute name="char"/>
+		<attribute name="charoff"/>
+		<attribute name="charset"/>
+		<attribute name="checked"/>
+		<attribute name="cite"/>
+		<attribute name="class"/>
+		<attribute name="classid"/>
+		<attribute name="clear"/>		
+		<attribute name="code"/>
+		<attribute name="codebase"/>
+		<attribute name="codetype"/>
+		<attribute name="color"/>
+		<attribute name="cols"/>
+		<attribute name="colspan"/>
+		<attribute name="compact"/>
+		<attribute name="content"/>
+		<attribute name="coords"/>
+		<attribute name="data"/>		
+		<attribute name="datetime"/>
+		<attribute name="declare"/>
+		<attribute name="defer"/>
+		<attribute name="dir"/>
+		<attribute name="direction"/>
+		<attribute name="disabled"/>
+		<attribute name="enctype"/>
+		<attribute name="face"/>
+		<attribute name="for"/>
+		<attribute name="frame"/>
+		<attribute name="frameborder"/>
+		<attribute name="headers"/>
+		<attribute name="height"/>
+		<attribute name="hidden"/>
+		<attribute name="href"/>
+		<attribute name="hreflang"/>
+		<attribute name="hspace"/>
+		<attribute name="http-equiv"/>
+		<attribute name="id"/>
+		<attribute name="ismap"/>
+		<attribute name="label"/>
+		<attribute name="lang"/>
+		<attribute name="link"/>
+		<attribute name="longdesc"/>
+		<attribute name="loop"/>
+		<attribute name="marginheight"/>
+		<attribute name="marginwidth"/>
+		<attribute name="maxlength"/>
+		<attribute name="media"/>
+		<attribute name="method"/>
+		<attribute name="multiple"/>
+		<attribute name="name"/>
+		<attribute name="nohref"/>
+		<attribute name="noresize"/>
+		<attribute name="noshade"/>
+		<attribute name="object"/>
+		<attribute name="pluginspage"/>
+		<attribute name="profile"/>
+		<attribute name="prompt"/>
+		<attribute name="rbspan"/>
+		<attribute name="readonly"/>
+		<attribute name="rel"/>
+		<attribute name="rev"/>
+		<attribute name="rows"/>
+		<attribute name="rowspan"/>
+		<attribute name="rules"/>
+		<attribute name="scheme"/>
+		<attribute name="scope"/>
+		<attribute name="scrollamount"/>
+		<attribute name="scrolldelay"/>
+		<attribute name="scrolling"/>
+		<attribute name="selected"/>
+		<attribute name="shape"/>
+		<attribute name="size"/>
+		<attribute name="span"/>		
+		<attribute name="src"/>
+		<attribute name="standby"/>
+		<attribute name="start"/>
+		<attribute name="style"/>
+		<attribute name="summary"/>
+		<attribute name="tabindex"/>
+		<attribute name="target"/>
+		<attribute name="text"/>
+		<attribute name="title"/>
+		<attribute name="type"/>
+		<attribute name="units"/>
+		<attribute name="usemap"/>
+		<attribute name="valign"/>
+		<attribute name="value"/>
+		<attribute name="valuetype"/>
+		<attribute name="version"/>
+		<attribute name="vlink"/>
+		<attribute name="vspace"/>
+		<attribute name="width"/>
+	</attributeRule>
+
+</config>
