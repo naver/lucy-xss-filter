@@ -7,7 +7,7 @@
 		<url>http://www.nhncorp.com/</url>
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 	<artifactId>lucy-xss</artifactId>
 	<name>NHNCorp Lucy XSS Filter</name>
 	<packaging>jar</packaging>
@@ -107,6 +107,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
+		</dependency>
+		<dependency>
+    		<groupId>commons-codec</groupId>
+    		<artifactId>commons-codec</artifactId>
+    		<version>1.4</version>
 		</dependency>
 	</dependencies>
 

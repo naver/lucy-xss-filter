@@ -14,13 +14,17 @@
 	</elementRule>
 	
 	<attributeRule>
-		<attribute name="src">
+		<attribute name="data" base64Decoding="true">
 			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
-			<notAllowedPattern><![CDATA[[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+		</attribute>
+		<attribute name="src" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
 		</attribute>
 		<attribute name="style">
 			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
-			<notAllowedPattern><![CDATA[[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
 		</attribute>
 	</attributeRule>
 

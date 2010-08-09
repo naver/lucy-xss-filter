@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
+
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 
 /**
@@ -20,6 +22,9 @@ public final class AttributeRule {
 	private boolean disabled;
 	private List<Pattern> patterns;
 	private List<Pattern> npatterns;
+	
+	//Base64Decoding on the browser supporting HTML5
+	private boolean base64Decoding;
 	
 	AttributeRule(String name) {
 		this.name = name;
@@ -38,6 +43,11 @@ public final class AttributeRule {
 		return this.disabled;
 	}
 	
+	//Base64Decoding
+	public boolean isBase64Decoding() {
+		return this.base64Decoding;
+	}
+
 	public List<Pattern> getAllowedPatterns() {
 		return Collections.unmodifiableList(this.patterns);
 	}
@@ -52,9 +62,30 @@ public final class AttributeRule {
 		}
 	}
 
+	private String decodeWithBase64(String originalValue) {
+		String[] value = originalValue.split(",");
+		
+		if (value[0].endsWith("base64")) {
+			byte[] decodedValue = Base64.decodeBase64(value[1]);
+			return new String(decodedValue);
+		}
+		
+		return originalValue;
+	}
+	
+	/**
+	 * attribute value가 whitelist를 위반하는지 검사한다.
+	 * 
+	 * @param att {@link Attribute}
+	 */
 	public void checkAttributeValue(Attribute att) {
 		if (att != null && !att.isMinimized()) {
 			String value = att.getValue();
+			
+			if(this.isBase64Decoding()) {
+				value = this.decodeWithBase64(value);
+			}
+			
 			if (this.patterns != null && !this.patterns.isEmpty()) {
 				for (Pattern p : this.patterns) {
 					if (p.matcher(value).matches()) {
@@ -78,6 +109,16 @@ public final class AttributeRule {
 		this.disabled = disabled;
 	}
 	
+	//Base64Decoding
+	void setBase64Decoding(boolean base64Decoding) {
+		this.base64Decoding = base64Decoding;
+	}
+
+	/**
+	 * WhiteList에 AllowedPatterns으로 정의된 regex를 compile해patterns에추가한다.
+	 * 
+	 * @param regex {@link String}
+	 */
 	void addAllowedPattern(String regex) {
 		if (regex != null) {
 			if (this.patterns == null) {
@@ -95,7 +136,12 @@ public final class AttributeRule {
 			}
 		}
 	}
-	
+
+	/**
+	 * WhiteList에 NotAllowedPatterns으로 정의된 regex를 compile해서 npatterns에 추가한다.
+	 * 
+	 * @param regex {@link String}
+	 */
 	void addNotAllowedPattern(String regex) {
 		if (regex != null) {
 			if (this.npatterns == null) {
