@@ -1,3 +1,9 @@
+/*
+ * @(#) XssFilterException.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss;
 
 public class XssFilterException extends RuntimeException {	
@@ -6,7 +12,6 @@ public class XssFilterException extends RuntimeException {
 
 	public XssFilterException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 }

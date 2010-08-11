@@ -1,3 +1,9 @@
+/*
+ * @(#) ObjectListener.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.listener;
 
 import java.util.regex.Pattern;
@@ -9,7 +15,7 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 이 클래스는 Object 태그에 대한 보안 필터링을 수행한다.
  * 
  * @author Web Platform Development Team
- * @version $Rev: 20290 $, $Date: 2009-03-09 14:51:01 +0900 (월, 09 3 2009) $
+ * 
  */
 public class ObjectListener implements ElementListener {
 	private static final Pattern INVOKEURLS = Pattern

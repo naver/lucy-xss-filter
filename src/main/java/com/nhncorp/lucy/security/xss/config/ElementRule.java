@@ -1,3 +1,9 @@
+/*
+ * @(#) ElementRule.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.config;
 
 import java.util.ArrayList;
@@ -15,7 +21,7 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 이 클래스는 패키지 외부에서 참조 되지 않는다.
  * 
  * @author Web Platform Development Team
- * @version $Rev: 18530 $, $Date: 2008-08-14 14:41:03 +0900 (목, 14 8 2008) $
+ * 
  */
 public final class ElementRule {
 

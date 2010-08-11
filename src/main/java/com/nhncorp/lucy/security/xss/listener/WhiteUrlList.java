@@ -1,3 +1,9 @@
+/*
+ * @(#) WhiteUrlList.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.listener;
 
 import java.io.InputStream;
@@ -18,7 +24,7 @@ import com.nhncorp.lucy.security.xss.config.XssConfiguration;
  * 이 클래스는 {@code "white-url.xml"} 을 바탕으로 White List를 생성한다.
  * 
  * @author Web Platform Development Team
- * @version $Rev: 20085 $, $Date: 2009-02-05 18:19:28 +0900 (목, 05 2 2009) $
+ * 
  */
 public final class WhiteUrlList {
 

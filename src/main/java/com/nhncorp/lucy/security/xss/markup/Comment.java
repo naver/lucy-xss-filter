@@ -1,3 +1,9 @@
+/*
+ * @(#) Comment.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.markup;
 
 import java.io.IOException;
@@ -8,7 +14,7 @@ import java.io.Writer;
  * 즉, {@code '<!--'}으로 시작하여 {@code '-->'} 으로 끝나는 모든 Content 를 나타낸다. 
  * 
  * @author Web Platform Development Team
- * @version $Rev: 17653 $, $Date: 2008-04-15 15:47:50 +0900 (화, 15 4 2008) $
+ * 
  */
 public class Comment extends Content {
 

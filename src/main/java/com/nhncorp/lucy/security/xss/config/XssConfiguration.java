@@ -1,3 +1,9 @@
+/*
+ * @(#) XssConfiguration.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.config;
 
 import java.io.IOException;
@@ -19,11 +25,11 @@ import org.w3c.dom.NodeList;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 
 /**
- * ���대옒�ㅻ뒗 XSS Filter �ㅼ젙 �댁슜���섑��몃떎. <br/>
- * 留뚯빟, �ㅼ젙 �댁슜���닿퀬 �덈뒗 �뚯씪��議댁옱 �섏� �딄굅���덉긽移�紐삵븳 �щĸ��媛��怨��덈떎硫� Exception��諛쒖깮 �쒗궓��
+ * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
+ * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
  * 
  * @author Web Platform Development Team
- * @version $Rev: 19999 $, $Date: 2009-01-28 16:17:59 +0900 (�� 28 1 2009) $
+ * 
  */
 public final class XssConfiguration {
 	
@@ -42,11 +48,11 @@ public final class XssConfiguration {
 	}
 
 	/**
-	 * ��硫붿냼�쒕뒗 �뱀젙 �뚯씪濡쒕���XSS Filter �ㅼ젙 �댁슜��濡쒕뵫�섏뿬, �덈줈���몄뒪�댁뒪瑜�由ы꽩�쒕떎.
+	 * 이 메소드는 특정 파일로부터 XSS Filter 설정 내용을 로딩하여, 새로운 인스턴스를 리턴한다.
 	 * 
-	 * @param file	XSS Filter �ㅼ젙�뚯씪.
-	 * @return	XssConfiguration �몄뒪�댁뒪.
-	 * @throws Exception	�ㅼ젙 �댁슜���닿퀬 �덈뒗 �뚯씪���덉긽移�紐삵븳 �щĸ��媛��怨��덉쓣 寃쎌슦 諛쒖깮.
+	 * @param file	XSS Filter 설정파일.
+	 * @return	XssConfiguration 인스턴스.
+	 * @throws Exception	설정 내용을 담고 있는 파일이 예상치 못한 포멧을 가지고 있을 경우 발생.
 	 */
 	public static XssConfiguration newInstance(String file) throws Exception {
 		XssConfiguration config = null;

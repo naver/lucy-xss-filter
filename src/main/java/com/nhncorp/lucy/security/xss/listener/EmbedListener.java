@@ -1,3 +1,9 @@
+/*
+ * @(#) EmbedListener.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.listener;
 
 import com.nhncorp.lucy.security.xss.event.ElementListener;
@@ -7,7 +13,7 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 이 클래스는 Embed 태그에 대한 보안 필터링을 수행한다.
  *
  * @author Web Platform Development Team
- * @version $Rev: 20085 $, $Date: 2009-02-05 18:19:28 +0900 (목, 05 2 2009) $
+ * 
  */
 public class EmbedListener implements ElementListener {
 

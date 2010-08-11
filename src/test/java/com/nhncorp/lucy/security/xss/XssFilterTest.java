@@ -1,3 +1,9 @@
+/*
+ * @(#) XssFilterTest.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss;
 
 import java.util.ArrayList;
@@ -43,12 +49,8 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mine.xml");
 		int i = 1;
 		for (String invalid : readString(INVALID_HTML_FILES)) {
-			//System.out.println(i);
 			String clean = filter.doFilter(invalid);
 			Assert.assertFalse("\n" + invalid + "\n" + clean, invalid.equals(clean));
-//			System.out.println(invalid);
-//			System.out.println(clean);
-//			System.out.println("/" + i++);
 		}
 	}
 
@@ -145,6 +147,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	}		
 		
 	@Test
+	//HTML5 적용된 브라우저에서 Base64 인코딩된 XSS 우회 공격을 필터링한다.
 	public void testBase64DecodingTest() {
 		
 		XssFilter filter = XssFilter.getInstance("xss.xml");

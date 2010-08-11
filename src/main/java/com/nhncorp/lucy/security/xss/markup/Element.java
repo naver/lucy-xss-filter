@@ -1,3 +1,9 @@
+/*
+ * @(#) Element.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.markup;
 
 import java.io.IOException;
@@ -14,7 +20,7 @@ import java.util.Map;
  * 또한 하위에 {@link Content Content} 들을 포함할 수 있다.
  * 
  * @author Web Platform Development Team
- * @version $Rev: 17989 $, $Date: 2008-06-03 11:09:28 +0900 (화, 03 6 2008) $
+ * 
  */
 public class Element extends Content {
 

@@ -1,3 +1,9 @@
+/*
+ * @(#) XssFilter.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss;
 
 import java.io.IOException;
@@ -33,7 +39,7 @@ import com.nhncorp.lucy.security.xss.markup.Text;
  * </pre>
  * 
  * @author Web Platform Development Team
- * @version $Rev: 20182 $, $Date: 2009-02-17 18:44:11 +0900 (화, 17 2 2009) $
+ * 
  */
 public final class XssFilter {
 

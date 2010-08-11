@@ -1,3 +1,9 @@
+/*
+ * @(#) MarkupParser.java 2010. 8. 11 
+ *
+ * Copyright 2010 NHN Corp. All rights Reserved. 
+ * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 package com.nhncorp.lucy.security.xss.markup;
 
 import java.io.IOException;
@@ -41,7 +47,7 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  * </pre>
  * 
  * @author Web Platform Development Team
- * @version $Rev: 18138 $, $Date: 2008-06-23 11:25:31 +0900 (월, 23 6 2008) $
+ * 
  */
 public final class MarkupParser {
 	
