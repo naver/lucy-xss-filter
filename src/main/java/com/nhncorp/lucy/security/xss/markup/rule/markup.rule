@@ -7,5 +7,5 @@ tagName		::= [^?!'"/<>#x20#x9#xD#xA]+
 attribute	::= attName ([#x20#x9#xD#xA]* '=' [#x20#x9#xD#xA]* attValue)?
 attName		::= [^=<>#x20#x9#xD#xA]+
 attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
-				| [^<>#x20#x9#xD#xA]*
+				|([^"'`<>#x20#x9#xD#xA]+ ["'`]?)|[^<>#x20#x9#xD#xA]*
 text		::= [^<]* | ('<' [^<]*)
