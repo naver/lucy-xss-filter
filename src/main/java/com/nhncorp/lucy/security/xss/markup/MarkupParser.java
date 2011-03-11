@@ -62,6 +62,7 @@ public final class MarkupParser {
 	 * @return	{@code Collection<Content>}.
 	 */
 	public static Collection<Content> parse(String input) {
+		
 		if (input == null || "".equals(input)) {
 			return null;
 		}
@@ -93,10 +94,21 @@ public final class MarkupParser {
 					}
 				}
 				
-				if (stack == null) {
-					stack = new LinkedList<Element>();
-				}				
-				stack.addFirst(element);				
+				Token closeStartEnd = t.getChild("closeStartEnd");
+				
+				if(closeStartEnd == null) {
+					
+					if (stack == null) {
+						stack = new LinkedList<Element>();
+					}				
+					
+					stack.addFirst(element);
+
+				} else {
+					element.setStartClose(true);
+				
+				}
+				
 				result.add(element);
 			} else if ("endTag".equals(tokenName)) {
 				boolean flag = false;

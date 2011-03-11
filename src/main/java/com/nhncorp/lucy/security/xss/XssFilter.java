@@ -218,7 +218,14 @@ public final class XssFilter {
 			}
 		}
 
-		writer.write((e.isDisabled()) ? "&gt;" : ">");
+		if(e.isStartClosed()) {
+
+			writer.write((e.isDisabled()) ? " /&gt;" : " />");
+
+		} else {
+	
+			writer.write((e.isDisabled()) ? "&gt;" : ">");
+		}
 
 		if (!e.isEmpty()) {
 			this.serialize(writer, e.getContents());

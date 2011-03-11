@@ -41,6 +41,12 @@ public class Element extends Content {
 	 * 이 멤버 변수는 Tag가 닫혀 있는지 여부를 저장한다. (기본값은 {@code false}).
 	 */
 	protected boolean isClosed;
+	
+	/**
+	 * 이 멤버 변수는 Tag가 Start Tag에서 닫혀 있는지 여부를 저장한다. (기본값은 {@code false}).
+	 */
+	protected boolean isStartClosed;
+	
 	/**
 	 * {@link com.nhncorp.lucy.security.xss.XssFilter XssCleaner}에서 사용하는 멤버 변수로 
 	 * Attribute 의 활성화 여부를 나타낸다.
@@ -66,6 +72,10 @@ public class Element extends Content {
 		return (this.name == null)? "" : this.name;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	/**
 	 * 이 메소드는 Tag 가 닫혀 있는지 여부를 리턴한다.
 	 * 
@@ -80,8 +90,26 @@ public class Element extends Content {
 	 * 
 	 * @param close	Tag 가 닫혀 있는지 여부.
 	 */
-	void setClose(boolean close) {
+	public void setClose(boolean close) {
 		this.isClosed = close;
+	}
+	
+	/**
+	 * 이 메소드는 Tag 가 닫혀 있는지 여부를 리턴한다.
+	 * 
+	 * @return	닫혀 있으면 {@code true}, 그렇지 않으면 {@code false}.
+	 */
+	public boolean isStartClosed() {
+		return this.isStartClosed;
+	}
+	
+	/**
+	 * 이 메소드는 Tag 가 닫혀 있는지 여부를 세팅한다.
+	 * 
+	 * @param close	Tag 가 닫혀 있는지 여부.
+	 */
+	public void setStartClose(boolean startClose) {
+		this.isStartClosed = startClose;
 	}
 	
 	/**
@@ -438,5 +466,13 @@ public class Element extends Content {
 		}
 		
 		return flag;
+	}
+
+	public void removeAllAttributes() {
+		this.atts.clear();
+	}
+	
+	public Attribute removeAttribute(String attriName) {
+		return this.atts.remove(attriName);
 	}
 }

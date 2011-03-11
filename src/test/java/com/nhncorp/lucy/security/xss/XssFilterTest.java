@@ -6,6 +6,7 @@
  */
 package com.nhncorp.lucy.security.xss;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.junit.Assert;
@@ -154,14 +155,75 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty ="<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnZW1iZWRfc2NyaXB0X2FsZXJ0Jyk8L3NjcmlwdD4=\">";
 		String expected ="<!-- Not Allowed Attribute Filtered --><embed>";
 		String clean = filter.doFilter(dirty);
-		System.out.println(clean);
 		Assert.assertEquals(expected, clean);
 		
 		String dirty2 ="<object data=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnb2JqZWN0X3NjcmlwdF9hbGVydCcpPC9zY3JpcHQ+\"></object>";
 		String expected2 ="<!-- Not Allowed Attribute Filtered --><object></object>";
 		String clean2 = filter.doFilter(dirty2);
-		System.out.println(clean2);
 		Assert.assertEquals(expected2, clean2);
 	}
 	
+	@Test
+	public void testIMGListenerTest(){
+		
+		XssFilter filter = XssFilter.getInstance("lucy-xss-cafe-child.xml");
+
+		String dirty = "<IMG id=mms://stream.media.naver.com/cafeucc2/2007/8/6/41/46b6e5b82fd46b6e5c23c8-danyecafe.wmv height=284 src=\"http://thumb.media.naver.com/cafeucc2/2007/8/6/41/46b6e5b82fd46b6e5c23c8-danyecafe_player.jpg\" width=342 movietype=\"1\">";
+		String expected = "<iframe frameborder='no' width=342 height=296 scrolling=no name='mplayer' src='http://local.cafe.naver.com/MoviePlayer.nhn?dir=mms://stream.media.naver.com/cafeucc2/2007/8/6/41/46b6e5b82fd46b6e5c23c8-danyecafe.wmv?key=></iframe>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
+	}
+	
+	@Test
+	public void testASCIICtrlChars(){
+		// ASCIICtrl Chars : URL encoded %00 ~ %1F, %7F
+		XssFilter filter = XssFilter.getInstance();
+
+		String dirty = URLDecoder.decode("%00");
+		String expected = "\0";
+		String clean = filter.doFilter(dirty);
+		
+		Assert.assertTrue(expected.equals(clean));
+	}
+
+	// startTag에서 공백 뒤에 오는 Close char '/' 를 attributeName으로 인식하는 오류 수정
+	// e.g. <br />, <img src="aaaa" />
+	// 공백 + /> 가 표준이므로 공백 없이 '/' char가 온 경우도 공백을 넣어서 리턴하도록 함.
+	// e.g. <br/> -> <br />
+	@Test
+	public void testXHTMLStandard () {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		
+		String dirty = "<br />";
+		String clean = filter.doFilter(dirty);
+		
+		Assert.assertTrue(dirty.equals(clean));
+		
+		String dirty2 = "<img src=\"aaaa\" />";
+		String clean2 = filter.doFilter(dirty2);
+		
+		Assert.assertTrue(dirty2.equals(clean2));
+		
+		String dirty3 = "<br/>";
+		String expected3 = "<br />";
+		String clean3 = filter.doFilter(dirty3);
+		Assert.assertTrue(expected3.equals(clean3));
+		
+		String dirty4 = "<img src=\"aaaa\"/>";
+		String expected4 = "<img src=\"aaaa\" />";
+		String clean4 = filter.doFilter(dirty4);
+		
+		Assert.assertTrue(expected4.equals(clean4));
+		
+		String dirty5 = "<p>"
+			+"<FONT style=\"FONT-SIZE: 9pt; FONT-FAMILY: 1144591_9\">"
+			+"<FONT style=\"FONT-SIZE: 10pt; FONT-FAMILY: 1144591_10\"> 에서 탑승하시오.</FONT>"
+			+"<br />"
+			+"</FONT>" 
+			+"</p>";
+		
+		String clean5 = filter.doFilter(dirty5);
+		Assert.assertTrue(clean5.equals(dirty5));
+		
+	}
 }
