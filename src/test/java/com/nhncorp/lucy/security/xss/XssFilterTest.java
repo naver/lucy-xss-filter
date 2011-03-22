@@ -176,7 +176,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	
 	@Test
 	public void testASCIICtrlChars(){
-		// ASCIICtrl Chars : URL encoded %00 ~ %1F, %7F
+		// ASCIICtrl Chars : URL encoded %00 ~ %1F, %7F 이중 문제가 되는 것은 %00 뿐이다.
 		XssFilter filter = XssFilter.getInstance();
 
 		String dirty = URLDecoder.decode("%00");
@@ -184,6 +184,20 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		
 		Assert.assertTrue(expected.equals(clean));
+		
+		String dirty2="aaa\0aaa";
+		String expected2 = "aaa\0aaa";
+		String clean2 = filter.doFilter(dirty2);
+		
+		Assert.assertTrue(expected2.equals(clean2));
+		
+		String dirty3="\0aaa\0\0aaa\0";
+		String expected3 = "\0aaa\0\0aaa\0";
+		String clean3 = filter.doFilter(dirty3);
+		
+		Assert.assertTrue(expected3.equals(clean3));
+	
+	
 	}
 
 	// startTag에서 공백 뒤에 오는 Close char '/' 를 attributeName으로 인식하는 오류 수정
@@ -225,5 +239,23 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean5 = filter.doFilter(dirty5);
 		Assert.assertTrue(clean5.equals(dirty5));
 		
+		String dirty6 = "<img src=\"aaaa\" >";
+		String expected6 = "<img src=\"aaaa\">";
+		String clean6 = filter.doFilter(dirty6);
+		
+		Assert.assertTrue(expected6.equals(clean6));
+		
+	}
+	
+	
+	@Test
+	//VM 옵션 -Xss 128k 에서 overflow 발생하는 사례 / -Xss 256k or Defalut(512k) 옵션에서는 정상 작동
+	public void testCafeHtmlFiltering() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-cafe-child.xml");
+		for (String valid : readLines("StackOverFlowError_Sample.html")) {
+			String clean = filter.doFilter(valid);
+			System.out.println(clean);
+			//Assert.assertTrue("\n" + valid + "\n" + clean, valid.equals(clean));
+		}
 	}
 }
