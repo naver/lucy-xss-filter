@@ -46,6 +46,7 @@ public final class XssFilter {
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
 	private static String CONFIG = "lucy-xss.xml";
+	private boolean withoutComment;
 
 	private XssConfiguration config;
 
@@ -63,7 +64,15 @@ public final class XssFilter {
 	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
 	 */
 	public static XssFilter getInstance() throws XssFilterException {
-		return getInstance(CONFIG);
+		return getInstance(CONFIG, false);
+	}
+	
+	public static XssFilter getInstance(boolean withoutComment) throws XssFilterException {
+		return getInstance(CONFIG, withoutComment);
+	}
+	
+	public static XssFilter getInstance(String fileName) throws XssFilterException {
+		return getInstance(fileName, false);
 	}
 
 	/**
@@ -75,18 +84,21 @@ public final class XssFilter {
 	 * @throws XssFilterException
 	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
 	 */
-	public static XssFilter getInstance(String fileName) throws XssFilterException {
+	public static XssFilter getInstance(String fileName, boolean withoutComment) throws XssFilterException {
 		XssFilter filter = instanceMap.get(fileName);
 		if (filter != null) {
+			filter.withoutComment = withoutComment;
 			return filter;
 		}
 		try {
 			synchronized (XssFilter.class) {
 				filter = instanceMap.get(fileName);
 				if (filter != null) {
+					filter.withoutComment = withoutComment;
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
+				filter.withoutComment = withoutComment;
 				instanceMap.put(fileName, filter);
 				return filter;
 			}
@@ -194,11 +206,21 @@ public final class XssFilter {
 		}
 
 		if (e.isDisabled()) {
-			writer.write(BAD_TAG_INFO);
+			
+			if (!this.withoutComment) {
+			
+				writer.write(BAD_TAG_INFO);
+			}
+			
 			writer.write("&lt;");
 			writer.write(e.getName());
 		} else if (e.existDisabledAttribute()) {
-			writer.write(BAD_ATT_INFO);
+			
+			if (!this.withoutComment) {
+			
+				writer.write(BAD_ATT_INFO);
+			}
+			
 			writer.write('<');
 			writer.write(e.getName());
 		} else {

@@ -258,4 +258,23 @@ public class XssFilterTest extends XssFilterTestCase {
 			//Assert.assertTrue("\n" + valid + "\n" + clean, valid.equals(clean));
 		}
 	}
+	
+	@Test
+	//필터링된 Tag와 Attribute 입력에 Comment를 삽입하는 것은 옵션으로한다.
+	//getInstance의 두번째 파라미터가 noComment를 설정할 수 있다.
+	public void testNoCommentXSSFilter() {
+		
+		XssFilter filter = XssFilter.getInstance("lucy-xss5.xml", true);
+		String dirty ="<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnZW1iZWRfc2NyaXB0X2FsZXJ0Jyk8L3NjcmlwdD4=\"></embed>";
+		String expected ="<embed></embed>";
+		String clean = filter.doFilter(dirty);
+		System.out.println(clean);
+		Assert.assertEquals(expected, clean);
+		
+		String dirty2 ="<script></script>";
+		String expected2 ="&lt;script&gt;&lt;/script&gt;";
+		String clean2 = filter.doFilter(dirty2);
+		System.out.println(clean2);
+		Assert.assertEquals(expected2, clean2);
+	}
 }
