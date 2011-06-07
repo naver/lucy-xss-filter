@@ -67,10 +67,29 @@ public final class XssFilter {
 		return getInstance(CONFIG, false);
 	}
 	
+	/**
+	 * 이 메소드는 XssFilter 객체를 리턴한다.
+	 * @param withoutComment
+	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
+	 * @return XssFilter 객체
+	 * @throws XssFilterException
+	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
+	 */
 	public static XssFilter getInstance(boolean withoutComment) throws XssFilterException {
 		return getInstance(CONFIG, withoutComment);
 	}
 	
+	/**
+	 * 이 메소드는 XssFilter 객체를 리턴한다.
+	 * 
+	 * @param fileName
+	 *            XSS Filter 설정파일
+	 * @param withoutComment
+	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
+	 * @return XssFilter 객체
+	 * @throws XssFilterException
+	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
+	 */
 	public static XssFilter getInstance(String fileName) throws XssFilterException {
 		return getInstance(fileName, false);
 	}
@@ -80,6 +99,8 @@ public final class XssFilter {
 	 * 
 	 * @param fileName
 	 *            XSS Filter 설정파일
+	 * @param withoutComment
+	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
 	 * @return XssFilter 객체
 	 * @throws XssFilterException
 	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
