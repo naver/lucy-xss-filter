@@ -50,16 +50,19 @@ public final class WhiteUrlList {
 				}
 			}
 		}
+
+		is.close();
 	}
 
 	public static WhiteUrlList getInstance() throws Exception {
-		if (instance == null) {
-			synchronized (WhiteUrlList.class) {
-				if (instance == null) {
-					instance = new WhiteUrlList();
-				}
+		//Double checking
+		//if (instance == null) {
+		synchronized (WhiteUrlList.class) {
+			if (instance == null) {
+				instance = new WhiteUrlList();
 			}
 		}
+		//}
 
 		return instance;
 	}

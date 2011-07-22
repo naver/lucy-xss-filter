@@ -217,22 +217,18 @@ public final class XssFilter {
 	}
 
 	private void serialize(Writer writer, Element e) throws IOException {
-		StringWriter logWriter = new StringWriter();
+		StringWriter neloLogWriter = new StringWriter();
 		boolean hasElementXss = false;
 		boolean hasAttrXss = false;
 		
-		logWriter.write(e.getName());
+		neloLogWriter.write(e.getName());
 		
 		if (!e.isDisabled()) {
 			checkRule(e);
 		}
 
 		if (e.isDisabled()) {
-			
-//			if (this.enableNeloLog) {
-//				LOG.error(e.getName() + neloElementMSG);
-//			}
-			
+						
 			hasElementXss = true;
 
 			if (!this.withoutComment) {
@@ -242,6 +238,7 @@ public final class XssFilter {
 			
 			writer.write("&lt;");
 			writer.write(e.getName());
+			
 		} else if (e.existDisabledAttribute()) {
 			
 			if (!this.withoutComment) {
@@ -251,26 +248,26 @@ public final class XssFilter {
 			
 			writer.write('<');
 			writer.write(e.getName());
+			
 		} else {
+			
 			writer.write('<');
 			writer.write(e.getName());
 		}
 		
-		long attrWriteDuration = 0;
 		Collection<Attribute> atts = e.getAttributes();
+		
 		if (atts != null && !atts.isEmpty()) {
+		
 			for (Attribute att : atts) {
+			
 				if (!e.isDisabled() && att.isDisabled()) {
-					long beforeAttrWrite = System.currentTimeMillis();
+
 					hasAttrXss = true;
-					logWriter.write(" "+ att.getName() + "=" + att.getValue());
-					long afterAttrWrite = System.currentTimeMillis();
-					attrWriteDuration += (afterAttrWrite - beforeAttrWrite);
-//					if (this.enableNeloLog) {
-//						LOG.error(e.getName() + " " + att.getName() + "=" + att.getValue() + neloElementMSG);
-//					}
+					neloLogWriter.write(" "+ att.getName() + "=" + att.getValue());
 					
 					continue;
+				
 				} else {
 					writer.write(' ');
 					att.serialize(writer);
@@ -304,18 +301,12 @@ public final class XssFilter {
 			}
 		}
 		
-		long neloDuration = 0;
-		long beforeNeloLog = System.currentTimeMillis();
 		if (this.enableNeloLog && (hasElementXss || hasAttrXss)) {
-			logWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
-			LOG.error(logWriter.toString());
+			
+			neloLogWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
+			LOG.error(neloLogWriter.toString());
 		}
-		long afterNeloLog = System.currentTimeMillis();
-		neloDuration = afterNeloLog - beforeNeloLog;
 		
-		System.out.println("---------------------------------");
-		System.out.println("WRITE TIME : "+attrWriteDuration);
-		System.out.println("NELO TIME : "+ neloDuration);
 	}
 
 	private void checkRule(Element e) {
