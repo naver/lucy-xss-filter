@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+
+	<elementRule>
+
+		  
+		<element name="embed" override="false" disable="false">
+			  <!-- 상속 불가 리스너 -->
+			   
+			<attributes>
+				    
+				<ref name="Attrs" />
+				    
+				<ref name="align" />
+				    
+				<ref name="disabled" />
+				    
+				<ref name="height" />
+				<ref name="width" />
+
+				<ref name="type" />
+				<ref name="volume" />
+				<ref name="loop" />
+				<ref name="omcontextmenu" />
+				<ref name="wmode" />
+				<ref name="allowNetworking" />
+				<ref name="invokeURLs" />
+				<ref name="autostart" />
+				<ref name="onresize" />
+				<ref name="AllowScriptAccess" />
+				<ref name="src" />
+			</attributes>
+		</element>
+
+		<element name="paramT">
+			<attributes>
+				<ref name="paramA" />
+			</attributes>
+		</element>
+	</elementRule>
+
+	<attributeRule>
+		<attribute name="paramA">
+			<!-- 입력받는 parameter로 허용하지 않는 attribute들을 아래에 등록한다 -->
+			<notAllowedPattern><![CDATA[onmouseover]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[onmouseclick]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[onload]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[onerror]]></notAllowedPattern>
+		</attribute>
+
+		<attribute name="AllowScriptAccess" />
+		<attribute name="volume" />
+		<attribute name="omcontextmenu" />
+		<attribute name="wmode" />
+		<attribute name="allowNetworking" />
+		<attribute name="allowScriptAccess" />
+		<attribute name="invokeURLs" />
+		<attribute name="autostart" />
+		<attribute name="onresize" />
+	</attributeRule>
+	
+	<neloAsyncLog enable="true" service="XSSFILTER_TEST"/>
+</config>

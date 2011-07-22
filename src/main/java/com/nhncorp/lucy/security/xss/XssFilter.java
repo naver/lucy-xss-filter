@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.nhncorp.lucy.security.xss.config.AttributeRule;
 import com.nhncorp.lucy.security.xss.config.ElementRule;
 import com.nhncorp.lucy.security.xss.config.XssConfiguration;
@@ -43,10 +46,18 @@ import com.nhncorp.lucy.security.xss.markup.Text;
  */
 public final class XssFilter {
 
+	private static final Log LOG = LogFactory.getLog(XssFilter.class);
+	
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
+	private static String ElELMENT_NELO_MSG = " \n(Disabled Element)";
+	private static String ATTRIBUTE_NELO_MSG = " \n(Disabled Attribute)";
 	private static String CONFIG = "lucy-xss.xml";
 	private boolean withoutComment;
+	private boolean enableNeloLog;
+	private String service;
+	private String neloElementMSG;
+	private String neloAttrMSG;
 
 	private XssConfiguration config;
 
@@ -67,29 +78,10 @@ public final class XssFilter {
 		return getInstance(CONFIG, false);
 	}
 	
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 * @param withoutComment
-	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssFilter getInstance(boolean withoutComment) throws XssFilterException {
 		return getInstance(CONFIG, withoutComment);
 	}
 	
-	/**
-	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 * 
-	 * @param fileName
-	 *            XSS Filter 설정파일
-	 * @param withoutComment
-	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
-	 * @return XssFilter 객체
-	 * @throws XssFilterException
-	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
-	 */
 	public static XssFilter getInstance(String fileName) throws XssFilterException {
 		return getInstance(fileName, false);
 	}
@@ -99,27 +91,30 @@ public final class XssFilter {
 	 * 
 	 * @param fileName
 	 *            XSS Filter 설정파일
-	 * @param withoutComment
-	 * 			   공격 패턴이 검출 됐을 때 알려주는 주석문의 추가 여부
 	 * @return XssFilter 객체
 	 * @throws XssFilterException
 	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
 	 */
 	public static XssFilter getInstance(String fileName, boolean withoutComment) throws XssFilterException {
+		/**
 		XssFilter filter = instanceMap.get(fileName);
 		if (filter != null) {
 			filter.withoutComment = withoutComment;
 			return filter;
 		}
+		**/
 		try {
 			synchronized (XssFilter.class) {
-				filter = instanceMap.get(fileName);
+				XssFilter filter = instanceMap.get(fileName);
 				if (filter != null) {
-					filter.withoutComment = withoutComment;
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
+				filter.enableNeloLog = filter.config.enableNeloAsyncLog();
+				filter.service = filter.config.getService();
 				filter.withoutComment = withoutComment;
+				filter.neloElementMSG = ElELMENT_NELO_MSG + "@[" + filter.service + "]";
+				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG + "@[" + filter.service + "]";
 				instanceMap.put(fileName, filter);
 				return filter;
 			}
@@ -222,12 +217,24 @@ public final class XssFilter {
 	}
 
 	private void serialize(Writer writer, Element e) throws IOException {
+		StringWriter logWriter = new StringWriter();
+		boolean hasElementXss = false;
+		boolean hasAttrXss = false;
+		
+		logWriter.write(e.getName());
+		
 		if (!e.isDisabled()) {
 			checkRule(e);
 		}
 
 		if (e.isDisabled()) {
 			
+//			if (this.enableNeloLog) {
+//				LOG.error(e.getName() + neloElementMSG);
+//			}
+			
+			hasElementXss = true;
+
 			if (!this.withoutComment) {
 			
 				writer.write(BAD_TAG_INFO);
@@ -248,17 +255,28 @@ public final class XssFilter {
 			writer.write('<');
 			writer.write(e.getName());
 		}
-
+		
+		long attrWriteDuration = 0;
 		Collection<Attribute> atts = e.getAttributes();
 		if (atts != null && !atts.isEmpty()) {
 			for (Attribute att : atts) {
 				if (!e.isDisabled() && att.isDisabled()) {
+					long beforeAttrWrite = System.currentTimeMillis();
+					hasAttrXss = true;
+					logWriter.write(" "+ att.getName() + "=" + att.getValue());
+					long afterAttrWrite = System.currentTimeMillis();
+					attrWriteDuration += (afterAttrWrite - beforeAttrWrite);
+//					if (this.enableNeloLog) {
+//						LOG.error(e.getName() + " " + att.getName() + "=" + att.getValue() + neloElementMSG);
+//					}
+					
 					continue;
 				} else {
 					writer.write(' ');
 					att.serialize(writer);
 				}
 			}
+			
 		}
 
 		if(e.isStartClosed()) {
@@ -285,6 +303,19 @@ public final class XssFilter {
 				writer.write('>');
 			}
 		}
+		
+		long neloDuration = 0;
+		long beforeNeloLog = System.currentTimeMillis();
+		if (this.enableNeloLog && (hasElementXss || hasAttrXss)) {
+			logWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
+			LOG.error(logWriter.toString());
+		}
+		long afterNeloLog = System.currentTimeMillis();
+		neloDuration = afterNeloLog - beforeNeloLog;
+		
+		System.out.println("---------------------------------");
+		System.out.println("WRITE TIME : "+attrWriteDuration);
+		System.out.println("NELO TIME : "+ neloDuration);
 	}
 
 	private void checkRule(Element e) {

@@ -7,7 +7,6 @@
 package com.nhncorp.lucy.security.xss;
 
 import java.net.URLDecoder;
-import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -254,7 +253,6 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-cafe-child.xml");
 		for (String valid : readLines("StackOverFlowError_Sample.html")) {
 			String clean = filter.doFilter(valid);
-			System.out.println(clean);
 			//Assert.assertTrue("\n" + valid + "\n" + clean, valid.equals(clean));
 		}
 	}
@@ -268,13 +266,70 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty ="<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnZW1iZWRfc2NyaXB0X2FsZXJ0Jyk8L3NjcmlwdD4=\"></embed>";
 		String expected ="<embed></embed>";
 		String clean = filter.doFilter(dirty);
-		System.out.println(clean);
 		Assert.assertEquals(expected, clean);
 		
 		String dirty2 ="<script></script>";
 		String expected2 ="&lt;script&gt;&lt;/script&gt;";
 		String clean2 = filter.doFilter(dirty2);
-		System.out.println(clean2);
 		Assert.assertEquals(expected2, clean2);
+	}
+
+	
+	@Test
+	public void testDetectedBase64EncodingAttect() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo.xml");
+		
+		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
+		
+		String clean = filter.doFilter(dirty);
+		
+		System.out.println(clean);
+	}
+
+	@Test
+	public void testOnMouseFilter() {
+
+		XssFilter filter = XssFilter.getInstance("lucy-xss-on.xml");
+		
+		String dirty =" onmouseover=prompt(954996)";
+		String dirty2 = URLDecoder.decode("%22%20onmouseover%3dprompt%28954996%29%20bad%3d%22");
+		String dirty3 ="\" onmouseover=prompt(954996)\'aa";
+		
+		String clean = filter.doFilter("paramT", "paramA", dirty);
+		String clean2 = filter.doFilter("paramT", "paramA", dirty2);
+		String clean3 = filter.doFilter("paramT", "paramA", dirty3);
+		
+		System.out.println("clean::::[" + clean + "]");
+		System.out.println("clean2::::[" + clean2 + "]");
+		System.out.println("clean3::::[" + clean3 + "]");
+		
+		
+
+		String orgKeyword = dirty2;//dirty3; //keyword 파라미터에 사용자가 입력하는 경우를 예로 든다.
+		                
+		                XssFilter filter1 = XssFilter.getInstance("lucy-xss-on.xml"); // 새로운 사용자 정의 whitelist file을 만든다 (아래 첨부 내용 참고)
+		//이 API 는 version 1.1.0부터 제공합니다. 그 이하 version에서는 기존 방법대로 사용하세요.  단, lucy-xss.xml에 Element와 Attribute정의를 추가해야합니다.              
+		                
+		                String[] attList = orgKeyword.split("[\"'`]"); 
+		                
+		                boolean resultflag = true;
+		                
+		                for(String att : attList){
+		                	
+		                	att = "\"" + att + "\"";
+		                	
+		                	String cleanAtt = filter1.doFilter("paramT", "paramA", att); // 공백으로 구분된 입력 값을 각각 필터링한다.
+		                	
+		                	if (!att.equals(cleanAtt)) {
+		                		resultflag = false;
+		                	} 
+		                }
+		                
+		               		                
+		                if(resultflag){
+		                        System.out.println("Clean User!!");
+		                }else{
+		                        System.out.println("Dirty User !!");
+		                }
 	}
 }

@@ -39,6 +39,8 @@ public final class XssConfiguration {
 	private Map<String, AttributeRule> atts;
 	private Map<String, Set<String>> tagGroups;
 	private Map<String, Set<String>> attGroups;
+	private boolean neloAsyncLog;
+	private String service;
 	
 	private XssConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
@@ -57,16 +59,16 @@ public final class XssConfiguration {
 	public static XssConfiguration newInstance(String file) throws Exception {
 		XssConfiguration config = null;
 		
-		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
-		if (is == null) {
-			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
-		}
+//		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
+//		if (is == null) {
+//			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
+//		}
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();		
 			
-			config = create(builder, is);
+			config = create(builder, file);
 			
 			if (config == null) {
 				throw new Exception(String.format("The XSS configuration file [%s] is not a expected xml document.", file));
@@ -78,15 +80,20 @@ public final class XssConfiguration {
 		return config;
 	}
 	
-	private static XssConfiguration create(DocumentBuilder builder, InputStream is) {
+	private static XssConfiguration create(DocumentBuilder builder, String file) {
 		XssConfiguration config = null;
+		
+		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
+		if (is == null) {
+			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
+		}
 		
 		try {
 			Element root = builder.parse(is).getDocumentElement();
 			String extend = root.getAttribute("extends");
 			if (extend != null && !"".equals(extend)) {
-				InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(extend);
-				config = create(builder, stream);
+				//InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(extend);
+				config = create(builder, extend);
 			}
 			
 			if (config == null) {
@@ -111,6 +118,12 @@ public final class XssConfiguration {
 			list = root.getElementsByTagName("attribute");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
+			}
+			
+			list = root.getElementsByTagName("neloAsyncLog");
+			
+			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
 			}
 			
 		} catch(Exception ex) {
@@ -140,6 +153,21 @@ public final class XssConfiguration {
 		}
 		
 		return rule;
+	}
+	
+	private void enableNeloAsyncLog(Element e) {
+		String enable = e.getAttribute("enable");
+		String service = e.getAttribute("service");
+		
+		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
+			this.setNeloAsyncLog("true".equalsIgnoreCase(enable)? true : false);
+		}
+		
+		if (service != null && !service.isEmpty()) {
+			this.setService(service);
+		} else {
+			this.setService("UnknownService");
+		}
 	}
 	
 	private void addElementRule(Element e) {
@@ -307,5 +335,21 @@ public final class XssConfiguration {
 		}
 		
 		return result;
+	}
+
+	public void setNeloAsyncLog(boolean neloAsyncLog) {
+		this.neloAsyncLog = neloAsyncLog;
+	}
+
+	public boolean enableNeloAsyncLog() {
+		return neloAsyncLog;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public String getService() {
+		return service;
 	}
 }
