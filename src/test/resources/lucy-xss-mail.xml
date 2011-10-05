@@ -3,6 +3,7 @@
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
 
 	<elementRule>
+		<element name="style" disable="false" />
 		<element name="embed" disable="false">
 			<listener>com.nhncorp.lucy.security.xss.listener.EmbedListener
 			</listener>
@@ -12,11 +13,11 @@
 			</listener>
 		</element>
 		<element name="img" disable="false">
-			<attributes>
-				<ref name="movietype"/>
-			</attributes>
 			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
 			</listener>
+		</element>
+		<element name="style" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.StyleListener</listener>
 		</element>
 
 		<element name="table" override="true" endTag="false">
@@ -38,10 +39,7 @@
 			</elements>
 		</element>
 		
-	</elementRule>
+	</elementRule>	
 	
-	<attributeRule>
-		<attribute name="movietype"/>
-	</attributeRule>
-
+	<blockingPrefix enable="true" prefix="blocking_"/>
 </config>

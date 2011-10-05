@@ -11,17 +11,19 @@ public class IMGListener implements ElementListener{
 		
 		String srcValue = "'http://local.cafe.naver.com/MoviePlayer.nhn?dir="+id+"?key=";
 		
-		e.removeAllAttributes();
-		
 		e.setName("iframe");
 		
-		e.putAttribute("frameborder", "'no'");
-		e.putAttribute("width", "342");
-		e.putAttribute("height", "296");
-		e.putAttribute("scrolling", "no");
-		e.putAttribute("name", "'mplayer'");
-		e.putAttribute("src", srcValue);
-		
+		boolean result = e.removeAllAttributes();
+		if (result) {
+			e.putAttribute("frameborder", "'no'");
+			e.putAttribute("width", "342");
+			e.putAttribute("height", "296");
+			e.putAttribute("scrolling", "no");
+			e.putAttribute("name", "'mplayer'");
+			e.putAttribute("src", srcValue);
+			
+		}		
 		e.setClose(true);
+		e.removeAllContents();		
 	}
 }

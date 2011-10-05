@@ -468,11 +468,32 @@ public class Element extends Content {
 		return flag;
 	}
 
-	public void removeAllAttributes() {
-		this.atts.clear();
+	public boolean removeAllAttributes() {
+		
+		if (this.atts != null && !this.atts.isEmpty()) {
+		
+			this.atts.clear();
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public Attribute removeAttribute(String attriName) {
+		
 		return this.atts.remove(attriName);
+	}
+	
+	public boolean removeAllContents() {
+		
+		if (this.contents != null && !this.contents.isEmpty()) {
+			
+			this.contents.clear();
+			
+			return true;
+		}
+		
+		return false;
 	}
 }

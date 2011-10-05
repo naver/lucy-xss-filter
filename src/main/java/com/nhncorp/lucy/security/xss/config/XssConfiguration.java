@@ -40,13 +40,21 @@ public final class XssConfiguration {
 	private Map<String, Set<String>> tagGroups;
 	private Map<String, Set<String>> attGroups;
 	private boolean neloAsyncLog;
-	private String service;
+	private String service = "UnknownService";
+	private boolean isBlockingPrefixEnabled;
+	private String blockingPrefix = "diabled_";
+
+	private Map<String, Set<String>> elementGroupRef;
+	private Map<String, Set<String>> nestedElementGroupRef;
+	
 	
 	private XssConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
 		this.atts = new HashMap<String, AttributeRule>();
 		this.tagGroups = new HashMap<String, Set<String>>();
 		this.attGroups = new HashMap<String, Set<String>>();
+		this.elementGroupRef = new HashMap<String, Set<String>>();
+		this.nestedElementGroupRef = new HashMap<String, Set<String>>();
 	}
 
 	/**
@@ -77,6 +85,8 @@ public final class XssConfiguration {
 			throw new Exception(String.format("Cannot parse the XSS configuration file [%s].", file), ex);
 		}
 		
+		config.closeElementGroupRefResource();
+		config.closeNestedElementGroupRefResource();
 		return config;
 	}
 	
@@ -104,37 +114,58 @@ public final class XssConfiguration {
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addElementGroup(Element.class.cast(list.item(i)));
 			}
-			
+
 			list = root.getElementsByTagName("attributeGroup");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeGroup(Element.class.cast(list.item(i)));
 			}
-			
+
 			list = root.getElementsByTagName("element");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addElementRule(Element.class.cast(list.item(i)));
+
 			}
-			
+
 			list = root.getElementsByTagName("attribute");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
 			
 			list = root.getElementsByTagName("neloAsyncLog");
-			
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
 			}
 			
+			list = root.getElementsByTagName("blockingPrefix");
+			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+				config.enableBlockingPrefix(Element.class.cast(list.item(i)));
+			}
+
 		} catch(Exception ex) {
 			return null;
 		} finally {
 			if (is != null) {
 				try { is.close(); } catch(IOException ioe) {}
 			}
+			
+
 		}
 		
 		return config;
+	}
+
+	private void enableBlockingPrefix(Element e) {
+		String enable = e.getAttribute("enable");
+		String prefix = e.getAttribute("prefix");
+		
+		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
+			this.setBlockingPrefixEnabled("true".equalsIgnoreCase(enable)? true : false);
+		}
+		
+		if (prefix != null && !prefix.isEmpty()) {
+			this.setBlockingPrefix(prefix);
+		}
+		
 	}
 
 	public ElementRule getElementRule(String tagName) {
@@ -157,17 +188,15 @@ public final class XssConfiguration {
 	
 	private void enableNeloAsyncLog(Element e) {
 		String enable = e.getAttribute("enable");
-		String service = e.getAttribute("service");
+		String serviceName = e.getAttribute("service");
 		
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
 			this.setNeloAsyncLog("true".equalsIgnoreCase(enable)? true : false);
 		}
 		
-		if (service != null && !service.isEmpty()) {
-			this.setService(service);
-		} else {
-			this.setService("UnknownService");
-		}
+		if (serviceName != null && !serviceName.isEmpty()) {
+			this.setService(serviceName);
+		} 
 	}
 	
 	private void addElementRule(Element e) {
@@ -203,7 +232,7 @@ public final class XssConfiguration {
 			Element attributes = Element.class.cast(list.item(0));
 			
 			list = attributes.getChildNodes();
-			rule.addAllowedAttributes(this.getReferences(list, this.attGroups));
+			rule.addAllowedAttributes(this.getReferences(list, this.attGroups, null));
 		}
 		
 		list = e.getElementsByTagName("elements");
@@ -211,7 +240,10 @@ public final class XssConfiguration {
 			Element elements = Element.class.cast(list.item(0));
 			
 			list = elements.getChildNodes();
-			rule.addAllowedElements(this.getReferences(list, this.tagGroups));
+			System.out.println("AA" + name);
+			this.addElementGroupRef(list, name);
+			System.out.println("BB" + name);
+			rule.addAllowedElements(this.getReferences(list, this.tagGroups, null));
 		}
 		
 		list = e.getElementsByTagName("listener");
@@ -270,21 +302,50 @@ public final class XssConfiguration {
 	}
 	
 	private void addElementGroup(Element e) {
+		
 		String name = e.getAttribute("name");
+		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
 		
 		if (name == null || "".equals(name)) {
 			return ;
 		}
 		
-		Set<String> tagGroup = new HashSet<String>();		
+		Set<String> tagGroup = null;		
+
+		if (override) {
+			tagGroup = this.tagGroups.get(name);
+		} 
+		
+		if (tagGroup == null) {
+			tagGroup = new HashSet<String>();
+		}
+		
 
 		NodeList list = e.getElementsByTagName("ref");
-		Collection<String> refs = this.getReferences(list, this.tagGroups);		
+		Set<String> nestedGroups = new HashSet<String>();
+		Collection<String> refs = this.getReferences(list, this.tagGroups, nestedGroups);		
 		if (refs != null && !refs.isEmpty()) {
 			tagGroup.addAll(refs);
 		}
+		
+		if (nestedGroups != null && !nestedGroups.isEmpty()) {
+			this.nestedElementGroupRef.put(name, nestedGroups);
+		}
 
 		this.tagGroups.put(name, tagGroup);
+
+		if (override) {
+			/**
+			 * TO-DO : 
+			 */
+			Set<String> elementSet = elementGroupRef.get(name);
+			if (elementSet != null) {
+				for(String tagName : elementSet) {
+					ElementRule rule = this.tags.get(tagName);
+					rule.addAllowedElements(refs);
+				}
+			}
+		}
 	}
 	
 	private void addAttributeGroup(Element e) {
@@ -297,7 +358,7 @@ public final class XssConfiguration {
 		Set<String> attGroup = new HashSet<String>();
 		
 		NodeList list = e.getElementsByTagName("ref");
-		Collection<String> refs = this.getReferences(list, this.attGroups);
+		Collection<String> refs = this.getReferences(list, this.attGroups, null);
 		if (refs != null && !refs.isEmpty()) {
 			attGroup.addAll(refs);
 		}
@@ -305,7 +366,44 @@ public final class XssConfiguration {
 		this.attGroups.put(name, attGroup);
 	}
 	
-	private Collection<String> getReferences(NodeList list, Map<String, Set<String>> groups) {
+	private void addElementGroupRef(NodeList list, String tagName) {
+		
+		for(int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+			Node node = list.item(i);
+			if (!(node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("ref"))) {
+				continue;
+			}
+
+			Element ref = Element.class.cast(node);
+			String tagGroupName = ref.getAttribute("name");
+			Set<String> nestedGroupNames = new HashSet<String>();
+
+			if (this.tagGroups.containsKey(tagGroupName)) { //elementGroup name 이면,
+				nestedGroupNames.add(tagGroupName);
+				System.out.println(tagGroupName);
+				Set<String> tagGroupSet = this.nestedElementGroupRef.get(tagGroupName);
+				
+				if (tagGroupSet != null) {
+					nestedGroupNames.addAll(this.nestedElementGroupRef.get(tagGroupName));
+				}
+				
+				for (String groupName : nestedGroupNames) {
+					if (this.elementGroupRef.containsKey(groupName)) {
+						Set<String> elementList = this.elementGroupRef.get(groupName);
+						elementList.add(tagName);
+					} else {
+						Set<String> newElementSet = new HashSet<String>();
+						newElementSet.add(tagName);
+						this.elementGroupRef.put(groupName, newElementSet);
+					}
+				}
+			}			
+		}
+		
+	}
+	
+
+	private Collection<String> getReferences(NodeList list, Map<String, Set<String>> groups, Set<String> nestedGroups) {
 		Collection<String> result = new ArrayList<String>();
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			Node node = list.item(i);
@@ -316,11 +414,16 @@ public final class XssConfiguration {
 			Element ref = Element.class.cast(node);
 			String name = ref.getAttribute("name");
 			if (groups.containsKey(name)) {
+				
+				if (nestedGroups != null) {
+					nestedGroups.add(name);
+				}
+				
 				Set<String> names = new HashSet<String>(groups.get(name));				
 				NodeList excludes = ref.getElementsByTagName("excludes");
 				if (excludes != null && excludes.getLength() > 0) {					
 					Collection<String> tmp = this.getReferences(
-							Element.class.cast(excludes.item(0)).getElementsByTagName("ref"), groups);
+							Element.class.cast(excludes.item(0)).getElementsByTagName("ref"), groups, null);
 					if (tmp != null && !tmp.isEmpty()) {
 						names.removeAll(tmp);
 					}
@@ -351,5 +454,31 @@ public final class XssConfiguration {
 
 	public String getService() {
 		return service;
+	}
+
+	public void setBlockingPrefixEnabled(boolean isEnableBlockingPrefix) {
+	
+		this.isBlockingPrefixEnabled = isEnableBlockingPrefix;
+	}
+	
+	public boolean isEnableBlockingPrefix() {
+		
+		return this.isBlockingPrefixEnabled;
+	}
+
+	public void setBlockingPrefix(String blockingPrefix) {
+		this.blockingPrefix = blockingPrefix;
+	}
+
+	public String getBlockingPrefix() {
+		return blockingPrefix;
+	}
+	
+	public void closeElementGroupRefResource() {
+		this.elementGroupRef = null;
+	}
+	
+	public void closeNestedElementGroupRefResource() {
+		this.nestedElementGroupRef = null;
 	}
 }

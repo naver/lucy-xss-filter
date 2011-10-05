@@ -1,4 +1,5 @@
-contents	::= (startTag | endTag | comment | text)+
+contents	::= (description | startTag | endTag | comment | text)+
+description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>' | '<!--[if' ([#x9-#xFFFD]*-']>') ']>' | '<![endif]-->'
 comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
 startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | startEnd)?
 startEnd	::= ([#x20#x9#xD#xA]* '>')?
