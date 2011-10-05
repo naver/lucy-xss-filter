@@ -171,6 +171,12 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<iframe frameborder='no' width=342 height=296 scrolling=no name='mplayer' src='http://local.cafe.naver.com/MoviePlayer.nhn?dir=mms://stream.media.naver.com/cafeucc2/2007/8/6/41/46b6e5b82fd46b6e5c23c8-danyecafe.wmv?key=></iframe>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
+		
+		dirty = "<IMG><font></font></IMG>";
+		expected = "<iframe></iframe>";
+		String actual = filter.doFilter(dirty);
+		Assert.assertEquals(expected, actual);
+		
 	}
 	
 	@Test
@@ -284,6 +290,66 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		
 		System.out.println(clean);
+	}
+	
+	@Test
+	public void testDOCTYPEAndXMLELEMNT() {
+		
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		
+		String doctype = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+		String clean = filter.doFilter(doctype);		
+		Assert.assertEquals(doctype, clean);
+		
+		String xmltag = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		clean = filter.doFilter(xmltag);
+		Assert.assertEquals(xmltag, clean);
+		
+		String xssElement = "<script></script>";
+		String expected = "<blocking_script></blocking_script>";
+		clean = filter.doFilter(xssElement);
+		Assert.assertEquals(expected, clean);
+		
+		
+		
+	}
+	
+	@Test
+	public void testOverrideIssue() {
+		XssFilter filter2 = XssFilter.getInstance("lucy-xss-body-test.xml");
+		String testDirty = "<div><o:p><FONT face=\"맑은 고딕\">&nbsp;</FONT></o:p></div><span lang=EN-US>TEST</span>";
+		String clean = filter2.doFilter(testDirty);
+		Assert.assertEquals(testDirty, clean);
+		
+		testDirty = "<p><newElement1></newElement1></p>";
+		clean = filter2.doFilter(testDirty);
+		System.out.println("dkdkdkdkdkdkdkdkd :: " + clean);
+	}
+	
+	@Test
+	public void testIEHackTag() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-default.xml");
+		//String dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		String dirty = "<!--[if gte mso 9]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		String clean = filter.doFilter(dirty);
+		System.out.println("IEHack :: " + clean);
+		Assert.assertEquals(dirty, clean);
+		
+		
+		dirty = "<!--[if !IE]> <-->";
+		clean = filter.doFilter(dirty);
+		System.out.println("IEHack&comment :  " + clean);
+		
+		dirty = "<!--> <![endif]-->";
+		clean = filter.doFilter(dirty);
+		System.out.println("IEHack&comment :  " + clean);
+		
+		XssFilter filter2 = XssFilter.getInstance("lucy-xss-mail.xml");
+		dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		clean = filter2.doFilter(dirty);
+		System.out.println("IEHack :: " + clean);
+		//Assert.assertEquals(dirty, clean);
+
 	}
 
 	@Test

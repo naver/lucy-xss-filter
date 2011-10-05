@@ -73,7 +73,13 @@ public final class MarkupParser {
 		Token root = grammar.tokenize(input);
 		for (Token t : root.getChildren()) {
 			String tokenName = t.getName();
-			if ("comment".equals(tokenName)) {
+			if ("description".equals(tokenName)) {
+				String description = t.getText();
+				if (description != null && !"".equals(description)) {
+					description = description.substring(1, description.length() - 1);
+				}
+				result.add(new Description(description));
+			} else if ("comment".equals(tokenName)) {
 				String comment = t.getText();
 				if (comment != null && !"".equals(comment)) {
 					comment = comment.substring(4, comment.length() - 3);

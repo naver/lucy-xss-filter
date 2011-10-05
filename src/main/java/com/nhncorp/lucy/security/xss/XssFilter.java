@@ -22,6 +22,7 @@ import com.nhncorp.lucy.security.xss.config.XssConfiguration;
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 import com.nhncorp.lucy.security.xss.markup.Comment;
 import com.nhncorp.lucy.security.xss.markup.Content;
+import com.nhncorp.lucy.security.xss.markup.Description;
 import com.nhncorp.lucy.security.xss.markup.Element;
 import com.nhncorp.lucy.security.xss.markup.MarkupParser;
 import com.nhncorp.lucy.security.xss.markup.Text;
@@ -54,10 +55,12 @@ public final class XssFilter {
 	private static String ATTRIBUTE_NELO_MSG = " \n(Disabled Attribute)";
 	private static String CONFIG = "lucy-xss.xml";
 	private boolean withoutComment;
-	private boolean enableNeloLog;
+	private boolean isNeloLogEnabled;
 	private String service;
 	private String neloElementMSG;
 	private String neloAttrMSG;
+	private String blockingPrefix;
+	private boolean isBlockingPrefixEnabled;
 
 	private XssConfiguration config;
 
@@ -110,11 +113,13 @@ public final class XssFilter {
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
-				filter.enableNeloLog = filter.config.enableNeloAsyncLog();
+				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
 				filter.withoutComment = withoutComment;
 				filter.neloElementMSG = ElELMENT_NELO_MSG + "@[" + filter.service + "]";
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG + "@[" + filter.service + "]";
+				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
+				filter.blockingPrefix = filter.config.getBlockingPrefix();
 				instanceMap.put(fileName, filter);
 				return filter;
 			}
@@ -207,7 +212,7 @@ public final class XssFilter {
 	private void serialize(Writer writer, Collection<Content> contents) throws IOException {
 		if (contents != null && !contents.isEmpty()) {
 			for (Content c : contents) {
-				if (c instanceof Comment || c instanceof Text) {
+				if (c instanceof Comment || c instanceof Text || c instanceof Description) {
 					c.serialize(writer);
 				} else if (c instanceof Element) {
 					this.serialize(writer, Element.class.cast(c));
@@ -227,10 +232,10 @@ public final class XssFilter {
 			checkRule(e);
 		}
 
-		if (e.isDisabled()) {
+		if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
 						
 			hasElementXss = true;
-
+			
 			if (!this.withoutComment) {
 			
 				writer.write(BAD_TAG_INFO);
@@ -251,6 +256,12 @@ public final class XssFilter {
 			
 		} else {
 			
+			if (e.isDisabled()) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다. 
+				
+				e.setName(this.blockingPrefix + e.getName());
+				e.setEnabled(true);
+			}
+
 			writer.write('<');
 			writer.write(e.getName());
 		}
@@ -301,7 +312,7 @@ public final class XssFilter {
 			}
 		}
 		
-		if (this.enableNeloLog && (hasElementXss || hasAttrXss)) {
+		if (this.isNeloLogEnabled && (hasElementXss || hasAttrXss)) {
 			
 			neloLogWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
 			LOG.error(neloLogWriter.toString());
