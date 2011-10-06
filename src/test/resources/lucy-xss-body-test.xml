@@ -12,9 +12,34 @@
 		<ref name="newElement2"/>
 	</elementGroup>
 	
+	<elementGroup name="Special" override="true">
+		<ref name="embed"/>
+	</elementGroup>
+	
+	<attributeGroup name="BorderColor">
+		<ref name="bordercolordark"/>
+		<ref name="bordercolorlight"/>
+	</attributeGroup>
+
+	<attributeGroup name="Attrs">
+		<ref name="BorderColor"/>
+	</attributeGroup>
+	
 	<elementRule>
+		<attribute name="bordercolordark" />	
+		<attribute name="bordercolorlight" />
+	
+		<element name="body">
+			<elements>
+				<ref name="Inline"/>
+				<ref name="style"/>
+				<ref name="xml"/>
+			</elements>
+		</element>
+	
 		<element name="newElement1"/>
 		<element name="newElement2"/>
+		
 		<element name="body" disable="false" />
 		<element name="iframe" disable="true" />
 		<element name="meta" disable="true" />
@@ -27,7 +52,6 @@
 		</element>
 		
 		<element name="embed" disable="false">
-			<listener>com.nhncorp.lucy.security.xss.listener.MailEmbedListener</listener>
 		</element> 
 		 
 		<element name="object" disable="false">

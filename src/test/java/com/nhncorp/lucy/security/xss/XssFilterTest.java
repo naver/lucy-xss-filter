@@ -316,14 +316,23 @@ public class XssFilterTest extends XssFilterTestCase {
 	
 	@Test
 	public void testOverrideIssue() {
-		XssFilter filter2 = XssFilter.getInstance("lucy-xss-body-test.xml");
+		XssFilter filter = XssFilter.getInstance("lucy-xss-body-test.xml");
 		String testDirty = "<div><o:p><FONT face=\"맑은 고딕\">&nbsp;</FONT></o:p></div><span lang=EN-US>TEST</span>";
-		String clean = filter2.doFilter(testDirty);
+		String clean = filter.doFilter(testDirty);
 		Assert.assertEquals(testDirty, clean);
 		
 		testDirty = "<p><newElement1></newElement1></p>";
-		clean = filter2.doFilter(testDirty);
-		System.out.println("dkdkdkdkdkdkdkdkd :: " + clean);
+		clean = filter.doFilter(testDirty);
+		Assert.assertEquals(testDirty, clean);
+		
+		testDirty = "<body><embed></embed></body>";
+		clean = filter.doFilter(testDirty);
+		Assert.assertEquals(testDirty, clean);
+		
+		testDirty = "<a bordercolordark=b></a>";
+		clean = filter.doFilter(testDirty);
+		Assert.assertEquals(testDirty, clean);
+		
 	}
 	
 	@Test
