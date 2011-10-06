@@ -75,9 +75,6 @@ public final class MarkupParser {
 			String tokenName = t.getName();
 			if ("description".equals(tokenName)) {
 				String description = t.getText();
-				if (description != null && !"".equals(description)) {
-					description = description.substring(1, description.length() - 1);
-				}
 				result.add(new Description(description));
 			} else if ("comment".equals(tokenName)) {
 				String comment = t.getText();
