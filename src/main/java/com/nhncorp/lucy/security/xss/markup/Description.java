@@ -25,34 +25,7 @@ public class Description extends Content{
 			return ;
 		} 
 		
-		writer.write("<");
-		
-		int pos = 0;
-		int length = this.text.length();
-		for (int i = 0; i < length; i++) {
-			switch (this.text.charAt(i)) {
-				case '<':
-					if (i > pos) {
-						writer.write(this.text, pos, i - pos);						
-					}						
-					writer.write("&lt;");
-					pos = i + 1;
-					break;
-				case '>':
-					if (i > pos) {
-						writer.write(this.text, pos, i - pos);						
-					}	
-					writer.write("&gt;");
-					pos = i + 1;
-					break;
-			}
-		}
-		
-		if (length > pos) {
-			writer.write(this.text, pos, length - pos);
-		}
-		
-		writer.write(">");
+		writer.write(this.text);
 	}
 
 }
