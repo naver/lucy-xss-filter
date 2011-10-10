@@ -24,6 +24,5 @@ public class IMGListener implements ElementListener{
 			
 		}		
 		e.setClose(true);
-		e.removeAllContents();		
 	}
 }

@@ -6,7 +6,7 @@
 		<url>http://www.nhncorp.com/</url>
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
-	<version>1.1.7-SNAPSHOT</version>
+	<version>1.1.7</version>
 	<artifactId>lucy-xss</artifactId>
 	<name>NHNCorp Lucy XSS Filter</name>
 	<packaging>jar</packaging>

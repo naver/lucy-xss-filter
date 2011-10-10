@@ -163,7 +163,9 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 	
 	@Test
-	public void testIMGListenerTest(){
+	// Element Class의 setName Method와 removeAllAttributes Method를 테스트한다.
+	// IMGLinstener에서 해당 메소드를 호출하여 IMG를 iframe으로 변경하고, IMG의 모든 속성을 제거한 후 원하는 속성으로 변경한다.
+	public void testRemoveAllAttributesTest(){
 		
 		XssFilter filter = XssFilter.getInstance("lucy-xss-cafe-child.xml");
 
@@ -172,7 +174,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
 		
-		dirty = "<IMG><font></font></IMG>";
+		dirty = "<IMG></IMG>";
 		expected = "<iframe></iframe>";
 		String actual = filter.doFilter(dirty);
 		Assert.assertEquals(expected, actual);
@@ -288,11 +290,12 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
 		
 		String clean = filter.doFilter(dirty);
-		
-		System.out.println(clean);
+		String expected ="<!-- Not Allowed Attribute Filtered --><EMBED type=\"image/svg+xml\"></EMBED>";
+		Assert.assertEquals(expected, clean);
 	}
 	
 	@Test
+	//DOCTYPE과 xml 태그를 허용하도록한다.
 	public void testDOCTYPEAndXMLELEMNT() {
 		
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
@@ -309,9 +312,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<blocking_script></blocking_script>";
 		clean = filter.doFilter(xssElement);
 		Assert.assertEquals(expected, clean);
-		
-		
-		
+			
 	}
 	
 	@Test
@@ -336,29 +337,36 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 	
 	@Test
+	//IEHack을 허용한다.
 	public void testIEHackTag() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-default.xml");
-		//String dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
-		String dirty = "<!--[if gte mso 9]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		String dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		//String dirty = "<!--[if gte mso 9]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
 		String clean = filter.doFilter(dirty);
-		System.out.println("IEHack :: " + clean);
 		Assert.assertEquals(dirty, clean);
-		
 		
 		dirty = "<!--[if !IE]> <-->";
 		clean = filter.doFilter(dirty);
-		System.out.println("IEHack&comment :  " + clean);
+		String expected = "<!--[if !IE]> <!-- Not Allowed Tag Filtered -->&lt;--&gt;";
+		Assert.assertEquals(expected, clean);
 		
 		dirty = "<!--> <![endif]-->";
 		clean = filter.doFilter(dirty);
-		System.out.println("IEHack&comment :  " + clean);
+		expected = "<!--&gt; &lt;![endif]-->";
+		Assert.assertEquals(expected, clean);
 		
-		XssFilter filter2 = XssFilter.getInstance("lucy-xss-mail.xml");
-		dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
-		clean = filter2.doFilter(dirty);
-		System.out.println("IEHack :: " + clean);
-		//Assert.assertEquals(dirty, clean);
-
+	}
+	
+	@Test
+	//Element Class의 remveAllContents Method를 테스트한다.
+	//StyleListener에서 해당 메소드를 호출하여 style 태그의 하위에 속하는 모든 child를 제거한다.
+	public void testRemoveAllContents() {
+		
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !mso]><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
 	}
 
 	@Test
@@ -366,45 +374,46 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		XssFilter filter = XssFilter.getInstance("lucy-xss-on.xml");
 		
-		String dirty =" onmouseover=prompt(954996)";
+		String dirty1 =" onmouseover=prompt(954996)";
 		String dirty2 = URLDecoder.decode("%22%20onmouseover%3dprompt%28954996%29%20bad%3d%22");
 		String dirty3 ="\" onmouseover=prompt(954996)\'aa";
 		
-		String clean = filter.doFilter("paramT", "paramA", dirty);
+		String clean1 = filter.doFilter("paramT", "paramA", dirty1);
 		String clean2 = filter.doFilter("paramT", "paramA", dirty2);
 		String clean3 = filter.doFilter("paramT", "paramA", dirty3);
 		
-		System.out.println("clean::::[" + clean + "]");
-		System.out.println("clean2::::[" + clean2 + "]");
-		System.out.println("clean3::::[" + clean3 + "]");
-		
-		
+		Assert.assertEquals("", clean1);
+		Assert.assertEquals("", clean2);
+		Assert.assertEquals("\"", clean3);
 
 		String orgKeyword = dirty2;//dirty3; //keyword 파라미터에 사용자가 입력하는 경우를 예로 든다.
-		                
-		                XssFilter filter1 = XssFilter.getInstance("lucy-xss-on.xml"); // 새로운 사용자 정의 whitelist file을 만든다 (아래 첨부 내용 참고)
+
+		XssFilter filter1 = XssFilter.getInstance("lucy-xss-on.xml"); // 새로운 사용자 정의 whitelist file을 만든다 (아래 첨부 내용 참고)
 		//이 API 는 version 1.1.0부터 제공합니다. 그 이하 version에서는 기존 방법대로 사용하세요.  단, lucy-xss.xml에 Element와 Attribute정의를 추가해야합니다.              
-		                
-		                String[] attList = orgKeyword.split("[\"'`]"); 
-		                
-		                boolean resultflag = true;
-		                
-		                for(String att : attList){
-		                	
-		                	att = "\"" + att + "\"";
-		                	
-		                	String cleanAtt = filter1.doFilter("paramT", "paramA", att); // 공백으로 구분된 입력 값을 각각 필터링한다.
-		                	
-		                	if (!att.equals(cleanAtt)) {
-		                		resultflag = false;
-		                	} 
-		                }
-		                
-		               		                
-		                if(resultflag){
-		                        System.out.println("Clean User!!");
-		                }else{
-		                        System.out.println("Dirty User !!");
-		                }
+
+		String[] attList = orgKeyword.split("[\"'`]"); 
+
+		boolean resultflag = true;
+
+		for(String att : attList){
+
+			att = "\"" + att + "\"";
+
+			String cleanAtt = filter1.doFilter("paramT", "paramA", att); // 공백으로 구분된 입력 값을 각각 필터링한다.
+
+			if (!att.equals(cleanAtt)) {
+				resultflag = false;
+			} 
+		}
+
+		String result = "";
+
+		if(resultflag){
+			result = "Clean User!!";
+		}else{
+			result = "Dirty User !!";
+		}
+		
+		Assert.assertEquals("Dirty User !!", result);
 	}
 }
