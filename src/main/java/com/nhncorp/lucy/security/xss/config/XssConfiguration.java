@@ -44,13 +44,13 @@ public final class XssConfiguration {
 	private boolean isBlockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
 
-	private Map<String, Set<String>> childElementRef; //elementGroup - Group에 속하는 Element
-	private Map<String, Set<String>> childElementGroupRef; // elementGroup = Group에 속하는 ChildGroup
-	private Map<String, Set<String>> parentElementGroupRef; // elementGroup =Group의 ParentGroup
+	private Map<String, Set<String>> childElementRef; //elementGroup - key Element Group을 하위에 포함할 수 있는 Element
+	private Map<String, Set<String>> childElementGroupRef; // elementGroup - key Group에 포함되는 ChildGroup
+	private Map<String, Set<String>> parentElementGroupRef; // elementGroup - key Group을 포함하는 ParentGroup
 	
-	private Map<String, Set<String>> childAttrRef; // attrGroup - Group에 속하는 Attr
-	private Map<String, Set<String>> childAttrGroupRef; // attrGroup = Group에 속하는 ChildGroup
-	private Map<String, Set<String>> parentAttrGroupRef; // attrGroup =Group의 ParentGroup
+	private Map<String, Set<String>> childAttrRef; // attrGroup - key Attribute Group을 포함할 수 있는 Element
+	private Map<String, Set<String>> childAttrGroupRef; // attrGroup - key Group에 포함되는 ChildGroup
+	private Map<String, Set<String>> parentAttrGroupRef; // attrGroup - key Group을 포함하는 ParentGroup
 	
 	private XssConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
@@ -119,6 +119,8 @@ public final class XssConfiguration {
 				config = new XssConfiguration();
 			}
 			
+			// 항상 element rule 이전에 Group을 먼저 정의한다.
+			// 정의된 Group이 rule에 영향을 주기 때문이다.
 			NodeList list = root.getElementsByTagName("elementGroup");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addElementGroup(Element.class.cast(list.item(i)));
@@ -522,8 +524,6 @@ public final class XssConfiguration {
 						this.childAttrRef.put(groupName, newElementSet);
 					}
 				}
-				
-				
 			}			
 		}
 		
