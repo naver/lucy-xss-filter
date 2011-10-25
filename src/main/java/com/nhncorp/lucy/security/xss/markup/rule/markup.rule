@@ -1,5 +1,7 @@
-contents	::= (description | startTag | endTag | comment | text)+
-description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>' | '<!--[if' ([#x9-#xFFFD]*-']>') ']>' | '<![endif]-->'
+contents	::= (description | iEHExStartTag | iEHExEndTag | startTag | endTag | comment | text)+
+iEHExStartTag	::= ('<!--'|'<!') '[if' ([#x9-#xFFFD]*-'>') '>'
+iEHExEndTag	::= '<!--[endif]-->' | '<![endif]-->'
+description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>'
 comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
 startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | startEnd)?
 startEnd	::= ([#x20#x9#xD#xA]* '>')?
