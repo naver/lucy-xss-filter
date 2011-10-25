@@ -73,15 +73,30 @@ public final class MarkupParser {
 		Token root = grammar.tokenize(input);
 		for (Token t : root.getChildren()) {
 			String tokenName = t.getName();
+			
 			if ("description".equals(tokenName)) {
+			
 				String description = t.getText();
 				result.add(new Description(description));
+			
 			} else if ("comment".equals(tokenName)) {
 				String comment = t.getText();
 				if (comment != null && !"".equals(comment)) {
 					comment = comment.substring(4, comment.length() - 3);
 				}
 				result.add(new Comment(comment));
+			
+			} else if ("iEHExStartTag".endsWith(tokenName)) {
+				
+				Element element = new IEHackExtensionElement(t.getText());
+				
+				if (stack == null) {
+					stack = new LinkedList<Element>();
+				}
+				
+				stack.addFirst(element);
+				result.add(element);
+				
 			} else if ("startTag".equals(tokenName)) {
 				Element element = new Element(t.getChild("tagName").getText());
 				List<Token> attTokens = t.getChildren("attribute");
@@ -113,6 +128,45 @@ public final class MarkupParser {
 				}
 				
 				result.add(element);
+			
+			} else if ("iEHExEndTag".endsWith(tokenName)) {
+				
+				boolean flag = false;
+				if (stack != null) {
+					LinkedList<Element> tmp = new LinkedList<Element>();
+					Element e = null;
+					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
+						if (e instanceof IEHackExtensionElement) {
+							Content c = null;
+							while (!result.isEmpty() && (c = result.getLast()) != null) {
+								if (c == e) {									
+									e.setClose(true);
+									tmp.clear();
+									break;
+								} else {
+									if (stack.contains(c)) {
+										stack.remove(c);
+									}
+									
+									e.addContent(0, result.removeLast());
+								}
+							}
+							flag = true;
+							break;
+						} else {
+							tmp.add(e);
+						}
+					}
+					
+					if (tmp != null && !tmp.isEmpty()) {
+						stack = tmp;
+					}
+				}
+				
+				if (!flag) {
+					result.add(new Text(t.getText()));					
+				}
+				
 			} else if ("endTag".equals(tokenName)) {
 				boolean flag = false;
 				String tagName = t.getChild("tagName").getText();

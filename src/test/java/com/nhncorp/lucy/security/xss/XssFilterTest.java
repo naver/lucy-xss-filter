@@ -368,6 +368,16 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<!--[if !mso]><style></style><![endif]-->";
 		Assert.assertEquals(expected, clean);
 	}
+	
+	@Test
+	public void testIEHackExtension() {
+		//IEHackExtension
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--[if !mso]--><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><!--[endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !mso]><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+	}
 
 	@Test
 	public void testOnMouseFilter() {

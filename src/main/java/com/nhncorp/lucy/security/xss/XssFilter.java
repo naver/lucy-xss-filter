@@ -24,6 +24,7 @@ import com.nhncorp.lucy.security.xss.markup.Comment;
 import com.nhncorp.lucy.security.xss.markup.Content;
 import com.nhncorp.lucy.security.xss.markup.Description;
 import com.nhncorp.lucy.security.xss.markup.Element;
+import com.nhncorp.lucy.security.xss.markup.IEHackExtensionElement;
 import com.nhncorp.lucy.security.xss.markup.MarkupParser;
 import com.nhncorp.lucy.security.xss.markup.Text;
 
@@ -54,6 +55,7 @@ public final class XssFilter {
 	private static String ElELMENT_NELO_MSG = " \n(Disabled Element)";
 	private static String ATTRIBUTE_NELO_MSG = " \n(Disabled Attribute)";
 	private static String CONFIG = "lucy-xss.xml";
+	private static String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
 	private boolean isNeloLogEnabled;
 	private String service;
@@ -214,13 +216,41 @@ public final class XssFilter {
 			for (Content c : contents) {
 				if (c instanceof Comment || c instanceof Text || c instanceof Description) {
 					c.serialize(writer);
-				} else if (c instanceof Element) {
+				} else if (c instanceof IEHackExtensionElement) {
+					this.serialize(writer, IEHackExtensionElement.class.cast(c));
+				}else if (c instanceof Element) {
 					this.serialize(writer, Element.class.cast(c));
 				}
 			}
 		}
 	}
 
+	private void serialize(Writer writer, IEHackExtensionElement ie) throws IOException {
+	
+		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
+		
+		iEHExRule.checkEndTag(ie);
+		
+		if (iEHExRule != null) {
+			iEHExRule.excuteListener(ie);
+		}
+		
+		if (writer == null) {
+			return ;
+		}
+		
+		String valid = ie.getName().replaceAll("-->",">");
+		writer.write(valid);
+		
+		if (!ie.isEmpty()) {
+			this.serialize(writer, ie.getContents());
+		}
+		
+		if (ie.isClosed()) {
+			writer.write("<![endif]-->");
+		}
+	}
+	
 	private void serialize(Writer writer, Element e) throws IOException {
 		StringWriter neloLogWriter = new StringWriter();
 		boolean hasElementXss = false;
@@ -321,6 +351,7 @@ public final class XssFilter {
 	}
 
 	private void checkRule(Element e) {
+		
 		ElementRule tagRule = this.config.getElementRule(e.getName());
 		if (tagRule == null) {
 			e.setEnabled(false);
