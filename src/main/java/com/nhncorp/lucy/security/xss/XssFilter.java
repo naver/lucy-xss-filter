@@ -229,7 +229,7 @@ public final class XssFilter {
 	
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
 		
-		iEHExRule.checkEndTag(ie);
+		//iEHExRule.checkEndTag(ie);
 		
 		if (iEHExRule != null) {
 			iEHExRule.excuteListener(ie);
@@ -239,8 +239,8 @@ public final class XssFilter {
 			return ;
 		}
 		
-		String valid = ie.getName().replaceAll("-->",">");
-		writer.write(valid);
+		String stdName = ie.getName().replaceAll("-->",">");
+		writer.write(stdName);
 		
 		if (!ie.isEmpty()) {
 			this.serialize(writer, ie.getContents());

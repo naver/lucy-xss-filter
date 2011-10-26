@@ -370,9 +370,46 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 	
 	@Test
-	public void testIEHackExtension() {
+	//IEHack의 비표준을 표준화하여 비표준과 표준의 모두 IEHackExtensionElement로 동일하게 다룬다.
+	//Element Class를 extends하였으므로 Element의 모든 기능을 사용할 수 있다. (setName method는 예외로 한다.)
+	//이 테스트에서는 비표준을 표준으로 변경하는 기능을 테스트한다.
+	//그리고 하위에 속하는 Element들이 적절하게 해당되는 Listener를 타는지 테스트한다.
+	//여기서는, 하위의 style element가 StyleListener를 가지도록 설정돼 있다. (@lucy-xss-mail.xml)
+	public void testIEHackExtensionElement() {
 		//IEHackExtension
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--[if !mso]--><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><!--[endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !mso]><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+		
+		
+		dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		clean = filter.doFilter(dirty);
+		expected = "<!--[if !mso]><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	//IEHackExtensionElement의 모든 객체는 동일한 Element로 간주된다.
+	//그래서, 설정파일에서도 대표 이름 하나로 설정한다.
+	//<element name="IEHackExtension">
+	//IEHackExtension element가 IEHackExtensionListener 를 가지도록 설정했다. (@lucy-xss-mail2.xml)
+	public void testIEHackExtensionElementConfig() {
+		//IEHackExtension
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
+		String dirty = "<!--[if !mso]--><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><!--[endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !mso]><![endif]-->";
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test(expected=UnsupportedOperationException.class)
+	//IEHackExtensionElement와 Element의 유일한 차이는 IEHack이 setName 메소드를 허용하지 않는 것이다.
+	//여기서는 IEHack에서 setName을 호출했을 때 UnsupportedOperationException 이 발생하는 지 테스트한다. 
+	public void testIEHExElementSetNameOperationDisabled() {
+		//IEHackExtension
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail3.xml");
 		String dirty = "<!--[if !mso]--><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><!--[endif]-->";
 		String clean = filter.doFilter(dirty);
 		String expected = "<!--[if !mso]><style></style><![endif]-->";
