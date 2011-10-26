@@ -47,7 +47,7 @@
 
 	<issueManagement>
 		<system>jira</system>
-		<url>http://bts.nhncorp.com/nhnbts/browse/LUCY</url>
+		<url>http://bts.nhncorp.com/nhnbts/browse/XSSFILTERSUS</url>
 	</issueManagement>
 
 	<ciManagement>
