@@ -112,7 +112,8 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = readString("xss-dirtyobject.html");
 		String expected = readString("xss-dirtyobject-expected.html");
 		String clean = filter.doFilter(dirty);
-		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
+		Assert.assertEquals(expected, clean);
+		//Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
 	}
 
 	@Test
@@ -352,15 +353,16 @@ public class XssFilterTest extends XssFilterTestCase {
 	@Test
 	public void testIEHackTagOtherCase() {
 		XssFilter xssFilter = XssFilter.getInstance("lucy-xss-default.xml");
-		String dirty = "<!--[if !supportMisalignedColumns]--> <style> div { border:1px solid #f00; } </style> <!--[endif]-->";
+		String dirty = "<!--[if !supportMisalignedColumns]--> <style> div { border:1px solid #f00; } </style><!--[endif]-->";
 		String clean = xssFilter.doFilter(dirty);
 
-		Assert.assertEquals(dirty, clean);
+		String Expected = "<!--[if !supportMisalignedColumns]> <style> div { border:1px solid #f00; } </style><![endif]-->";
+		Assert.assertEquals(Expected, clean);
 
-		dirty = " <!--[if !supportMisalignedColumns]> <style> div { border:1px solid #f00; } </style><![endif]-->";
+		dirty = "<!--[if !supportMisalignedColumns]> <style> div { border:1px solid #f00; } </style><![endif]-->";
 		clean = xssFilter.doFilter(dirty);
 
-		Assert.assertEquals(dirty, clean);
+		Assert.assertEquals(Expected, clean);
 	}
 
 	@Test
@@ -374,7 +376,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<!--[if !mso]><style></style><![endif]-->";
 		Assert.assertEquals(expected, clean);
 	}
-	
+
 	@Test
 	//IEHack의 비표준을 표준화하여 비표준과 표준의 모두 IEHackExtensionElement로 동일하게 다룬다.
 	//Element Class를 extends하였으므로 Element의 모든 기능을 사용할 수 있다. (setName method는 예외로 한다.)
@@ -388,14 +390,13 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		String expected = "<!--[if !mso]><style></style><![endif]-->";
 		Assert.assertEquals(expected, clean);
-		
-		
+
 		dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
 		clean = filter.doFilter(dirty);
 		expected = "<!--[if !mso]><style></style><![endif]-->";
 		Assert.assertEquals(expected, clean);
 	}
-	
+
 	@Test
 	//IEHackExtensionElement의 모든 객체는 동일한 Element로 간주된다.
 	//그래서, 설정파일에서도 대표 이름 하나로 설정한다.
@@ -409,10 +410,10 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<!--[if !mso]><![endif]-->";
 		Assert.assertEquals(expected, clean);
 	}
-	
-	@Test(expected=UnsupportedOperationException.class)
+
+	@Test(expected = UnsupportedOperationException.class)
 	//IEHackExtensionElement와 Element의 유일한 차이는 IEHack이 setName 메소드를 허용하지 않는 것이다.
-	//여기서는 IEHack에서 setName을 호출했을 때 UnsupportedOperationException 이 발생하는 지 테스트한다. 
+	//여기서는 IEHack에서 setName을 호출했을 때 UnsupportedOperationException 이 발생하는 지 테스트한다.
 	public void testIEHExElementSetNameOperationDisabled() {
 		//IEHackExtension
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail3.xml");
@@ -420,6 +421,81 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		String expected = "<!--[if !mso]><style></style><![endif]-->";
 		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
+	//상기 testIEHackExtensionElement 테스트에 더해, IEHack 태그에 공백이 들어가는 경우도 기존 IEHack과 동일하게 처리 되는지를 테스트한다.
+	public void testIEHackExtensionElementWithSpace() {
+		//IEHackExtension
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--        [if !mso]  ><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !mso]><style></style><![endif]-->";
+		System.out.println(expected);
+		System.out.println(clean);
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
+	public void testIEHackTagWithoutCloseTag() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
+
+		// IE Hack 에서는 Close 태그가 없으면 주석으로 인식되서 뒤에 있는 엘리먼트들 노출에 문제가 생길 수 있다. Close 태그가 없거나 broken 일 때 IE Hack Start 태그를 제거하는 식으로 변경하자.
+		String dirty = "<!--[if !IE]><h1>abcd</h1>";
+		String clean = filter.doFilter(dirty);
+		String expected = "<h1>abcd</h1>";
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!--[if]><h1>abcd</h1><![endif]-->";
+		clean = filter.doFilter(dirty);
+		expected = "<!--[if]><![endif]-->";
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!--[if !IE]><h1>abcd</h1><![endif]--";
+		clean = filter.doFilter(dirty);
+		expected = "<h1>abcd</h1>&lt;![endif]--";
+		Assert.assertEquals(expected, clean);
+
+	}
+
+	@Test
+	public void testIEHackTagWrongGrammar() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--[if !IE><style>abcd</style><![endif]-->";
+		String clean = filter.doFilter(dirty);
+		String expected = "<!--[if !IE><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!--[if><style>abcd</style><![endif]-->";
+		clean = filter.doFilter(dirty);
+		expected = "<!--[if><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!--[if]><style>abcd</style><![endif]-->";
+		clean = filter.doFilter(dirty);
+		expected = "<!--[if]><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!--[ifaa><style>abcd</style><![endif]-->";
+		clean = filter.doFilter(dirty);
+		expected = "<!--[ifaa><style></style><![endif]-->";
+		Assert.assertEquals(expected, clean);
+	}
+
+	// White Url을 포함하지 않은 src Attribute 에 대한 보안 필터링 하는지 검사한다.
+	@Test
+	public void testAttributeSrcListener() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-attribure-listener.xml");
+
+		String dirty = "<IMG src=\"http://medlabum.com/cafe/0225/harisu.jpg\" width=\"425\" height=\"344\">";
+		String expected = "<IMG src=\"\" width=\"425\" height=\"344\">";
+		String clean = filter.doFilter(dirty);
+		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
+
+		dirty = "<iframe src=\"http://test.com/hello.nhn\" width=\"425\" height=\"344\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;iframe src=\"\" width=\"425\" height=\"344\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
 	}
 
 	@Test

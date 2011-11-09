@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+	extends="lucy-xss-superset.xml">
+
+	<elementRule>
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListener</listener>
+		</element>
+	</elementRule>
+	<attributeRule>
+		<attribute name="src">
+			<notAllowedPattern><![CDATA[(?i:file:[/]{1,3}[a-zA-Z]:[^>]*)]]></notAllowedPattern>
+			<listener>com.nhncorp.lucy.security.xss.listener.SrcAttributeListener</listener>
+		</attribute>
+	</attributeRule>
+</config>
