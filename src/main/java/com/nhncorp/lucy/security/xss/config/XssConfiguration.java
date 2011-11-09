@@ -1,7 +1,7 @@
 /*
- * @(#) XssConfiguration.java 2010. 8. 11 
+ * @(#) XssConfiguration.java 2010. 8. 11
  *
- * Copyright 2010 NHN Corp. All rights Reserved. 
+ * Copyright 2010 NHN Corp. All rights Reserved.
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package com.nhncorp.lucy.security.xss.config;
@@ -22,17 +22,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.nhncorp.lucy.security.xss.event.AttributeListener;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 
 /**
  * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
  * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
- * 
+ *
  * @author Web Platform Development Team
- * 
+ *
  */
 public final class XssConfiguration {
-	
+
 	private static String DEFAULT_CONFIG = "/lucy-xss-default.xml";
 
 	private Map<String, ElementRule> tags;
@@ -47,21 +48,21 @@ public final class XssConfiguration {
 	private Map<String, Set<String>> childElementRef; //elementGroup - key Element Group을 하위에 포함할 수 있는 Element
 	private Map<String, Set<String>> childElementGroupRef; // elementGroup - key Group에 포함되는 ChildGroup
 	private Map<String, Set<String>> parentElementGroupRef; // elementGroup - key Group을 포함하는 ParentGroup
-	
+
 	private Map<String, Set<String>> childAttrRef; // attrGroup - key Attribute Group을 포함할 수 있는 Element
 	private Map<String, Set<String>> childAttrGroupRef; // attrGroup - key Group에 포함되는 ChildGroup
 	private Map<String, Set<String>> parentAttrGroupRef; // attrGroup - key Group을 포함하는 ParentGroup
-	
+
 	private XssConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
 		this.atts = new HashMap<String, AttributeRule>();
 		this.tagGroups = new HashMap<String, Set<String>>();
 		this.attGroups = new HashMap<String, Set<String>>();
-		
+
 		this.childElementRef = new HashMap<String, Set<String>>();
 		this.childElementGroupRef = new HashMap<String, Set<String>>();
 		this.parentElementGroupRef = new HashMap<String, Set<String>>();
-		
+
 		this.childAttrRef = new HashMap<String, Set<String>>();
 		this.childAttrGroupRef = new HashMap<String, Set<String>>();
 		this.parentAttrGroupRef = new HashMap<String, Set<String>>();
@@ -69,44 +70,44 @@ public final class XssConfiguration {
 
 	/**
 	 * 이 메소드는 특정 파일로부터 XSS Filter 설정 내용을 로딩하여, 새로운 인스턴스를 리턴한다.
-	 * 
+	 *
 	 * @param file	XSS Filter 설정파일.
 	 * @return	XssConfiguration 인스턴스.
 	 * @throws Exception	설정 내용을 담고 있는 파일이 예상치 못한 포멧을 가지고 있을 경우 발생.
 	 */
 	public static XssConfiguration newInstance(String file) throws Exception {
 		XssConfiguration config = null;
-		
-//		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
-//		if (is == null) {
-//			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
-//		}
-		
+
+		//		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
+		//		if (is == null) {
+		//			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
+		//		}
+
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();		
-			
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
 			config = create(builder, file);
-			
+
 			if (config == null) {
 				throw new Exception(String.format("The XSS configuration file [%s] is not a expected xml document.", file));
 			}
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			throw new Exception(String.format("Cannot parse the XSS configuration file [%s].", file), ex);
 		}
-		
+
 		config.closeConfigurationResource();
 		return config;
 	}
-	
+
 	private static XssConfiguration create(DocumentBuilder builder, String file) {
 		XssConfiguration config = null;
-		
+
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
 		if (is == null) {
 			is = XssConfiguration.class.getResourceAsStream(DEFAULT_CONFIG);
 		}
-		
+
 		try {
 			Element root = builder.parse(is).getDocumentElement();
 			String extend = root.getAttribute("extends");
@@ -114,11 +115,11 @@ public final class XssConfiguration {
 				//InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(extend);
 				config = create(builder, extend);
 			}
-			
+
 			if (config == null) {
 				config = new XssConfiguration();
 			}
-			
+
 			// 항상 element rule 이전에 Group을 먼저 정의한다.
 			// 정의된 Group이 rule에 영향을 주기 때문이다.
 			NodeList list = root.getElementsByTagName("elementGroup");
@@ -141,50 +142,52 @@ public final class XssConfiguration {
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
-			
+
 			list = root.getElementsByTagName("neloAsyncLog");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
 			}
-			
+
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableBlockingPrefix(Element.class.cast(list.item(i)));
 			}
 
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			return null;
 		} finally {
 			if (is != null) {
-				try { is.close(); } catch(IOException ioe) {}
+				try {
+					is.close();
+				} catch (IOException ioe) {
+				}
 			}
-			
 
 		}
-		
+
 		return config;
 	}
 
 	private void enableBlockingPrefix(Element e) {
 		String enable = e.getAttribute("enable");
 		String prefix = e.getAttribute("prefix");
-		
+
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
-			this.setBlockingPrefixEnabled("true".equalsIgnoreCase(enable)? true : false);
+			this.setBlockingPrefixEnabled("true".equalsIgnoreCase(enable) ? true : false);
 		}
-		
+
 		if (prefix != null && !prefix.isEmpty()) {
 			this.setBlockingPrefix(prefix);
 		}
-		
+
 	}
 
 	public ElementRule getElementRule(String tagName) {
 		ElementRule rule = null;
 		if (tagName != null && this.tags != null && !this.tags.isEmpty()) {
-			rule = this.tags.get(tagName.toLowerCase());			
+			rule = this.tags.get(tagName.toLowerCase());
 		}
-		
+
 		return rule;
 	}
 
@@ -193,69 +196,69 @@ public final class XssConfiguration {
 		if (attName != null && this.atts != null && !this.atts.isEmpty()) {
 			rule = this.atts.get(attName.toLowerCase());
 		}
-		
+
 		return rule;
 	}
-	
+
 	private void enableNeloAsyncLog(Element e) {
 		String enable = e.getAttribute("enable");
 		String serviceName = e.getAttribute("service");
-		
+
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
-			this.setNeloAsyncLog("true".equalsIgnoreCase(enable)? true : false);
+			this.setNeloAsyncLog("true".equalsIgnoreCase(enable) ? true : false);
 		}
-		
+
 		if (serviceName != null && !serviceName.isEmpty()) {
 			this.setService(serviceName);
-		} 
+		}
 	}
-	
+
 	private void addElementRule(Element e) {
-		String name = e.getAttribute("name");		
+		String name = e.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
 		String endTag = e.getAttribute("endTag");
 		String disable = e.getAttribute("disable");
-		
+
 		if (name == null || "".equals(name)) {
-			return ;
+			return;
 		}
-		
+
 		ElementRule rule = null;
 		if (override) {
-			rule = this.tags.get(name);	
+			rule = this.tags.get(name);
 		}
-		
+
 		if (rule == null || !override) {
 			rule = new ElementRule(name);
 			this.tags.put(name.toLowerCase(), rule);
 		}
-		
+
 		if (endTag != null && ("true".equalsIgnoreCase(endTag) || "false".equalsIgnoreCase(endTag))) {
-			rule.setEndTag("true".equalsIgnoreCase(endTag)? true : false);
+			rule.setEndTag("true".equalsIgnoreCase(endTag) ? true : false);
 		}
-		
+
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {
-			rule.setDisabled("true".equalsIgnoreCase(disable)? true : false);
+			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
-		
+
 		NodeList list = e.getElementsByTagName("attributes");
 		if (list != null && list.getLength() > 0) {
 			Element attributes = Element.class.cast(list.item(0));
-			
+
 			list = attributes.getChildNodes();
 			this.addAttrGroupRef(list, name);
 			rule.addAllowedAttributes(this.getReferences(list, this.attGroups, null));
 		}
-		
+
 		list = e.getElementsByTagName("elements");
 		if (list != null && list.getLength() > 0) {
 			Element elements = Element.class.cast(list.item(0));
-			
+
 			list = elements.getChildNodes();
 			this.addElementGroupRef(list, name);
 			rule.addAllowedElements(this.getReferences(list, this.tagGroups, null));
 		}
-		
+
 		list = e.getElementsByTagName("listener");
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			String className = list.item(i).getTextContent();
@@ -263,88 +266,100 @@ public final class XssConfiguration {
 				try {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(ElementListener.class.cast(obj));
-				} catch(Exception ex) {
+				} catch (Exception ex) {
 					// ignore
 				}
 			}
 		}
 	}
-	
+
 	private void addAttributeRule(Element element) {
 		String name = element.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
 		String disable = element.getAttribute("disable");
 		//Base64Decoding
 		String base64Decoding = element.getAttribute("base64Decoding");
-		
+
 		if (name == null || "".equals(name)) {
-			return ;
+			return;
 		}
-		
+
 		AttributeRule rule = null;
 		if (override) {
 			rule = this.atts.get(name);
 		}
-		
+
 		if (rule == null || !override) {
 			rule = new AttributeRule(name);
 			this.atts.put(name.toLowerCase(), rule);
 		}
-		
+
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {
-			rule.setDisabled("true".equalsIgnoreCase(disable)? true : false);
+			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
-		
+
 		//Base64Decoding
 		if (base64Decoding != null && ("true".equalsIgnoreCase(base64Decoding) || "false".equalsIgnoreCase(base64Decoding))) {
 			rule.setBase64Decoding("true".equalsIgnoreCase(base64Decoding) ? true : false);
 		}
-		
+
 		NodeList list = element.getElementsByTagName("allowedPattern");
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			rule.addAllowedPattern(list.item(i).getTextContent());
 		}
-		
+
 		list = element.getElementsByTagName("notAllowedPattern");
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			rule.addNotAllowedPattern(list.item(i).getTextContent());
 		}
+
+		list = element.getElementsByTagName("listener");
+		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+			String className = list.item(i).getTextContent();
+			if (className != null) {
+				try {
+					Object obj = Class.forName(className.trim()).newInstance();
+					rule.addListener(AttributeListener.class.cast(obj));
+				} catch (Exception ex) {
+					// ignore
+				}
+			}
+		}
 	}
-	
+
 	private void addElementGroup(Element e) {
-		
+
 		String name = e.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
-		
+
 		if (name == null || "".equals(name)) {
-			return ;
+			return;
 		}
-		
-		Set<String> tagGroup = null;		
+
+		Set<String> tagGroup = null;
 
 		if (override) {
 			tagGroup = this.tagGroups.get(name);
-		} 
-		
+		}
+
 		if (tagGroup == null) {
 			tagGroup = new HashSet<String>();
 		}
-		
 
 		NodeList list = e.getElementsByTagName("ref");
 		Set<String> nestedGroups = new HashSet<String>();
-		Collection<String> refs = this.getReferences(list, this.tagGroups, nestedGroups);		
+		Collection<String> refs = this.getReferences(list, this.tagGroups, nestedGroups);
 		if (refs != null && !refs.isEmpty()) {
 			tagGroup.addAll(refs);
 		}
-		
+
 		if (nestedGroups != null && !nestedGroups.isEmpty()) {
 			Set<String> childGroup = new HashSet<String>();
-			for(String nestedGroup : nestedGroups) {
-				if(this.childElementGroupRef.containsKey(nestedGroup)) {
+			for (String nestedGroup : nestedGroups) {
+				if (this.childElementGroupRef.containsKey(nestedGroup)) {
 					childGroup.addAll(this.childElementGroupRef.get(nestedGroup));
 				}
-				
+
 				Set<String> parentElementGroup = this.parentElementGroupRef.get(nestedGroup);
 				if (parentElementGroup == null) {
 					parentElementGroup = new HashSet<String>();
@@ -352,72 +367,70 @@ public final class XssConfiguration {
 				parentElementGroup.add(name);
 				this.parentElementGroupRef.put(nestedGroup, parentElementGroup);
 			}
-			
+
 			if (!childGroup.isEmpty())
 				nestedGroups.addAll(childGroup);
-			
+
 			this.childElementGroupRef.put(name, nestedGroups);
 		}
 
 		this.tagGroups.put(name, tagGroup);
-		
-		if(this.parentElementGroupRef.containsKey(name)) {
+
+		if (this.parentElementGroupRef.containsKey(name)) {
 			for (String parentName : this.parentElementGroupRef.get(name)) {
 				this.tagGroups.get(parentName).addAll(tagGroup);
 			}
 		}
-		
 
 		if (override) {
 
 			/**
-			 * TO-DO : 
+			 * TO-DO :
 			 */
 			Set<String> elementSet = this.childElementRef.get(name);
-			
+
 			if (elementSet != null) {
 
-				for(String tagName : elementSet) {
+				for (String tagName : elementSet) {
 					ElementRule rule = this.tags.get(tagName);
 					rule.addAllowedElements(refs);
 				}
 			}
 		}
 	}
-	
+
 	private void addAttributeGroup(Element e) {
 		String name = e.getAttribute("name");
 		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
-		
+
 		if (name == null || "".equals(name)) {
-			return ;
+			return;
 		}
-		
+
 		Set<String> attGroup = null;
-		
+
 		if (override) {
 			attGroup = this.tagGroups.get(name);
-		} 
-		
+		}
+
 		if (attGroup == null) {
 			attGroup = new HashSet<String>();
 		}
 
-		
 		NodeList list = e.getElementsByTagName("ref");
 		Set<String> nestedGroups = new HashSet<String>();
-		Collection<String> refs = this.getReferences(list, this.attGroups, nestedGroups);		
+		Collection<String> refs = this.getReferences(list, this.attGroups, nestedGroups);
 		if (refs != null && !refs.isEmpty()) {
 			attGroup.addAll(refs);
 		}
-		
+
 		if (nestedGroups != null && !nestedGroups.isEmpty()) {
 			Set<String> childGroup = new HashSet<String>();
-			for(String nestedGroup : nestedGroups) {
-				if(this.childAttrGroupRef.containsKey(nestedGroup)) {
+			for (String nestedGroup : nestedGroups) {
+				if (this.childAttrGroupRef.containsKey(nestedGroup)) {
 					childGroup.addAll(this.childAttrGroupRef.get(nestedGroup));
 				}
-				
+
 				Set<String> parentElementGroup = this.parentAttrGroupRef.get(nestedGroup);
 				if (parentElementGroup == null) {
 					parentElementGroup = new HashSet<String>();
@@ -425,41 +438,40 @@ public final class XssConfiguration {
 				parentElementGroup.add(name);
 				this.parentAttrGroupRef.put(nestedGroup, parentElementGroup);
 			}
-			
+
 			if (!childGroup.isEmpty())
 				nestedGroups.addAll(childGroup);
-			
+
 			this.childAttrGroupRef.put(name, nestedGroups);
 		}
 
 		this.attGroups.put(name, attGroup);
-	
-		if(this.parentAttrGroupRef.containsKey(name)) {
+
+		if (this.parentAttrGroupRef.containsKey(name)) {
 			for (String parentName : this.parentAttrGroupRef.get(name)) {
 				this.attGroups.get(parentName).addAll(attGroup);
 			}
 		}
-		
 
 		if (override) {
 			/**
-			 * TO-DO : 
+			 * TO-DO :
 			 */
 			Set<String> elementSet = this.childAttrRef.get(name);
 
 			if (elementSet != null) {
-			
-				for(String tagName : elementSet) {
+
+				for (String tagName : elementSet) {
 					ElementRule rule = this.tags.get(tagName);
 					rule.addAllowedAttributes(refs);
 				}
 			}
 		}
 	}
-	
+
 	private void addElementGroupRef(NodeList list, String tagName) {
-		
-		for(int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+
+		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			Node node = list.item(i);
 			if (!(node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("ref"))) {
 				continue;
@@ -472,11 +484,11 @@ public final class XssConfiguration {
 			if (this.tagGroups.containsKey(tagGroupName)) { //elementGroup name 이면,
 				nestedGroupNames.add(tagGroupName);
 				Set<String> tagGroupSet = this.childElementGroupRef.get(tagGroupName);
-				
+
 				if (tagGroupSet != null) {
 					nestedGroupNames.addAll(tagGroupSet);
 				}
-				
+
 				for (String groupName : nestedGroupNames) {
 					if (this.childElementRef.containsKey(groupName)) {
 						Set<String> elementList = this.childElementRef.get(groupName);
@@ -487,16 +499,15 @@ public final class XssConfiguration {
 						this.childElementRef.put(groupName, newElementSet);
 					}
 				}
-				
-				
-			}			
+
+			}
 		}
-		
+
 	}
-	
+
 	private void addAttrGroupRef(NodeList list, String tagName) {
-		
-		for(int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+
+		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			Node node = list.item(i);
 			if (!(node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("ref"))) {
 				continue;
@@ -509,26 +520,25 @@ public final class XssConfiguration {
 			if (this.attGroups.containsKey(attGroupName)) { //att ref가 앞서 선언된 AttGroup 이면,
 				nestedAttNames.add(attGroupName);
 				Set<String> attGroupSet = this.childAttrGroupRef.get(attGroupName); // 이 attGroup이 또다른 attGroup을 child로 가지고 있는지 확
-				
+
 				if (attGroupSet != null) { // childGroup을 가지고 있다면,
-					nestedAttNames.addAll(attGroupSet); // 추가 
+					nestedAttNames.addAll(attGroupSet); // 추가
 				}
-				
+
 				for (String groupName : nestedAttNames) { // 모든 attGroup에 대해
-					if (this.childAttrRef.containsKey(groupName)) { // 해당 attGroup을 가질 수 있는 Element를 추출 하여 
-						Set<String> elementList = this.childAttrRef.get(groupName); 
-						elementList.add(tagName); // 모든 attGroup에 현재 tagName을 연결  
+					if (this.childAttrRef.containsKey(groupName)) { // 해당 attGroup을 가질 수 있는 Element를 추출 하여
+						Set<String> elementList = this.childAttrRef.get(groupName);
+						elementList.add(tagName); // 모든 attGroup에 현재 tagName을 연결
 					} else {
 						Set<String> newElementSet = new HashSet<String>();
 						newElementSet.add(tagName);
 						this.childAttrRef.put(groupName, newElementSet);
 					}
 				}
-			}			
+			}
 		}
-		
+
 	}
-	
 
 	private Collection<String> getReferences(NodeList list, Map<String, Set<String>> groups, Set<String> nestedGroups) {
 		Collection<String> result = new ArrayList<String>();
@@ -537,20 +547,19 @@ public final class XssConfiguration {
 			if (!(node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("ref"))) {
 				continue;
 			}
-			
+
 			Element ref = Element.class.cast(node);
 			String name = ref.getAttribute("name");
 			if (groups.containsKey(name)) {
-				
+
 				if (nestedGroups != null) {
 					nestedGroups.add(name);
 				}
-				
-				Set<String> names = new HashSet<String>(groups.get(name));				
+
+				Set<String> names = new HashSet<String>(groups.get(name));
 				NodeList excludes = ref.getElementsByTagName("excludes");
-				if (excludes != null && excludes.getLength() > 0) {					
-					Collection<String> tmp = this.getReferences(
-							Element.class.cast(excludes.item(0)).getElementsByTagName("ref"), groups, null);
+				if (excludes != null && excludes.getLength() > 0) {
+					Collection<String> tmp = this.getReferences(Element.class.cast(excludes.item(0)).getElementsByTagName("ref"), groups, null);
 					if (tmp != null && !tmp.isEmpty()) {
 						names.removeAll(tmp);
 					}
@@ -558,12 +567,12 @@ public final class XssConfiguration {
 
 				if (!names.isEmpty()) {
 					result.addAll(names);
-				}				
+				}
 			} else {
 				result.add(name);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -584,12 +593,12 @@ public final class XssConfiguration {
 	}
 
 	public void setBlockingPrefixEnabled(boolean isEnableBlockingPrefix) {
-	
+
 		this.isBlockingPrefixEnabled = isEnableBlockingPrefix;
 	}
-	
+
 	public boolean isEnableBlockingPrefix() {
-		
+
 		return this.isBlockingPrefixEnabled;
 	}
 
@@ -602,11 +611,11 @@ public final class XssConfiguration {
 	}
 
 	public void closeConfigurationResource() {
-		
+
 		this.childElementRef = null;
 		this.childElementGroupRef = null;
 		this.parentElementGroupRef = null;
-		
+
 		this.childAttrGroupRef = null;
 		this.childAttrRef = null;
 		this.parentAttrGroupRef = null;
