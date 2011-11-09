@@ -1,7 +1,7 @@
 /*
- * @(#) XssFilter.java 2010. 8. 11 
+ * @(#) XssFilter.java 2010. 8. 11
  *
- * Copyright 2010 NHN Corp. All rights Reserved. 
+ * Copyright 2010 NHN Corp. All rights Reserved.
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package com.nhncorp.lucy.security.xss;
@@ -31,25 +31,25 @@ import com.nhncorp.lucy.security.xss.markup.Text;
 /**
  * 이 클래스는 {@code Cross Site Scripting} 코드가 삽입된 {@code String} 데이터를 신뢰할 수 있는 코드로
  * 변환 시키거나, 삭제하는 기능을 제공한다. <br/><br/> 이 클래스를 사용하는 방법은 다음과 같다.
- * 
+ *
  * <pre>
  * ...
- * 
+ *
  * // XSS 설정파일(&quot;lucy-xss.xml&quot;)이 잘못된 포멧을 가지고 있다면 RuntimeException을 발생 시킨다.
  * XssFilter filter = XssFilter.getInstance();
- * 
+ *
  * String clean = filter.doFilter(String dirty);
- * 
+ *
  * ...
  * </pre>
- * 
+ *
  * @author Web Platform Development Team
- * 
+ *
  */
 public final class XssFilter {
 
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
-	
+
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
 	private static String ElELMENT_NELO_MSG = " \n(Disabled Element)";
@@ -74,7 +74,7 @@ public final class XssFilter {
 
 	/**
 	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 * 
+	 *
 	 * @return XssFilter 객체
 	 * @throws XssFilterException
 	 *             {@code "lucy-xss.xml"} 로딩 실패 시 발생(malformed인 경우).
@@ -82,18 +82,18 @@ public final class XssFilter {
 	public static XssFilter getInstance() throws XssFilterException {
 		return getInstance(CONFIG, false);
 	}
-	
+
 	public static XssFilter getInstance(boolean withoutComment) throws XssFilterException {
 		return getInstance(CONFIG, withoutComment);
 	}
-	
+
 	public static XssFilter getInstance(String fileName) throws XssFilterException {
 		return getInstance(fileName, false);
 	}
 
 	/**
 	 * 이 메소드는 XssFilter 객체를 리턴한다.
-	 * 
+	 *
 	 * @param fileName
 	 *            XSS Filter 설정파일
 	 * @return XssFilter 객체
@@ -132,7 +132,7 @@ public final class XssFilter {
 
 	/**
 	 * 이 메소드는 XSS Filter 설정 내용을 담고 있는 {@link XssConfiguration} 객체를 반환한다.
-	 * 
+	 *
 	 * @return {@link XssConfiguration} 객체
 	 */
 	public XssConfiguration getConfig() {
@@ -142,7 +142,7 @@ public final class XssFilter {
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
 	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
-	 * 
+	 *
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
 	 * @return 신뢰할 수 있는 코드.
@@ -171,7 +171,7 @@ public final class XssFilter {
 	 * 이 메소드는 특정 Tag 내 특정 Attribute의 값에 삽입되는 XSS({@code Cross Site Scripting})이
 	 * 포함된 위험한 코드를 신뢰할 수 있는 코드로 변환하거나, 삭제하는 기능을 제공한다. <br/>
 	 * {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
-	 * 
+	 *
 	 * @param tagName
 	 *            특정 Tag 이름.
 	 * @param attName
@@ -181,8 +181,7 @@ public final class XssFilter {
 	 * @return
 	 */
 	public String doFilter(String tagName, String attName, String dirtyAttValue) {
-		if (tagName == null || "".equals(tagName) || attName == null || "".equals(attName)
-				|| dirtyAttValue == null || "".equals(dirtyAttValue)) {
+		if (tagName == null || "".equals(tagName) || attName == null || "".equals(attName) || dirtyAttValue == null || "".equals(dirtyAttValue)) {
 			return "";
 		}
 
@@ -218,7 +217,7 @@ public final class XssFilter {
 					c.serialize(writer);
 				} else if (c instanceof IEHackExtensionElement) {
 					this.serialize(writer, IEHackExtensionElement.class.cast(c));
-				}else if (c instanceof Element) {
+				} else if (c instanceof Element) {
 					this.serialize(writer, Element.class.cast(c));
 				}
 			}
@@ -226,68 +225,70 @@ public final class XssFilter {
 	}
 
 	private void serialize(Writer writer, IEHackExtensionElement ie) throws IOException {
-	
+
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
-		
-		//iEHExRule.checkEndTag(ie);
-		
+
 		if (iEHExRule != null) {
+			iEHExRule.checkEndTag(ie);
 			iEHExRule.excuteListener(ie);
 		}
-		
+
 		if (writer == null) {
-			return ;
+			return;
 		}
-		
-		String stdName = ie.getName().replaceAll("-->",">");
-		writer.write(stdName);
-		
-		if (!ie.isEmpty()) {
-			this.serialize(writer, ie.getContents());
-		}
-		
-		if (ie.isClosed()) {
-			writer.write("<![endif]-->");
+
+		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
+		} else {
+			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
+			writer.write(stdName);
+
+			if (!ie.isEmpty()) {
+				this.serialize(writer, ie.getContents());
+			}
+
+			if (ie.isClosed()) {
+				writer.write("<![endif]-->");
+			}
 		}
 	}
-	
+
 	private void serialize(Writer writer, Element e) throws IOException {
 		StringWriter neloLogWriter = new StringWriter();
 		boolean hasElementXss = false;
 		boolean hasAttrXss = false;
-		
+
 		neloLogWriter.write(e.getName());
-		
+
 		if (!e.isDisabled()) {
 			checkRule(e);
 		}
 
 		if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
-						
+
 			hasElementXss = true;
-			
+
 			if (!this.withoutComment) {
-			
+
 				writer.write(BAD_TAG_INFO);
 			}
-			
+
 			writer.write("&lt;");
 			writer.write(e.getName());
-			
+
 		} else if (e.existDisabledAttribute()) {
-			
+
 			if (!this.withoutComment) {
-			
+
 				writer.write(BAD_ATT_INFO);
 			}
-			
+
 			writer.write('<');
 			writer.write(e.getName());
-			
+
 		} else {
-			
-			if (e.isDisabled()) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다. 
-				
+
+			if (e.isDisabled()) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+
 				e.setName(this.blockingPrefix + e.getName());
 				e.setEnabled(true);
 			}
@@ -295,34 +296,34 @@ public final class XssFilter {
 			writer.write('<');
 			writer.write(e.getName());
 		}
-		
+
 		Collection<Attribute> atts = e.getAttributes();
-		
+
 		if (atts != null && !atts.isEmpty()) {
-		
+
 			for (Attribute att : atts) {
-			
+
 				if (!e.isDisabled() && att.isDisabled()) {
 
 					hasAttrXss = true;
-					neloLogWriter.write(" "+ att.getName() + "=" + att.getValue());
-					
+					neloLogWriter.write(" " + att.getName() + "=" + att.getValue());
+
 					continue;
-				
+
 				} else {
 					writer.write(' ');
 					att.serialize(writer);
 				}
 			}
-			
+
 		}
 
-		if(e.isStartClosed()) {
+		if (e.isStartClosed()) {
 
 			writer.write((e.isDisabled()) ? " /&gt;" : " />");
 
 		} else {
-	
+
 			writer.write((e.isDisabled()) ? "&gt;" : ">");
 		}
 
@@ -341,17 +342,17 @@ public final class XssFilter {
 				writer.write('>');
 			}
 		}
-		
+
 		if (this.isNeloLogEnabled && (hasElementXss || hasAttrXss)) {
-			
+
 			neloLogWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
 			LOG.error(neloLogWriter.toString());
 		}
-		
+
 	}
 
 	private void checkRule(Element e) {
-		
+
 		ElementRule tagRule = this.config.getElementRule(e.getName());
 		if (tagRule == null) {
 			e.setEnabled(false);
@@ -375,6 +376,7 @@ public final class XssFilter {
 				} else {
 					attRule.checkDisabled(att);
 					attRule.checkAttributeValue(att);
+					attRule.executeListener(att);
 				}
 			}
 		}
