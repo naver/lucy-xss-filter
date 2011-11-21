@@ -1,7 +1,7 @@
 /*
- * @(#) ElementRule.java 2010. 8. 11 
+ * @(#) ElementRule.java 2010. 8. 11
  *
- * Copyright 2010 NHN Corp. All rights Reserved. 
+ * Copyright 2010 NHN Corp. All rights Reserved.
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package com.nhncorp.lucy.security.xss.config;
@@ -19,19 +19,20 @@ import com.nhncorp.lucy.security.xss.markup.Element;
 
 /**
  * 이 클래스는 패키지 외부에서 참조 되지 않는다.
- * 
+ *
  * @author Web Platform Development Team
- * 
+ *
  */
 public final class ElementRule {
 
 	private String name;
 	private boolean endTag;
 	private boolean disabled;
+	private boolean removeTag = false;
 	private Set<String> atts;
 	private Set<String> tags;
 	private List<ElementListener> listeners;
-	
+
 	ElementRule(String name) {
 		this.name = name;
 		this.atts = new HashSet<String>();
@@ -39,34 +40,34 @@ public final class ElementRule {
 	}
 
 	public String getName() {
-		return (this.name == null)? "" : this.name;
+		return (this.name == null) ? "" : this.name;
 	}
-	
+
 	public boolean hasEndTag() {
 		return this.endTag;
 	}
-	
+
 	public boolean isDisabled() {
 		return this.disabled;
 	}
-	
+
 	public Set<String> getAllowedAttributes() {
 		return Collections.unmodifiableSet(this.atts);
 	}
-	
+
 	public Set<String> getAllowedElements() {
 		return Collections.unmodifiableSet(this.tags);
 	}
-	
+
 	public List<ElementListener> getListeners() {
 		return Collections.unmodifiableList(this.listeners);
 	}
 
 	public void checkEndTag(Element e) {
 		if (e == null) {
-			return ;
-		} 
-		
+			return;
+		}
+
 		if (this.endTag && !e.isClosed()) {
 			e.setEnabled(false);
 		}
@@ -92,7 +93,7 @@ public final class ElementRule {
 	public void disableNotAllowedChildElements(Element e) {
 		List<Element> tags = e.getElements();
 		if (tags != null && !tags.isEmpty()) {
-			for (Element tag : tags) {				
+			for (Element tag : tags) {
 				if (!this.tags.contains(tag.getName().toLowerCase())) {
 					tag.setEnabled(false);
 				}
@@ -107,29 +108,29 @@ public final class ElementRule {
 			}
 		}
 	}
-	
+
 	void setEndTag(boolean isRequired) {
 		this.endTag = isRequired;
 	}
-	
+
 	boolean getEndTagFlag() {
 		return this.endTag;
 	}
-	
+
 	void setDisabled(boolean disabled) {
 		this.disabled = disabled;
 	}
-	
+
 	boolean getDisabledFlag() {
 		return this.disabled;
 	}
-	
+
 	void addAllowedAttribute(String attName) {
 		if (attName != null) {
 			this.atts.add(attName.toLowerCase());
 		}
 	}
-	
+
 	void addAllowedAttributes(Collection<String> attNames) {
 		if (attNames != null && !attNames.isEmpty()) {
 			for (String attName : attNames) {
@@ -137,13 +138,13 @@ public final class ElementRule {
 			}
 		}
 	}
-	
+
 	void addAllowedElement(String tagName) {
 		if (tagName != null) {
 			this.tags.add(tagName.toLowerCase());
 		}
 	}
-	
+
 	void addAllowedElements(Collection<String> tagNames) {
 		if (tagNames != null && !tagNames.isEmpty()) {
 			for (String tagName : tagNames) {
@@ -151,14 +152,30 @@ public final class ElementRule {
 			}
 		}
 	}
-	
+
 	void addListener(ElementListener l) {
 		if (l != null) {
 			if (this.listeners == null) {
 				this.listeners = new ArrayList<ElementListener>();
 			}
-			
+
 			this.listeners.add(l);
 		}
+	}
+
+	public boolean isRemoveTag() {
+		return removeTag;
+	}
+
+	public void setRemoveTag(boolean removeTag) {
+		this.removeTag = removeTag;
+	}
+
+	public void checkRemoveTag(Element e) {
+		if (e == null) {
+			return;
+		}
+
+		e.setRemoved(this.removeTag);
 	}
 }
