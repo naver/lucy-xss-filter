@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+	<elementRule>
+		<element name="html" removeTag="true">
+		</element>
+		<element name="head" removeTag="true">
+			<listener>com.nhncorp.lucy.security.xss.listener.ContentsRemoveListener</listener>
+		</element>
+		<element name="body" removeTag="true"/>
+	</elementRule>
+</config>
