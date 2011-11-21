@@ -218,6 +218,7 @@ public final class XssConfiguration {
 		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
 		String endTag = e.getAttribute("endTag");
 		String disable = e.getAttribute("disable");
+		String removeTag = e.getAttribute("removeTag");
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -235,6 +236,10 @@ public final class XssConfiguration {
 
 		if (endTag != null && ("true".equalsIgnoreCase(endTag) || "false".equalsIgnoreCase(endTag))) {
 			rule.setEndTag("true".equalsIgnoreCase(endTag) ? true : false);
+		}
+
+		if (removeTag != null && ("true".equalsIgnoreCase(removeTag) || "false".equalsIgnoreCase(removeTag))) {
+			rule.setRemoveTag("true".equalsIgnoreCase(removeTag) ? true : false);
 		}
 
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {

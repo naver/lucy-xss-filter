@@ -52,8 +52,9 @@ public final class XssFilter {
 
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
-	private static String ElELMENT_NELO_MSG = " \n(Disabled Element)";
+	private static String ELELMENT_NELO_MSG = " \n(Disabled Element)";
 	private static String ATTRIBUTE_NELO_MSG = " \n(Disabled Attribute)";
+	private static String ELELMENT_REMOVE_NELO_MSG = " \n(Removed Element)";
 	private static String CONFIG = "lucy-xss.xml";
 	private static String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
@@ -61,6 +62,7 @@ public final class XssFilter {
 	private String service;
 	private String neloElementMSG;
 	private String neloAttrMSG;
+	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean isBlockingPrefixEnabled;
 
@@ -118,8 +120,9 @@ public final class XssFilter {
 				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
 				filter.withoutComment = withoutComment;
-				filter.neloElementMSG = ElELMENT_NELO_MSG + "@[" + filter.service + "]";
+				filter.neloElementMSG = ELELMENT_NELO_MSG + "@[" + filter.service + "]";
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG + "@[" + filter.service + "]";
+				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG + "@[" + filter.service + "]";
 				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
 				instanceMap.put(fileName, filter);
@@ -256,96 +259,109 @@ public final class XssFilter {
 		StringWriter neloLogWriter = new StringWriter();
 		boolean hasElementXss = false;
 		boolean hasAttrXss = false;
+		boolean hasElementRemoved = false;
 
-		neloLogWriter.write(e.getName());
+		if (this.isNeloLogEnabled) {
+			neloLogWriter.write(e.getName());
+		}
 
 		if (!e.isDisabled()) {
 			checkRule(e);
 		}
 
-		if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
-
-			hasElementXss = true;
-
-			if (!this.withoutComment) {
-
-				writer.write(BAD_TAG_INFO);
+		if (e.isRemoved()) {
+			hasElementRemoved = true;
+			if (!e.isEmpty()) {
+				this.serialize(writer, e.getContents());
 			}
-
-			writer.write("&lt;");
-			writer.write(e.getName());
-
-		} else if (e.existDisabledAttribute()) {
-
-			if (!this.withoutComment) {
-
-				writer.write(BAD_ATT_INFO);
-			}
-
-			writer.write('<');
-			writer.write(e.getName());
-
 		} else {
+			if (e.isDisabled()) {
+				hasElementXss = true;
 
-			if (e.isDisabled()) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+					e.setName(this.blockingPrefix + e.getName());
+					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
+					writer.write('<');
+					writer.write(e.getName());
+				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
+					if (!this.withoutComment) {
 
-				e.setName(this.blockingPrefix + e.getName());
-				e.setEnabled(true);
+						writer.write(BAD_TAG_INFO);
+					}
+
+					writer.write("&lt;");
+					writer.write(e.getName());
+
+				}
+			} else {
+				if (e.existDisabledAttribute()) {
+					if (!this.withoutComment) {
+						writer.write(BAD_ATT_INFO);
+					}
+				}
+
+				writer.write('<');
+				writer.write(e.getName());
 			}
 
-			writer.write('<');
-			writer.write(e.getName());
-		}
+			Collection<Attribute> atts = e.getAttributes();
 
-		Collection<Attribute> atts = e.getAttributes();
+			if (atts != null && !atts.isEmpty()) {
 
-		if (atts != null && !atts.isEmpty()) {
+				for (Attribute att : atts) {
 
-			for (Attribute att : atts) {
+					if (!e.isDisabled() && att.isDisabled()) {
 
-				if (!e.isDisabled() && att.isDisabled()) {
+						hasAttrXss = true;
+						if (this.isNeloLogEnabled) {
+							neloLogWriter.write(" " + att.getName() + "=" + att.getValue());
+						}
 
-					hasAttrXss = true;
-					neloLogWriter.write(" " + att.getName() + "=" + att.getValue());
+						continue;
 
-					continue;
+					} else {
+						writer.write(' ');
+						att.serialize(writer);
+					}
+				}
 
+			}
+
+			if (e.isStartClosed()) {
+
+				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
+
+			} else {
+
+				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
+			}
+
+			if (!e.isEmpty()) {
+				this.serialize(writer, e.getContents());
+			}
+
+			if (e.isClosed()) {
+				if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
+					writer.write("&lt;/");
+					writer.write(e.getName());
+					writer.write("&gt;");
 				} else {
-					writer.write(' ');
-					att.serialize(writer);
+					writer.write("</");
+					writer.write(e.getName());
+					writer.write('>');
 				}
 			}
-
 		}
 
-		if (e.isStartClosed()) {
-
-			writer.write((e.isDisabled()) ? " /&gt;" : " />");
-
-		} else {
-
-			writer.write((e.isDisabled()) ? "&gt;" : ">");
-		}
-
-		if (!e.isEmpty()) {
-			this.serialize(writer, e.getContents());
-		}
-
-		if (e.isClosed()) {
-			if (e.isDisabled()) {
-				writer.write("&lt;/");
-				writer.write(e.getName());
-				writer.write("&gt;");
-			} else {
-				writer.write("</");
-				writer.write(e.getName());
-				writer.write('>');
+		if (this.isNeloLogEnabled && (hasElementXss || hasAttrXss || hasElementRemoved)) {
+			if (hasElementRemoved) {
+				neloLogWriter.write(this.neloElementRemoveMSG);
+			} else if (hasElementXss) {
+				neloLogWriter.write(this.neloElementMSG);
+			} else if (hasAttrXss) {
+				neloLogWriter.write(this.neloAttrMSG);
 			}
-		}
 
-		if (this.isNeloLogEnabled && (hasElementXss || hasAttrXss)) {
-
-			neloLogWriter.write(hasElementXss ? this.neloElementMSG : this.neloAttrMSG);
 			LOG.error(neloLogWriter.toString());
 		}
 
@@ -359,6 +375,7 @@ public final class XssFilter {
 			return;
 		}
 
+		tagRule.checkRemoveTag(e);
 		tagRule.checkEndTag(e);
 		tagRule.checkDisabled(e);
 		tagRule.disableNotAllowedAttributes(e);
