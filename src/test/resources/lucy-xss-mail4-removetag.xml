@@ -8,5 +8,6 @@
 			<listener>com.nhncorp.lucy.security.xss.listener.ContentsRemoveListener</listener>
 		</element>
 		<element name="body" removeTag="true"/>
+		<element name="o:p" removeTag="true"/>
 	</elementRule>
 </config>

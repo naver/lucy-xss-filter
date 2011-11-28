@@ -518,6 +518,36 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 
 	@Test
+	public void testElementRemoveOPTag() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail4-removetag.xml");
+
+		String dirty = "<p style=\"margin: 0cm 0cm 0pt;\" class=\"MsoNormal\"><span lang=\"EN-US\"><?xml:namespace prefix = o ns = \"urn:schemas-microsoft-com:office:office\" /><o:p><font size=\"2\" face=\"바탕\"></font></o:p></span></p>";
+		String expected = "<p style=\"margin: 0cm 0cm 0pt;\" class=\"MsoNormal\"><span lang=\"EN-US\"><?xml:namespace prefix = o ns = \"urn:schemas-microsoft-com:office:office\" /><font size=\"2\" face=\"바탕\"></font></span></p>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
+	public void testElementRemoveOPTagSimple() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail4-removetag.xml");
+
+		String dirty = "<o:p><font size=\"2\" face=\"바탕\"></font></o:p>";
+		String expected = "<font size=\"2\" face=\"바탕\"></font>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
+	public void testElementRemoveOPTagSimple2() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail4-removetag.xml");
+
+		String dirty = "<span><o:p><font size=\"2\" face=\"바탕\"></font></o:p></span>";
+		String expected = "<span><font size=\"2\" face=\"바탕\"></font></span>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
 	public void testOnMouseFilter() {
 
 		XssFilter filter = XssFilter.getInstance("lucy-xss-on.xml");
