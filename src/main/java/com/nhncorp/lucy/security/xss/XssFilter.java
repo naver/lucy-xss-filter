@@ -265,9 +265,7 @@ public final class XssFilter {
 			neloLogWriter.write(e.getName());
 		}
 
-		if (!e.isDisabled()) {
-			checkRule(e);
-		}
+		checkRuleRemove(e);
 
 		if (e.isRemoved()) {
 			hasElementRemoved = true;
@@ -275,6 +273,10 @@ public final class XssFilter {
 				this.serialize(writer, e.getContents());
 			}
 		} else {
+			if (!e.isDisabled()) {
+				checkRule(e);
+			}
+
 			if (e.isDisabled()) {
 				hasElementXss = true;
 
@@ -367,6 +369,19 @@ public final class XssFilter {
 
 	}
 
+	private void checkRuleRemove(Element e) {
+		ElementRule tagRule = this.config.getElementRule(e.getName());
+		if (tagRule == null) {
+			e.setEnabled(false);
+			return;
+		}
+
+		tagRule.checkRemoveTag(e);
+		if (e.isRemoved()) {
+			tagRule.excuteListener(e);
+		}
+	}
+
 	private void checkRule(Element e) {
 
 		ElementRule tagRule = this.config.getElementRule(e.getName());
@@ -375,7 +390,6 @@ public final class XssFilter {
 			return;
 		}
 
-		tagRule.checkRemoveTag(e);
 		tagRule.checkEndTag(e);
 		tagRule.checkDisabled(e);
 		tagRule.disableNotAllowedAttributes(e);
