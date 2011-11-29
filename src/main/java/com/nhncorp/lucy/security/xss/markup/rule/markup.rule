@@ -7,11 +7,12 @@ startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | startEnd
 startEnd	::= ([#x20#x9#xD#xA]* '>')?
 closeStartEnd	::= ([#x20#x9#xD#xA]* '/>')?
 endTag		::= '</' [#x20#x9#xD#xA]* tagName [#x20#x9#xD#xA]* '>'
-tagName		::= [^?!'"/<>#x20#x9#xD#xA]+
+letter		::= ([#x41-#x7A] - [#x5B-#x60])+
+digit		::= [#x30-#x39]+
+nameChar	::= letter | digit | '.' | '-' | '_' | ':'
+tagName		::= (letter | '_' | ':') (nameChar)*
 attribute	::= attName ([#x20#x9#xD#xA]* '=' [#x20#x9#xD#xA]* attValue)?
 attName		::= [^/=<>#x20#x9#xD#xA]+
 attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
 				|([^"'`<>#x20#x9#xD#xA]+ ["'`]?)|[^<>#x20#x9#xD#xA]*
 text		::= [^<]* | ('<' [^<]*) |[#x00]+[^<]*
-
-
