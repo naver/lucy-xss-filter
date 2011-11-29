@@ -38,8 +38,11 @@
 				<ref name="a"/>
 			</elements>
 		</element>
-		
-	</elementRule>	
-	
+
+		<element name="IEHackExtension"  endTag="true">
+		</element>
+
+	</elementRule>
+
 	<blockingPrefix enable="true" prefix="blocking_"/>
 </config>
