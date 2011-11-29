@@ -234,6 +234,8 @@ public final class XssFilter {
 		if (iEHExRule != null) {
 			iEHExRule.checkEndTag(ie);
 			iEHExRule.excuteListener(ie);
+		} else {
+			ie.setEnabled(false);
 		}
 
 		if (writer == null) {
@@ -241,8 +243,11 @@ public final class XssFilter {
 		}
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
+			if (!ie.isEmpty()) {
+				this.serialize(writer, ie.getContents());
+			}
 		} else {
-			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
+			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // 공백제거처리
 			writer.write(stdName);
 
 			if (!ie.isEmpty()) {

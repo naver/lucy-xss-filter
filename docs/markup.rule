@@ -1,0 +1,38 @@
+contents	::= (description | iEHExStartTag | iEHExEndTag | startTag | endTag | comment | text)+
+iEHExStartTag	::= ('<!--'|'<!') ([#x20#x9#xD#xA]* '[if') ([#x9-#xFFFD]*-'>') '>'
+iEHExEndTag	::= '<!--[endif]-->' | '<![endif]-->'
+description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>'
+comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
+startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | startEnd)?
+startEnd	::= ([#x20#x9#xD#xA]* '>')?
+closeStartEnd	::= ([#x20#x9#xD#xA]* '/>')?
+endTag		::= '</' [#x20#x9#xD#xA]* tagName [#x20#x9#xD#xA]* '>'
+letter		::= ([#x41-#x7A] - [#x5B-#x60])+
+digit		::= [#x30-#x39]+
+nameChar	::= letter | digit | '.' | '-' | '_' | ':'
+tagName		::= (letter | '_' | ':') (nameChar)*
+attribute	::= attName ([#x20#x9#xD#xA]* '=' [#x20#x9#xD#xA]* attValue)?
+attName		::= [^/=<>#x20#x9#xD#xA]+
+attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
+				|([^"'`<>#x20#x9#xD#xA]+ ["'`]?)|[^<>#x20#x9#xD#xA]*
+text		::= [^<]* | ('<' [^<]*) |[#x00]+[^<]*
+
+
+
+* 위 XSS 전용 정규표현식 설명
+- [#x20#x9#xD#xA] : 모든 공백 문자
+ -- #x20 스페이스 space
+ -- #xD CR 캐리지리턴 \r
+ -- #xA LF 라인피드 \n
+ -- #x9 HT 탭(horizontal tabulation) \t
+ -- #xB VT(vertical tab) \v
+- [#x9-#xFFFD] : 모든 char
+- [^?!'"/<>#x20#x9#xD#xA] : ?!'"/<> 특수문자 및 모든공백문자를 제외한 모든 캐릭터.
+** [] 대가로 안에서의 -(대쉬)의 의미 범위이다. 즉 위 표현은 #x9 부터 #xFFFD 까지의 문자캐릭터를 의미한다.
+** [] 대가로 안에서의 ^의 의미는 뒤에 오는 모든 문자를 제외한 문자를 의미한다.
+- letter : 알파벳(w3c 표준에서 정의한 letter는 abcd,ABCE의 알파벳 뿐만이니라 라틴문자 알파벳인  À Á 등도 포함한다. 하지만 Lucy Xss Filter 에서는 우선 우리가 일반적으로 쓰는 알파벳만 지정했다.
+- digit : 숫자, 숫자 또한 0,1,2,3,4,5,6,7,8,9 를 의미한다. w3c 표준에서는 ٠	١	٢	٣  이런것도(페르시안 숫자) 포함하는데 이런 숫자는 제외한다.
+
+ 참고 url : http://ko.wikipedia.org/wiki/%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C_0000~0FFF
+ http://www.xml.com/pub/a/2001/07/25/namingparts.html "xml 네이밍 룰 관련"
+ http://xsd.stylusstudio.com/2003Sep/post05008.htm "CombiningChar 와 Extender 에 대한 질문?"
