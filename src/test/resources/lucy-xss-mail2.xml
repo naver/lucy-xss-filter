@@ -7,6 +7,5 @@
 			<listener>com.nhncorp.lucy.security.xss.listener.IEHackExtensionListener</listener>
 		</element>
 	</elementRule>
-
 	<blockingPrefix enable="true" prefix="blocking_"/>
 </config>
