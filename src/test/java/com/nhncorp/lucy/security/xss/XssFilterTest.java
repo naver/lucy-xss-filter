@@ -399,6 +399,15 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 
 	@Test
+	public void testIEHackTagInTheOtherTag() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<div><!--[if !mso]><p>test</p><![endif]--></div>";
+		String clean = filter.doFilter(dirty);
+		String expected = "<div><p>test</p></div>";
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
 	//IEHackExtensionElement의 모든 객체는 동일한 Element로 간주된다.
 	//그래서, 설정파일에서도 대표 이름 하나로 설정한다.
 	//<element name="IEHackExtension">
@@ -553,8 +562,43 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
 
 		String dirty = "<하하하>";
-		String expected = "&lt;하하하&gt;";
+		String expected = "&lt;하하하&gt;"; // 한글은 태그가 아닌 텍스트로 인식해서 블로킹 prefix를 붙이지 않고, escape 처리.
 		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
+	@Test
+	public void testElementNaming() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
+
+		String dirty = "<asdf>";
+		String expected = "<blocking_asdf>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<aAdFa>";
+		expected = "<blocking_aAdFa>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<_a>";
+		expected = "<blocking__a>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<:a>";
+		expected = "<blocking_:a>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<a b>";
+		expected = "<blocking_a b>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+
+		dirty = "<!a>"; // 요놈은 태그(엘리먼트)로 인식하면 안된다.
+		expected = "&lt;!a&gt;"; // 태그가 아닌 텍스트로 인식해서 블로킹 prefix를 붙이지 않고, escape 처리.
+		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
 
