@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+	extends="lucy-xss-superset-test.xml">
+	
+	<elementGroup name="Block" override="true">
+		<ref name="marquee"/>
+		<ref name="center"/>
+		<ref name="o:p"/>
+	</elementGroup>
+	
+	<!-- embed태그를 Special그룹에 포함시킴 -->
+	<elementGroup name="Special">
+		<ref name="embed"/>
+	</elementGroup>
+	
+	
+	<!-- 신규로 그룹을 생성함. -->
+	<attributeGroup name="BorderColor">
+		<ref name="bordercolordark"/>
+		<ref name="bordercolorlight"/>
+	</attributeGroup>
+	
+	<attributeGroup name="Attrs">
+		<ref name="BorderColor"/>
+	</attributeGroup>
+	
+	<elementRule>
+		<element name="body" disable="false" />
+		<element name="iframe" disable="true" />
+		<element name="meta" disable="true" />
+		<element name="base" disable="true" />
+		
+		<element name="a" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.AnchorListener</listener>
+		</element>
+		
+		<element name="embed" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.MailEmbedListener</listener>
+		</element> 
+		 
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.MailObjectListener</listener>
+		</element>
+		
+		<!-- 
+			하위 컴포넌트를 삭제해야하는 태그들은 DeleteTagContentListener를 사용
+			style, script, title, xml (PHP 기준)
+		 -->
+		<element name="style" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="script" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="title" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="xml" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		
+		<element name="p">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+				<ref name="table"/>
+				<ref name="style"/>
+				<ref name="xml"/>
+				<ref name="List"/>
+				<ref name="li"/>
+			</elements>
+		</element>
+		
+		<element name="span">
+			<elements>
+				<ref name="Block"/>
+			</elements>
+		</element>
+		
+		<element name="body">
+			<elements>
+				<ref name="Inline"/>
+				<ref name="style"/>
+				<ref name="xml"/>
+			</elements>
+		</element>
+		
+		<element name="table">
+			<attributes>
+				<ref name="background"/>
+			</attributes>
+		</element>
+
+		<element name="td">
+			<attributes>
+				<ref name="background"/>	
+				<ref name="align"/>
+				<ref name="height"/>
+				<ref name="width"/>
+				<ref name="nowrap"/>
+			</attributes>
+			<elements>
+				<ref name="img"/>
+			</elements>
+		</element>
+		
+		<!-- ul 하위에 ul, ol을 허용함. -->
+		<element name="ul">
+			<elements>
+				<ref name="ul"/>
+				<ref name="ol"/>
+			</elements>
+		</element>
+		
+		<!-- ol 하위에 ol, ul을 허용함. -->
+		<element name="ol">
+			<elements>
+				<ref name="ol"/>
+				<ref name="ul"/>
+			</elements>
+		</element>
+		
+		
+		<element name="o:p">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="Cellhalign"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+				<ref name="table"/>
+				<ref name="List"/>
+				<ref name="li"/>
+			</elements>
+		</element>
+		
+		<element name="div">
+			<elements>
+				<ref name="li"/>
+			</elements>
+		</element>
+		
+		<!-- img태그에 border, align속성을 추가한다. -->
+		<element name="img">
+			<attributes>
+				<ref name="border"/>
+				<ref name="Cellhalign"/>
+			</attributes>
+		</element>
+		
+		<!-- head태그 하위에 script태그를 허용. 허용하지 않으면 xscript로 표시됨. -->
+		<element name="head">
+			<elements>
+				<ref name="script"/>
+			</elements>
+		</element>
+		
+		<!-- dt 하위에 Block 그룹 허용 -->
+		<element name="dt">
+			<elements>
+				<ref name="Block" />
+			</elements>
+		</element>
+		
+		<!-- dl 하위에 Block 그룹 허용 -->
+		<element name="dl">
+			<elements>
+				<ref name="Block" />
+			</elements>
+		</element>
+		
+		<!-- IE핵 처리를 위해 추가 삽입해야함. Lucy-XSS Filter 담당자 요청.
+		<element name="IEHackExtension">
+		</element>
+		 -->
+		
+	</elementRule>
+	
+	<blockingPrefix enable="true" prefix="x"/>
+	
+	<attributeRule>
+		<attribute name="data" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="src" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="style">
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="background">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="href">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|mailto:|x-msg:).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(javascript:util\.viewEmbed\(.\\*).+]]></allowedPattern>
+		</attribute>
+		
+		<!-- nowrap 속성 추가 -->
+		<attribute name="nowrap" />
+		
+		<!-- bordercolordark 속성 추가 -->
+		<attribute name="bordercolordark" />
+		
+		<!-- bordercolorlight 속성 추가 -->
+		<attribute name="bordercolorlight" />
+		
+		<!-- 모든 id라는 속성은 허용하지 않음 -->
+		<attribute name="id" disable="true" />
+		
+		<!-- 모든 class라는 속성을 허용하지 않음 -->
+		<attribute name="class" disable="true" />
+		
+		<!-- 모든 자바스크립트 이벤트는 속성은 불가 -->
+		<attribute name="onabort" disable="true" />
+		<attribute name="onactivate" disable="true" />
+		<attribute name="onafterprint" disable="true" />
+		<attribute name="onafterupdate" disable="true" />
+		<attribute name="onbeforeactivate" disable="true" />
+		<attribute name="onbeforecopy" disable="true" />
+		<attribute name="onbeforecut" disable="true" />
+		<attribute name="onbeforedeactivate" disable="true" />
+		<attribute name="onbeforeeditfocus" disable="true" />
+		<attribute name="onbeforepaste" disable="true" />
+		<attribute name="onbeforeprint" disable="true" />
+		<attribute name="onbeforeunload" disable="true" />
+		<attribute name="onbeforeupdate" disable="true" />
+		<attribute name="onbegin" disable="true" />
+		<attribute name="onblur" disable="true" />
+		<attribute name="onbounce" disable="true" />
+		<attribute name="oncellchange" disable="true" />
+		<attribute name="onchange" disable="true" />
+		<attribute name="onchange" disable="true" />
+		<attribute name="onclick" disable="true" />
+		<attribute name="oncontentready" disable="true" />
+		<attribute name="oncontentsave" disable="true" />
+		<attribute name="oncontextmenu" disable="true" />
+		<attribute name="oncontrolselect" disable="true" />
+		<attribute name="oncopy" disable="true" />
+		<attribute name="oncut" disable="true" />
+		<attribute name="ondataavailable" disable="true" />
+		<attribute name="ondatasetchanged" disable="true" />
+		<attribute name="ondatasetcomplete" disable="true" />
+		<attribute name="ondatasetcomplete" disable="true" />
+		<attribute name="ondblclick" disable="true" />
+		<attribute name="ondeactivate" disable="true" />
+		<attribute name="ondetach" disable="true" />
+		<attribute name="ondocumentready" disable="true" />
+		<attribute name="ondrag" disable="true" />
+		<attribute name="ondragdrop" disable="true" />
+		<attribute name="ondragend" disable="true" />
+		<attribute name="ondragenter" disable="true" />
+		<attribute name="ondragleave" disable="true" />
+		<attribute name="ondragover" disable="true" />
+		<attribute name="ondragstart" disable="true" />
+		<attribute name="ondrop" disable="true" />
+		<attribute name="onend" disable="true" />
+		<attribute name="onerror" disable="true" />
+		<attribute name="onerrorupdate" disable="true" />
+		<attribute name="onfilterchange" disable="true" />
+		<attribute name="onfinish" disable="true" />
+		<attribute name="onfocus" disable="true" /> 
+		<attribute name="onfocusin" disable="true" /> 
+		<attribute name="onfocusout" disable="true" /> 
+		<attribute name="onhelp" disable="true" /> 
+		<attribute name="onhide" disable="true" />  
+		<attribute name="onkeydown" disable="true" />
+		<attribute name="onkeypress" disable="true" />
+		<attribute name="onkeyup" disable="true" />
+		<attribute name="onlayoutcomplete" disable="true" /> 
+		<attribute name="onload" disable="true" />  
+		<attribute name="onlosecapture" disable="true" />
+		<attribute name="onmediacomplete" disable="true" /> 
+		<attribute name="onmediaerror" disable="true" />  
+		<attribute name="onmedialoadfailed" disable="true" />
+		<attribute name="onmousedown" disable="true" />  
+		<attribute name="onmouseenter" disable="true" /> 
+		<attribute name="onmouseleave" disable="true" /> 
+		<attribute name="onmousemove" disable="true" />
+		<attribute name="onmouseout" disable="true" /> 
+		<attribute name="onmouseover" disable="true" /> 
+		<attribute name="onmouseup" disable="true" />  
+		<attribute name="onmousewheel" disable="true" /> 
+		<attribute name="onmove" disable="true" />  
+		<attribute name="onmoveend" disable="true" />
+		<attribute name="onmovestart" disable="true" /> 
+		<attribute name="onopenstatechange" disable="true" /> 
+		<attribute name="onoutofsync" disable="true" /> 
+		<attribute name="onpaste" disable="true" /> 
+		<attribute name="onpause" disable="true" />  
+		<attribute name="onplaystatechange" disable="true" />  
+		<attribute name="onpropertychange" disable="true" />  
+		<attribute name="onreadystatechange" disable="true" /> 
+		<attribute name="onrepeat" disable="true" /> 
+		<attribute name="onreset" disable="true" /> 
+		<attribute name="onreset" disable="true" /> 
+		<attribute name="onresize" disable="true" />  
+		<attribute name="onresizeend" disable="true" />  
+		<attribute name="onresizestart" disable="true" />  
+		<attribute name="onresume" disable="true" />  
+		<attribute name="onreverse" disable="true" />  
+		<attribute name="onrowclick" disable="true" />  
+		<attribute name="onrowenter" disable="true" />  
+		<attribute name="onrowexit" disable="true" /> 
+		<attribute name="onrowout" disable="true" /> 
+		<attribute name="onrowover" disable="true" /> 
+		<attribute name="onrowsdelete" disable="true" /> 
+		<attribute name="onrowsinserted" disable="true" /> 
+		<attribute name="onsave" disable="true" /> 
+		<attribute name="onscroll" disable="true" /> 
+		<attribute name="onseek" disable="true" /> 
+		<attribute name="onselect" disable="true" />
+		<attribute name="onselectionchange" disable="true" /> 
+		<attribute name="onselectstart" disable="true" /> 
+		<attribute name="onshow" disable="true" /> 
+		<attribute name="onstart" disable="true" />
+		<attribute name="onstop" disable="true" /> 
+		<attribute name="onsubmit" disable="true" />
+		<attribute name="onsyncrestored" disable="true" />
+		<attribute name="ontimeerror" disable="true" />
+		<attribute name="ontrackchange" disable="true" />
+		<attribute name="onunload" disable="true" />
+		<attribute name="onurlflip" disable="true" />
+	</attributeRule>
+</config>
