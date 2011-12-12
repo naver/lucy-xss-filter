@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+	<elementGroup name="Inline">
+		<ref name="Fontstyle"/>
+		<ref name="Phrase"/>
+		<ref name="Special"/>
+		<ref name="Formctrl"/>
+		<ref name="div"/>
+		<ref name="table"/>
+		<ref name="embed"/>
+	</elementGroup>
+	
+	<elementRule>
+		<element name="embed" override="false" disable="false">
+			<!-- 상속 불가 리스너 -->
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="align" />
+				<ref name="disabled" />
+				<ref name="height" />
+				<ref name="hidden" />
+				<ref name="hspace" />
+				<ref name="name" />
+				<ref name="pluginspage" />
+				<ref name="src" />
+				<ref name="type" />
+				<ref name="width" />
+				<ref name="units" />
+				<ref name="invokeurls" />
+				<ref name="autostart" />
+				<ref name="allownetworking" />
+				<ref name="allowscriptaccess" />
+				<ref name="allowfullscreen" />
+				<ref name="onresize" />
+				<ref name="Flash" />
+				<ref name="WMP" />
+			</attributes>
+			<elements>
+				<ref name="param" />
+			</elements>
+			<listener>com.naver.blog.mylog.abuse.content.filter.listener.EmbedListener
+			</listener>
+		</element>
+
+		<element name="object" override="false" disable="false">
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="archive" />
+				<ref name="classid" />
+				<ref name="codebase" />
+				<ref name="codetype" />
+				<ref name="data" />
+				<ref name="declare" />
+				<ref name="height" />
+				<ref name="name" />
+				<ref name="standby" />
+				<ref name="tabindex" />
+				<ref name="type" />
+				<ref name="width" />
+				<ref name="usemap" />
+				<ref name="align" />
+				<ref name="Flash" />
+			</attributes>
+			<elements>
+				<ref name="Flow" />
+				<ref name="param" />
+				<ref name="embed" />
+			</elements>
+			<listener>com.naver.blog.mylog.abuse.content.filter.listener.ObjectListener
+			</listener>
+		</element>
+
+		<element name="iframe" override="false" disable="false">
+			<attributes>
+				<ref name="title" />
+				<ref name="width" />
+				<ref name="height" />
+				<ref name="src" />
+				<ref name="frameborder" />
+				<ref name="scrolling" />
+				<ref name="marginheight" />
+				<ref name="marginwidth" />
+				<ref name="frameborder" />
+				<ref name="allowfullscreen" />
+			</attributes>
+			<listener>com.naver.blog.mylog.abuse.content.filter.listener.IframeListener
+			</listener>
+		</element>
+
+		<element name="html" override="true" disable="false" removeTag="true" />
+
+		<element name="head" override="true" disable="false" removeTag="true">
+			<listener>com.nhncorp.lucy.security.xss.listener.ContentsRemoveListener
+			</listener>
+		</element>
+
+		<element name="body" override="true" disable="false" removeTag="true" />
+
+		<!-- 상속 허용 리스너 -->
+		<element name="a" override="true" disable="false">
+			<attributes>
+				<ref name="target" />
+				<ref name="class" />
+			</attributes>
+			<elements>
+				<ref name="span" />
+			</elements>
+			<listener>com.naver.blog.mylog.abuse.content.filter.listener.AnchorListener
+			</listener>
+		</element>
+
+		<element name="IEHackExtension" endTag="true">
+			<listener>com.nhncorp.lucy.security.xss.listener.IEHackExtensionListener
+			</listener>
+		</element>
+
+		<!-- 허용태그 -->
+		<element name="table">
+			<attributes>
+				<ref name="style" />
+				<ref name="width" />
+				<ref name="height" />
+				<ref name="align" />
+				<ref name="background" />
+				<ref name="bordercolor" />
+				<ref name="attr_no_border_tbl" />
+				<ref name="_cssquery_UID" />
+			</attributes>
+		</element>
+		<element name="tbody">
+			<elements>
+				<ref name="td" />
+			</elements>
+		</element>
+		<element name="tr">
+			<attributes>
+				<ref name="width" />
+				<ref name="height" />
+				<ref name="class" />
+				<ref name="valign" />
+			</attributes>
+			<elements>
+				<ref name="strong" />
+			</elements>
+		</element>
+		<element name="td">
+			<attributes>
+				<ref name="style" />
+				<ref name="width" />
+				<ref name="height" />
+				<ref name="class" />
+				<ref name="valign" />
+				<ref name="background" />
+				<ref name="_cssquery_UID" />
+			</attributes>
+			<elements>
+				<ref name="Heading" />
+				<ref name="table" />
+				<ref name="tbody" />
+				<ref name="tr" />
+				<ref name="td" />
+				<ref name="li" />
+				<ref name="embed" />
+				<ref name="object" />
+				<ref name="center" />
+				<ref name="marquee" />
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="img">
+			<attributes>
+				<ref name="border" />
+				<ref name="vid" />
+				<ref name="movietype" />
+				<ref name="nhn_extra_image" />
+				<ref name="align" />
+				<ref name="onload" />
+				<ref name="onclick" />
+				<ref name="desc" />
+				<ref name="value" />
+			</attributes>
+			<elements>
+				<ref name="Inline" />
+			</elements>
+		</element>
+		<element name="font">
+			<elements>
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="bgsound">
+			<attributes>
+				<ref name="loop" />
+				<ref name="src" />
+				<ref name="volume" />
+				<ref name="balance" />
+			</attributes>
+		</element>
+		<element name="dl">
+			<elements>
+				<ref name="Inline" />
+				<ref name="p" />
+			</elements>
+		</element>
+		<element name="dt">
+			<elements>
+				<ref name="strong" />
+				<ref name="Heading" />
+				<ref name="dl" />
+				<ref name="p" />
+			</elements>
+		</element>
+		<element name="a">
+			<elements>
+				<ref name="Block" />
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="p">
+			<attributes>
+				<ref name="align" />
+				<ref name="name" />
+			</attributes>
+			<elements>
+				<ref name="object" />
+				<ref name="embed" />
+				<ref name="center" />
+				<ref name="marquee" />
+				<ref name="bgsound" />
+				<ref name="table" />
+				<ref name="Block" />
+				<ref name="del" />
+				<ref name="ins" />
+				<ref name="ruby" />
+				<ref name="dt" />
+			</elements>
+		</element>
+		<element name="span">
+			<attributes>
+				<ref name="name" />
+				<ref name="jsonvalue" />
+				<ref name="s_type" />
+				<ref name="s_subtype" />
+			</attributes>
+			<elements>
+				<ref name="div" />
+				<ref name="Block" />
+				<ref name="object" />
+				<ref name="embed" />
+				<ref name="center" />
+				<ref name="marquee" />
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="center">
+			<elements>
+				<ref name="object" />
+				<ref name="embed" />
+				<ref name="center" />
+				<ref name="marquee" />
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="img">
+			<attributes>
+				<ref name="jsonvalue" />
+				<ref name="s_type" />
+				<ref name="s_subtype" />
+				<ref name="imgqe" />
+			</attributes>
+		</element>
+		<element name="div">
+			<attributes>
+				<ref name="euid" />
+				<ref name="mapId" />
+				<ref name="mapTitle" />
+				<ref name="mapAddress" />
+				<ref name="mapPointX" />
+				<ref name="mapPointY" />
+				<ref name="mapWidth" />
+				<ref name="mapHeight" />
+				<ref name="mapPreviewWidth" />
+				<ref name="mapPreviewHeight" />
+				<ref name="mapType" />
+				<ref name="width" />
+				<ref name="height" />
+				<ref name="servicename" />
+				<ref name="jsonvalue" />
+				<ref name="movietype" />
+				<ref name="sXml" />
+				<ref name="sType" />
+				<ref name="sWidth" />
+				<ref name="sHeight" />
+				<ref name="s_type" />
+				<ref name="s_subtype" />
+				<ref name="iframesrc" />
+			</attributes>
+			<elements>
+				<ref name="Block" />
+				<ref name="object" />
+				<ref name="embed" />
+				<ref name="center" />
+				<ref name="marquee" />
+				<ref name="center" />
+				<ref name="ruby" />
+			</elements>
+		</element>
+		<element name="blockquote">
+			<elements>
+				<ref name="span" />
+				<ref name="class" />
+			</elements>
+		</element>
+		<element name="caption">
+			<elements>
+				<ref name="p" />
+			</elements>
+		</element>
+		<element name="address">
+			<elements>
+				<ref name="Fontstyle" />
+				<ref name="Special" />
+			</elements>
+		</element>
+		<element name="marquee">
+			<elements>
+				<ref name="p" />
+				<ref name="marquee" />
+			</elements>
+		</element>
+		<!-- ruby tag -->
+		<element name="ruby">
+			<elements>
+				<ref name="span" />
+				<ref name="rb" />
+				<ref name="rbc" />
+				<ref name="rtc" />
+				<ref name="rp" />
+			</elements>
+		</element>
+		<element name="rb" endTag="true">
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="name" />
+			</attributes>
+			<elements>
+				<ref name="span" />
+			</elements>
+		</element>
+		<element name="rp" endTag="true">
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="name" />
+			</attributes>
+			<elements>
+				<ref name="span" />
+				<ref name="rt" />
+			</elements>
+		</element>
+		<element name="rbc" endTag="true">
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="name" />
+			</attributes>
+			<elements>
+				<ref name="span" />
+				<ref name="rb" />
+			</elements>
+		</element>
+		<element name="rtc" endTag="true">
+			<attributes>
+				<ref name="Attrs" />
+				<ref name="name" />
+			</attributes>
+			<elements>
+				<ref name="span" />
+				<ref name="rt" />
+			</elements>
+		</element>
+
+		<element name="map">
+			<elements>
+				<ref name="Block" />
+				<ref name="area" />
+			</elements>
+		</element>
+		<element name="th">
+			<attributes>
+				<ref name="width" />
+			</attributes>
+		</element>
+
+		<element name="ul">
+			<elements>
+				<ref name="ul" />
+				<ref name="div" />
+				<ref name="font" />
+				<ref name="br" />
+				<ref name="table" />
+			</elements>
+		</element>
+
+		<element name="o:p" removeTag="true" />
+
+		<!-- format text <element name="tt" disable="true" /> <element name="i" 
+			disable="true" /> <element name="b" disable="true" /> <element name="big" 
+			disable="true" /> <element name="small" disable="true" /> -->
+		<!-- The <s> and <strike> tags defines strikethrough text <element name="strike" 
+			disable="true" /> -->
+		<!-- An HTML table with a thead, tfoot, and a tbody element <element name="thead" 
+			disable="true" /> <element name="tfoot" disable="true" /> <element name="tbody" 
+			disable="true" /> -->
+		<!-- Preformatted text <element name="pre" disable="true" /> -->
+		<!-- 비허용 태그 -->
+		<element name="s" disable="true" />
+		<element name="isindex" disable="true" />
+		<element name="Formctrl" disable="true" />
+		<element name="basefont" disable="true" />
+		<element name="frameset" disable="true" />
+		<element name="frame" disable="true" />
+		<element name="noframes" disable="true" />
+		<element name="applet" disable="true" />
+		<element name="base" disable="true" />
+		<element name="form" disable="true" />
+		<element name="fieldset" disable="true" />
+		<element name="legend" disable="true" />
+		<element name="input" disable="true" />
+		<element name="title" disable="true" />
+		<element name="link" disable="true" />
+		<element name="meta" disable="true" />
+		<element name="plaintext" disable="true" />
+		<element name="script" disable="true" />
+		<element name="noscript" disable="true" />
+		<element name="style" disable="true" />
+		<element name="textarea" disable="true" />
+		<element name="xml" disable="true" />
+		<element name="xmp" disable="true" />
+	</elementRule>
+
+	<attributeRule>
+		<!-- 비허용 속성 -->
+		<attribute name="token" disable="true" />
+
+		<!-- 허용 속성 -->
+		<attribute name="class" />
+		<attribute name="align" />
+		<attribute name="bordercolor" />
+		<attribute name="bgcolor" />
+		<attribute name="valign" />
+		<attribute name="color" />
+		<attribute name="height" />
+		<attribute name="width" />
+		<attribute name="allowfullscreen" />
+		<attribute name="invokeurls" />
+		<attribute name="autostart" />
+		<attribute name="allownetworking" />
+		<attribute name="allowscriptaccess" />
+		<attribute name="onresize" />
+		<attribute name="value">
+   			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+   			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+  		</attribute>
+  		<attribute name="background">
+		   <notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+		   <notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+	    </attribute>
+		<attribute name="onload">
+			<allowedPattern><![CDATA[['"]?setTimeout\(.resizeImage\([0-9]+\).,200\)['"]?]]></allowedPattern>
+			<allowedPattern><![CDATA[['"]?resizeImage\([0-9]+\)['"]?]]></allowedPattern>
+			<allowedPattern><![CDATA[['"]?resizeImg\(this\)['"]?]]></allowedPattern>
+		</attribute>
+		<attribute name="onclick">
+			<allowedPattern><![CDATA[['"]?popview\(this\)['"]?]]></allowedPattern>
+			<allowedPattern><![CDATA[['"]?popview\(this\.src\)['"]?]]></allowedPattern>
+			<allowedPattern><![CDATA[['"]?popview\(http\S+\)['"]?]]></allowedPattern>
+			<allowedPattern><![CDATA[['"]?try\{parent\.musiciframe\..+['"]?]]></allowedPattern>
+		</attribute>
+		<attribute name="data" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|ftp:|ed2k:).+]]></allowedPattern>
+		</attribute>
+		<attribute name="src" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|ftp:|ed2k:).+]]></allowedPattern>
+		</attribute>
+		<attribute name="balance">
+			<allowedPattern><![CDATA[[0-9'"]+]]></allowedPattern>
+		</attribute>
+		<attribute name="volume">
+			<allowedPattern><![CDATA[[0-9'"]+]]></allowedPattern>
+		</attribute>
+		<attribute name="style" override="false">
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<!-- <notAllowedPattern><![CDATA[(?i)position[\s]*:[\s]*absolute]]></notAllowedPattern> -->
+			<notAllowedPattern><![CDATA[(\\[0-9]{4})|(\\[0-9]{2})]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i)(xss|document|eval|alert)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i)url\(('|"|&quot;|)http://(?!static\.naver\.com|itemsimgs\.naver\.com|blogimgs\.naver\.com|blogimgs\.naver\.net|static\.se2\.naver\.com|imgnews\.naver\.net|imgnews\.naver\.com|static\.apps\.naver\.net).+]]></notAllowedPattern>
+			<!-- 
+				static.naver.com 날씨 DB 첨부 예외 처리 
+				itemsimgs.naver.com 스마트에디터 뮤직샘 배경음악 첨부 
+				blogimgs.naver.com 블로그 마크업 
+				blogimgs.naver.net 블로그 마크업 
+				static.se2.naver.com 스마트에디터2 각종 글꾸미기 
+				imgnews.naver.com 네이버뉴스 매거진C 
+				static.apps.naver.net 소셜앱 스크랩
+			-->
+		</attribute>
+		<attribute name="href" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|ftp:|ed2k:).+]]></allowedPattern>
+		</attribute>
+		<!-- Smart Editor 2 Private Tag -->
+		<attribute name="s_type" />
+		<attribute name="s_subtype" />
+		<attribute name="jsonvalue" />
+		<attribute name="imgqe" />
+		<attribute name="attr_no_border_tbl" />
+
+		<!-- private 속성 -->
+		<attribute name="vid">
+			<allowedPattern><![CDATA[[0-9a-zA-Z'"]+]]></allowedPattern>
+		</attribute>
+		<!-- 비디오 -->
+		<attribute name="movietype">
+			<allowedPattern><![CDATA[[0-9'"]+]]></allowedPattern>
+		</attribute>
+		<attribute name="servicename">
+			<allowedPattern><![CDATA[[0-9a-zA-Z'"]+]]></allowedPattern>
+		</attribute>
+		<attribute name="jsonvalue">
+		</attribute>
+		<attribute name="nhn_extra_image">
+			<allowedPattern><![CDATA[[a-zA-Z'"]+]]></allowedPattern>
+		</attribute>
+		<!-- 지도 첨부 -->
+		<attribute name="mapId" />
+		<attribute name="mapTitle" />
+		<attribute name="mapAddress" />
+		<attribute name="mapPointX" />
+		<attribute name="mapPointY" />
+		<attribute name="mapWidth" />
+		<attribute name="mapHeight" />
+		<attribute name="mapPreviewWidth" />
+		<attribute name="mapPreviewHeight" />
+		<attribute name="mapType" />
+
+		<attribute name="euid" />
+		<!-- 스토리포토 -->
+		<attribute name="sXml" />
+		<attribute name="sType" />
+		<attribute name="sWidth" />
+		<attribute name="sHeight" />
+		<!-- flash embed -->
+		<attribute name="wmode" />
+		<attribute name="flashvars" />
+		<attribute name="swliveconnect" />
+		<attribute name="play" />
+		<attribute name="menu" />
+		<attribute name="quality" />
+		<attribute name="scale" />
+		<attribute name="salign" />
+		<attribute name="base" />
+		<attribute name="fullScreenAspectRatio" />
+		<attribute name="showstatusbar" />
+		<!-- DB 첨부 -->
+		<attribute name="desc" />
+		<!-- youtube iframe -->
+		<attribute name="iframesrc" />
+		<!-- wmp 6.0 -->
+		<attribute name="appearance" />
+		<attribute name="autostart" />
+		<attribute name="allowchangedisplaymode" />
+		<attribute name="allowhidedisplay" />
+		<attribute name="allowhidecontrols" />
+		<attribute name="autorewind" />
+		<attribute name="currentposition" />
+		<attribute name="displaybackcolor" />
+		<attribute name="displayforecolor" />
+		<attribute name="displaymode" />
+		<attribute name="enabled" />
+		<attribute name="enablecontextmenu" />
+		<attribute name="enablepositioncontrols" />
+		<attribute name="enableselectioncontrols" />
+		<attribute name="filename" />
+		<attribute name="fullscreenmode" />
+		<attribute name="moviewindowsize" />
+		<attribute name="playcount" />
+		<attribute name="rate" />
+		<attribute name="selectionstart" />
+		<attribute name="selectionend" />
+		<attribute name="showcontrols" />
+		<attribute name="showdisplay" />
+		<attribute name="showpositioncontrols" />
+		<attribute name="showtracker" />
+		<!-- wmp 6.4 -->
+		<attribute name="audiostream" />
+		<attribute name="autosize" />
+		<attribute name="animationatstart" />
+		<attribute name="allowscan" />
+		<attribute name="allowchangedisplaysize" />
+		<attribute name="baseurl" />
+		<attribute name="bufferingtime" />
+		<attribute name="captioningid" />
+		<attribute name="clicktoplay" />
+		<attribute name="cursortype" />
+		<attribute name="currentposition" />
+		<attribute name="currentmarker" />
+		<attribute name="defaultframe" />
+		<attribute name="displaybackcolor" />
+		<attribute name="displayforecolor" />
+		<attribute name="displaysize" />
+		<attribute name="enablefullscreencontrols" />
+		<attribute name="enabletracker" />
+		<attribute name="language" />
+		<attribute name="mute" />
+		<attribute name="previewmode" />
+		<attribute name="samilang" />
+		<attribute name="samistyle" />
+		<attribute name="samifilename" />
+		<attribute name="sendopenstatechangeevents" />
+		<attribute name="sendwarningevents" />
+		<attribute name="senderrorevents" />
+		<attribute name="sendkeyboardevents" />
+		<attribute name="sendmouseclickevents" />
+		<attribute name="sendmousemoveevents" />
+		<attribute name="sendplaystatechangeevents" />
+		<attribute name="showcaptioning" />
+		<attribute name="showaudiocontrols" />
+		<attribute name="showgotobar" />
+		<attribute name="showstatusbar" />
+		<attribute name="transparantatstart" />
+		<attribute name="videoborderwidth" />
+		<attribute name="videobordercolor" />
+		<attribute name="videoborder3d" />
+		<attribute name="windowlessvideo" />
+		<!-- jindo cssquery -->
+		<attribute name="_cssquery_UID" />
+	</attributeRule>
+
+	<attributeGroup name="Flash">
+		<ref name="wmode" />
+		<ref name="flashvars" />
+		<ref name="swliveconnect" />
+		<ref name="play" />
+		<ref name="loop" />
+		<ref name="menu" />
+		<ref name="quality" />
+		<ref name="scale" />
+		<ref name="salign" />
+		<ref name="base" />
+		<ref name="fullScreenAspectRatio" />
+		<ref name="showstatusbar" />
+	</attributeGroup>
+
+	<attributeGroup name="WMP">
+		<!-- wmp 6.0 -->
+		<ref name="appearance" />
+		<ref name="autostart" />
+		<ref name="allowchangedisplaymode" />
+		<ref name="allowhidedisplay" />
+		<ref name="allowhidecontrols" />
+		<ref name="autorewind" />
+		<ref name="balance" />
+		<ref name="currentposition" />
+		<ref name="displaybackcolor" />
+		<ref name="displayforecolor" />
+		<ref name="displaymode" />
+		<ref name="enabled" />
+		<ref name="enablecontextmenu" />
+		<ref name="enablepositioncontrols" />
+		<ref name="enableselectioncontrols" />
+		<ref name="filename" />
+		<ref name="fullscreenmode" />
+		<ref name="moviewindowsize" />
+		<ref name="playcount" />
+		<ref name="rate" />
+		<ref name="selectionstart" />
+		<ref name="selectionend" />
+		<ref name="showcontrols" />
+		<ref name="showdisplay" />
+		<ref name="showpositioncontrols" />
+		<ref name="showtracker" />
+		<!-- wmp 6.4 -->
+		<ref name="audiostream" />
+		<ref name="autosize" />
+		<ref name="animationatstart" />
+		<ref name="allowscan" />
+		<ref name="allowchangedisplaysize" />
+		<ref name="baseurl" />
+		<ref name="bufferingtime" />
+		<ref name="captioningid" />
+		<ref name="clicktoplay" />
+		<ref name="cursortype" />
+		<ref name="currentposition" />
+		<ref name="currentmarker" />
+		<ref name="defaultframe" />
+		<ref name="displaybackcolor" />
+		<ref name="displayforecolor" />
+		<ref name="displaysize" />
+		<ref name="enablefullscreencontrols" />
+		<ref name="enabletracker" />
+		<ref name="language" />
+		<ref name="mute" />
+		<ref name="previewmode" />
+		<ref name="samilang" />
+		<ref name="samistyle" />
+		<ref name="samifilename" />
+		<ref name="sendopenstatechangeevents" />
+		<ref name="sendwarningevents" />
+		<ref name="senderrorevents" />
+		<ref name="sendkeyboardevents" />
+		<ref name="sendmouseclickevents" />
+		<ref name="sendmousemoveevents" />
+		<ref name="sendplaystatechangeevents" />
+		<ref name="showcaptioning" />
+		<ref name="showaudiocontrols" />
+		<ref name="showgotobar" />
+		<ref name="showstatusbar" />
+		<ref name="transparantatstart" />
+		<ref name="videoborderwidth" />
+		<ref name="videobordercolor" />
+		<ref name="videoborder3d" />
+		<ref name="volume" />
+		<ref name="windowlessvideo" />
+	</attributeGroup>
+
+</config>
