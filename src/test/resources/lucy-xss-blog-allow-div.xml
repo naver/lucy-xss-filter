@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+	<elementRule>
+		<elementGroup name="Inline">
+		  <ref name="Fontstyle"/>
+		  <ref name="Phrase"/>
+		  <ref name="Special"/>
+		  <ref name="Formctrl"/>
+		  <ref name="div"/>
+		  <ref name="table"/>
+		  <ref name="embed"/>
+		 </elementGroup>
+	</elementRule>
+</config>
