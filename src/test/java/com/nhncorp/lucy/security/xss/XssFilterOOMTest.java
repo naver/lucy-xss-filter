@@ -6,14 +6,6 @@
  */
 package com.nhncorp.lucy.security.xss;
 
-import java.io.StringWriter;
-import java.util.LinkedList;
-
-import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.PrettyHtmlSerializer;
-import org.htmlcleaner.TagNode;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
