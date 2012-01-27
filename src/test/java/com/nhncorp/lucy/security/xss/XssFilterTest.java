@@ -6,9 +6,17 @@
  */
 package com.nhncorp.lucy.security.xss;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URLDecoder;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -678,7 +686,6 @@ public class XssFilterTest extends XssFilterTestCase {
 
 	@Test
 	public void testOnMouseFilter() {
-
 		XssFilter filter = XssFilter.getInstance("lucy-xss-on.xml");
 
 		String dirty1 = " onmouseover=prompt(954996)";
@@ -722,5 +729,69 @@ public class XssFilterTest extends XssFilterTestCase {
 		}
 
 		Assert.assertEquals("Dirty User !!", result);
+	}
+	
+	/**
+	 * 외부에서 Writer를 제어할 수 있는 메소드 추가 테스트 - 메일웹개발팀 김형기 수석님 기능 요구사항
+	 * case1 StringWriter
+	 * @throws Exception 
+	 */
+	@Test
+	public void externalWriterHandlingMethodAddTestStringWriter() throws Exception {
+		XssFilter filter = XssFilter.getInstance();
+		String valid = readString("xss-normal1.html");
+		//String clean = filter.doFilter(valid);
+		Writer writer;
+		writer = new StringWriter();
+		filter.doFilter(valid, writer);
+		
+		String clean = writer.toString();
+		System.out.println("clean : " + clean);
+		Assert.assertEquals(valid , clean);
+	}
+	
+	/**
+	 * 외부에서 Writer를 제어할 수 있는 메소드 추가 테스트 - 메일웹개발팀 김형기 수석님 기능 요구사항
+	 * case2 FileWriter
+	 * @throws Exception 
+	 */
+	@Test
+	@Ignore
+	public void externalWriterHandlingMethodAddTestFileWriter() throws Exception {
+		XssFilter filter = XssFilter.getInstance();
+		String valid = readString("xss-normal1.html");
+		System.out.println("valid : " + valid);
+		//String clean = filter.doFilter(valid);
+		Writer writer;
+		writer = new BufferedWriter(new FileWriter("c:/xss-normal1_dofilter.html"));
+		filter.doFilter(valid, writer);
+		System.out.println("writer.toString() : " + writer.toString()); 
+		writer.flush();
+		writer.close();
+		
+		BufferedReader reader = new BufferedReader(new FileReader("c:/xss-normal1_dofilter.html"));
+		String line = "";
+		while( (line = reader.readLine()) != null) {
+			System.out.println("line : " + line);
+		}
+	}
+	
+	/**
+	 * 외부에서 Writer를 제어할 수 있는 메소드 추가 테스트 - 메일웹개발팀 김형기 수석님 기능 요구사항
+	 * case3 StringWriter
+	 * @throws Exception 
+	 */
+	@Test
+	public void externalWriterHandlingMethodAddTestStringWriterEmptyString() throws Exception {
+		XssFilter filter = XssFilter.getInstance();
+		String valid = "";
+		//String clean = filter.doFilter(valid);
+		Writer writer;
+		writer = new StringWriter();
+		filter.doFilter(valid, writer);
+		
+		String clean = writer.toString();
+		System.out.println("clean : " + clean);
+		Assert.assertEquals(valid , clean);
 	}
 }
