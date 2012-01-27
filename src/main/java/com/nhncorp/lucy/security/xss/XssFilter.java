@@ -151,23 +151,34 @@ public final class XssFilter {
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public String doFilter(String dirty) {
+		StringWriter writer = new StringWriter();
+		doFilter(dirty, writer);
+		return writer.toString();
+	}
+	
+	/**
+	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
+	 *
+	 * @param dirty
+	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
+	 * @param writer            
+	 * @return 신뢰할 수 있는 코드.
+	 */
+	public void doFilter(String dirty, Writer writer) {
 		if (dirty == null || "".equals(dirty)) {
-			return "";
+			LOG.debug("target string is empty. doFilter() method end.");
+			return ;
 		}
 
-		String result = "";
 		Collection<Content> contents = MarkupParser.parse(dirty);
 
 		if (contents != null && !contents.isEmpty()) {
-			StringWriter writer = new StringWriter();
 			try {
 				this.serialize(writer, contents);
 			} catch (IOException ioe) {
 			}
-			result = writer.toString();
 		}
-
-		return result;
 	}
 
 	/**
