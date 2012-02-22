@@ -12,7 +12,7 @@ package com.nhncorp.lucy.security.xss.markup.rule;
  * @author Web Platform Development Team
  * 
  */
-final class CharArraySegment {
+public final class CharArraySegment {
 
 	private char[] array;
 	private int offset;

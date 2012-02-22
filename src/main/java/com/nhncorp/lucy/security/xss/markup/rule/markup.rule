@@ -3,14 +3,10 @@ iEHExStartTag	::= ('<!--'|'<!') ([#x20#x9#xD#xA]* '[if') ([#x9-#xFFFD]*-'>') '>'
 iEHExEndTag	::= '<!--[endif]-->' | '<![endif]-->'
 description	::= ('<!DOCTYPE' | '<?xml') ([#x9-#xFFFD]* - '>') '>'
 comment		::= '<!--' ([#x9-#xFFFD]* - '-->') '-->'
-startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | startEnd)?
-startEnd	::= ([#x20#x9#xD#xA]* '>')?
+startTag	::= '<' tagName ([#x20#x9#xD#xA]+ attribute)* (closeStartEnd | ([#x20#x9#xD#xA]* '>')?)?
 closeStartEnd	::= ([#x20#x9#xD#xA]* '/>')?
 endTag		::= '</' [#x20#x9#xD#xA]* tagName [#x20#x9#xD#xA]* '>'
-letter		::= ([#x41-#x7A] - [#x5B-#x60])+
-digit		::= [#x30-#x39]+
-nameChar	::= letter | digit | '.' | '-' | '_' | ':'
-tagName		::= (letter | '_' | ':') (nameChar)*
+tagName		::= (([#x41-#x7A] - [#x5B-#x60])+ | '_' | ':') (([#x41-#x7A] - [#x5B-#x60])+ | [#x30-#x39]+ | '.' | '-' | '_' | ':')*
 attribute	::= attName ([#x20#x9#xD#xA]* '=' [#x20#x9#xD#xA]* attValue)?
 attName		::= [^/=<>#x20#x9#xD#xA]+
 attValue	::= ('"' [^"<]*  '"') | ("'" [^'<]* "'") | ("`" [^`<]* "`")
