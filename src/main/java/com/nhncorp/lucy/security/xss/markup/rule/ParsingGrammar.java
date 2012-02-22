@@ -111,6 +111,21 @@ public final class ParsingGrammar {
 		return token;
 	}
 	
+	public Token nextToken(CharArraySegment input) {
+		if (input == null || input.length() <= 0) {
+			return null;
+		}
+		
+		NonTerminal start = instance.getRule(START_SYMBOL);
+		
+		Token token = new Token(start.getRuleName());
+		if (!start.sliceTokens(token, input, instance)) {
+			return null;
+		}
+		
+		return token;
+	}
+	
 	private void readNotation(String notation) {
 		if (!notation.contains(DEFINE)) {
 			return ;
