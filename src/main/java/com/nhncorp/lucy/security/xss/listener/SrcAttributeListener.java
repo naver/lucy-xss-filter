@@ -16,7 +16,6 @@ import com.nhncorp.lucy.security.xss.markup.Attribute;
  *
  */
 public class SrcAttributeListener implements AttributeListener {
-	@Override
 	public void handleAttribute(Attribute attr) {
 		if (this.isWhiteUrl(attr.getValue())) {
 		} else {
