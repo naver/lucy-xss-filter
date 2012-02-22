@@ -106,6 +106,10 @@ class Group extends NonTerminal {
 				
 				isTokenized = true;
 				start = input.pos();
+				
+				if("contents".equals(parent.getName())) {
+					break;
+				}
 			} else {
 				input.pos(start);
 				break;

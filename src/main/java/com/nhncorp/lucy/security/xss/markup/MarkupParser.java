@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.nhncorp.lucy.security.xss.markup.rule.CharArraySegment;
 import com.nhncorp.lucy.security.xss.markup.rule.ParsingGrammar;
 import com.nhncorp.lucy.security.xss.markup.rule.Token;
 
@@ -70,8 +71,14 @@ public final class MarkupParser {
 		LinkedList<Content> result = new LinkedList<Content>();
 		
 		LinkedList<Element> stack = null; 
-		Token root = grammar.tokenize(input);
-		for (Token t : root.getChildren()) {
+//		Token root = grammar.tokenize(input);
+//		List<Token> children = root.getChildren();
+//		for (Token t : children) {
+		CharArraySegment charArraySegment = new CharArraySegment(input);
+		Token root;
+		while((root = grammar.nextToken(charArraySegment)) != null) {
+			List<Token> children = root.getChildren();
+			Token t = children.get(0);
 			String tokenName = t.getName();
 			
 			if ("description".equals(tokenName)) {
@@ -209,7 +216,7 @@ public final class MarkupParser {
 				result.add(new Text(t.getText()));
 			}
 		}
-
+		
 		return result;
 	}
 	
