@@ -75,12 +75,9 @@ public final class MarkupParser {
 //		List<Token> children = root.getChildren();
 //		for (Token t : children) {
 		CharArraySegment charArraySegment = new CharArraySegment(input);
-		Token root;
-		while((root = grammar.nextToken(charArraySegment)) != null) {
-			List<Token> children = root.getChildren();
-			Token t = children.get(0);
+		Token t;
+		while((t = grammar.nextToken(charArraySegment)) != null) {
 			String tokenName = t.getName();
-			
 			if ("description".equals(tokenName)) {
 			
 				String description = t.getText();

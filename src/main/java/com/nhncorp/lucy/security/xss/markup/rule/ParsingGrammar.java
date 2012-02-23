@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.nhncorp.lucy.security.xss.markup.rule.Group.OPERATOR;
@@ -123,7 +124,10 @@ public final class ParsingGrammar {
 			return null;
 		}
 		
-		return token;
+		List<Token> children = token.getChildren();
+		Token t = children.get(0);
+		
+		return t;
 	}
 	
 	private void readNotation(String notation) {
