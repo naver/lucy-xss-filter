@@ -36,3 +36,5 @@ text		::= [^<]* | ('<' [^<]*) |[#x00]+[^<]*
  참고 url : http://ko.wikipedia.org/wiki/%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C_0000~0FFF
  http://www.xml.com/pub/a/2001/07/25/namingparts.html "xml 네이밍 룰 관련"
  http://xsd.stylusstudio.com/2003Sep/post05008.htm "CombiningChar 와 Extender 에 대한 질문?"
+ 
+ * 1.1.9-SNAPSHOT 버전에, 메일팀 OOM 이슈 관련해서 토큰 생성을 줄이기 위해,letter, digit, nameChar, startEnd 토큰 룰을 제거해서, 부모 토큰 룰에 합쳤다.
