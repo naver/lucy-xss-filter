@@ -95,6 +95,22 @@ class Group extends NonTerminal {
 		this.rules.remove(rule);
 	}
 	
+	/**
+	 * @return
+	 * @see com.nhncorp.lucy.security.xss.markup.rule.NonTerminal#nextToken()
+	 */
+	@Override
+	public Token nextToken(Token token, CharArraySegment input, ParsingGrammar grammar) {
+		if (!this.sliceToken(token, input, grammar)) {
+			return null;
+		}
+		
+		List<Token> children = token.getChildren();
+		Token t = children.get(0);
+		
+		return t;
+	}
+	
 	public boolean sliceTokens(Token parent, CharArraySegment input, ParsingGrammar grammar) {
 		boolean isTokenized = false;
 		
