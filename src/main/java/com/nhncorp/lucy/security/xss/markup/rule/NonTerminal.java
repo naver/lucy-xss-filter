@@ -23,4 +23,12 @@ abstract class NonTerminal extends ParsingRule {
 	public abstract int matchPos(CharArraySegment input, ParsingGrammar grammar);
 	
 	public abstract List<Terminal> getFirstNonOptTerminals(ParsingGrammar grammar);
+
+	/**
+	 * @param token 
+	 * @param instance 
+	 * @param input 
+	 * @return
+	 */
+	public abstract Token nextToken(Token token, CharArraySegment input, ParsingGrammar instance);
 }
