@@ -73,4 +73,13 @@ class Reference extends NonTerminal {
 	public String toString() {
 		return String.format("Reference(%s)", this.ref);
 	}
+
+	/**
+	 * @return
+	 * @see com.nhncorp.lucy.security.xss.markup.rule.NonTerminal#nextToken()
+	 */
+	@Override
+	public Token nextToken(Token token, CharArraySegment input, ParsingGrammar instance) {
+		throw new UnsupportedOperationException();
+	}
 }

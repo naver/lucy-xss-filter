@@ -119,6 +119,18 @@ public final class ParsingGrammar {
 		
 		NonTerminal start = instance.getRule(START_SYMBOL);
 		
+		Token startToken = new Token(start.getRuleName());
+		Token token = start.nextToken(startToken, input, instance);
+		return token;
+	}
+	
+	public Token nextTokenOld(CharArraySegment input) {
+		if (input == null || input.length() <= 0) {
+			return null;
+		}
+		
+		NonTerminal start = instance.getRule(START_SYMBOL);
+		
 		Token token = new Token(start.getRuleName());
 		if (!start.sliceTokens(token, input, instance)) {
 			return null;
