@@ -34,7 +34,7 @@
 	<!-- // define loggers // -->
 	<logger name="com.nhncorp.lucy.security.xss" additivity="false">
 		<level value="ERROR" />
-		<appender-ref ref="nelo" />
+		<appender-ref ref="nelo-async" />
 	</logger>
 
 	<!-- // define root // -->

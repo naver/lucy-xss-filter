@@ -7,6 +7,7 @@
 package com.nhncorp.lucy.security.xss;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class XssFilterTestCase {
 	private static final String CHARSET_NAME = "utf-8";
 
 	// 클래스 경로의 파일을 읽고 라인 단위로 읽어서() List로 반환한다.
-	protected List<String> readLines(String filePath) throws Exception {
+	protected List<String> readLines(String filePath) throws IOException {
 		ClassLoader classLoader = Thread.currentThread()
 				.getContextClassLoader();
 		if (null == classLoader) {
@@ -59,7 +60,7 @@ public class XssFilterTestCase {
 		return result;
 	}
 
-	protected String readString(String filePath) throws Exception {
+	protected String readString(String filePath) throws IOException {
 		List<String> lines = readLines(filePath);
 		StringBuilder buffer = new StringBuilder();
 		for (String line : lines) {

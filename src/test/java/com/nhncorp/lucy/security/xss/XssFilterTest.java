@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.Reader;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
@@ -30,6 +30,8 @@ public class XssFilterTest extends XssFilterTestCase {
 	private static final String DIRTY_CODES_FILE = "xss-dirtycodes.txt";
 	private static final String INVALID_HTML_FILES[] = {"xss-invalid1.html", "xss-invalid2.html", "xss-invalid3.html"};
 	private static final String NORMAL_HTML_FILES[] = {"xss-normal1.html"};
+	private static final String NORMAL_HTML_FILE = "xss-normal1.html";
+	private static final String INVALID_HTML_FILE = "xss-invalid1.html";
 
 	@Test
 	// 정상적인 HTML 페이지를 통과 시키는지 검사한다.(필터링 전후가 동일하면 정상)
@@ -109,7 +111,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<EMBED src=\"http://play.tagstory.com/player/harisu.wmv\" width=\"425\" height=\"344\">";
 		String expected = "<EMBED src=\"http://play.tagstory.com/player/harisu.wmv\" width=\"425\" height=\"344\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"all\">";
 		String clean = filter.doFilter(dirty);
-		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
+		Assert.assertEquals(expected, clean);
 	}
 
 	@Test
@@ -342,7 +344,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-default.xml");
 		String dirty = "<!--[if !mso]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
 		//String dirty = "<!--[if gte mso 9]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
-		String expected = "<style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style>";
+		String expected = "<!-- Removed Tag Filtered (&lt;!--[if !mso]&gt;) --><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
@@ -370,6 +372,16 @@ public class XssFilterTest extends XssFilterTestCase {
 		dirty = "<!--[if !supportMisalignedColumns]> <style> div { border:1px solid #f00; } </style><![endif]-->";
 		clean = xssFilter.doFilter(dirty);
 
+		Assert.assertEquals(Expected, clean);
+	}
+	
+	@Test
+	public void testIEHackTagInComment() {
+		XssFilter xssFilter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!-- Removed Tag Filtered (&lt;!--[if !mso]--&gt;) -->";
+		String clean = xssFilter.doFilter(dirty);
+		
+		String Expected = "<!-- Removed Tag Filtered (&lt;!--[if !mso]--&gt;) -->";
 		Assert.assertEquals(Expected, clean);
 	}
 
@@ -410,7 +422,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
 		String dirty = "<div><!--[if !mso]><p>test</p><![endif]--></div>";
 		String clean = filter.doFilter(dirty);
-		String expected = "<div><p>test</p></div>";
+		String expected = "<div><!-- Removed Tag Filtered (&lt;!--[if !mso]&gt;) --><p>test</p></div>";
 		Assert.assertEquals(expected, clean);
 	}
 
@@ -520,7 +532,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 
 		String dirty = "<html><head></head><body><p>Hello</p></body>";
-		String expected = "<p>Hello</p>";
+		String expected = "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -529,7 +541,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	public void testElementRemoveBlogRequest() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 		String dirty = "<html><head><style>P {margin-top:2px;margin-bottom:2px;}</style></head><body><div style=\"font-size:10pt; font-family:gulim;\"><div style=\"padding:0 0 0 10pt\"><p style=\"\">한글테스트에용~~~&nbsp;</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~한글테스트에용~~~</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~</p><p style=\"font-size:pt; font-family:,AppleGothic,sans-serif\"><img class=\"NHN_MAIL_IMAGE\" src=\"http://postfiles2.naver.net/20111116_241/youreme_dev_1321429196418_lRlJSu_jpg/h_cafe_mail.jpg?type=w3\"><br></p><p style=\"font-size:10pt;FONT-FAMILY: Gulim,AppleGothic,sans-serif;padding:0 0 0 0pt\"><span>-----Original Message-----</span><br><b>From:</b> \"박태민\"&lt;youreme_dev@naver.com&gt; <br><b>To:</b> youreme_dev@naver.com<br><b>Cc:</b> <br><b>Sent:</b> 11-11-11(금) 10:24:55<br><b>Subject:</b> test.txt<br /></p></div></div></body></html>";
-		String expected = "<div style=\"font-size:10pt; font-family:gulim;\"><div style=\"padding:0 0 0 10pt\"><p style=\"\">한글테스트에용~~~&nbsp;</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~한글테스트에용~~~</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~</p><p style=\"font-size:pt; font-family:,AppleGothic,sans-serif\"><img class=\"NHN_MAIL_IMAGE\" src=\"http://postfiles2.naver.net/20111116_241/youreme_dev_1321429196418_lRlJSu_jpg/h_cafe_mail.jpg?type=w3\"><br></p><p style=\"font-size:10pt;FONT-FAMILY: Gulim,AppleGothic,sans-serif;padding:0 0 0 0pt\"><span>-----Original Message-----</span><br><b>From:</b> \"박태민\"&lt;youreme_dev@naver.com&gt; <br><b>To:</b> youreme_dev@naver.com<br><b>Cc:</b> <br><b>Sent:</b> 11-11-11(금) 10:24:55<br><b>Subject:</b> test.txt<br /></p></div></div>";
+		String expected = "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><div style=\"font-size:10pt; font-family:gulim;\"><div style=\"padding:0 0 0 10pt\"><p style=\"\">한글테스트에용~~~&nbsp;</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~한글테스트에용~~~</p><p style=\"\">한글테스트에용~~~한글테스트에용~~~</p><p style=\"font-size:pt; font-family:,AppleGothic,sans-serif\"><img class=\"NHN_MAIL_IMAGE\" src=\"http://postfiles2.naver.net/20111116_241/youreme_dev_1321429196418_lRlJSu_jpg/h_cafe_mail.jpg?type=w3\"><br></p><p style=\"font-size:10pt;FONT-FAMILY: Gulim,AppleGothic,sans-serif;padding:0 0 0 0pt\"><span>-----Original Message-----</span><br><b>From:</b> \"박태민\"&lt;youreme_dev@naver.com&gt; <br><b>To:</b> youreme_dev@naver.com<br><b>Cc:</b> <br><b>Sent:</b> 11-11-11(금) 10:24:55<br><b>Subject:</b> test.txt<br /></p></div></div>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -539,7 +551,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 
 		String dirty = "<p style=\"margin: 0cm 0cm 0pt;\" class=\"MsoNormal\"><span lang=\"EN-US\"><?xml:namespace prefix = o ns = \"urn:schemas-microsoft-com:office:office\" /><o:p><font size=\"2\" face=\"바탕\"></font></o:p></span></p>";
-		String expected = "<p style=\"margin: 0cm 0cm 0pt;\" class=\"MsoNormal\"><span lang=\"EN-US\"><?xml:namespace prefix = o ns = \"urn:schemas-microsoft-com:office:office\" /><font size=\"2\" face=\"바탕\"></font></span></p>";
+		String expected = "<p style=\"margin: 0cm 0cm 0pt;\" class=\"MsoNormal\"><span lang=\"EN-US\"><?xml:namespace prefix = o ns = \"urn:schemas-microsoft-com:office:office\" /><!-- Removed Tag Filtered (o:p) --><font size=\"2\" face=\"바탕\"></font></span></p>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -549,7 +561,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 
 		String dirty = "<o:p><font size=\"2\" face=\"바탕\"></font></o:p>";
-		String expected = "<font size=\"2\" face=\"바탕\"></font>";
+		String expected = "<!-- Removed Tag Filtered (o:p) --><font size=\"2\" face=\"바탕\"></font>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -559,7 +571,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 
 		String dirty = "<span><o:p><font size=\"2\" face=\"바탕\"></font></o:p></span>";
-		String expected = "<span><font size=\"2\" face=\"바탕\"></font></span>";
+		String expected = "<span><!-- Removed Tag Filtered (o:p) --><font size=\"2\" face=\"바탕\"></font></span>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -782,5 +794,119 @@ public class XssFilterTest extends XssFilterTestCase {
 		clean = filter.doFilter(valid);
 		System.out.println("clean : " + clean);
 		Assert.assertEquals(valid , clean);
+	}
+	
+	@Test
+	public void elementVsAttributeDisable1() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+
+		String dirty = "<body text='test'><p>Hello</p></body>";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;<p>Hello</p>&lt;/body&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void elementVsAttributeDisable2() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+
+		String dirty = "<p src='test'>Hello</p>";
+		String expected = "<!-- Not Allowed Attribute Filtered --><p>Hello</p>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void elementVsAttributeDisable3() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+
+		String dirty = "<body src='test'>Hello</body>";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;body src='test'&gt;Hello&lt;/body&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void neloLogNoXss() throws IOException {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
+		String targetStr = readString(NORMAL_HTML_FILE);
+		String clean = filter.doFilterNelo(targetStr, neloLogWriter);
+		Assert.assertEquals(targetStr, clean);
+		Assert.assertEquals("", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogWithXssInvalidFile() throws IOException {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
+		String targetStr = readString(INVALID_HTML_FILE);
+		String clean = filter.doFilterNelo(targetStr, neloLogWriter);
+		Assert.assertNotSame(targetStr, clean);
+		String expectedNeloStr = "(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]form\n(Disabled Attribute)@[XSSFILTER_TEST]h2 align=\"center\"\n(Disabled Element)@[XSSFILTER_TEST]input\n(Disabled Element)@[XSSFILTER_TEST]input\n";
+		Assert.assertEquals(expectedNeloStr, neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogWithXssElement1() throws IOException {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
+		String dirty = "<html><body><br></br><p>hi</p><h1>test</h1></body></html>";
+		String clean = filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals("<html><!-- Not Allowed Tag Filtered -->&lt;body&gt;<!-- Not Allowed Tag Filtered -->&lt;br&gt;&lt;/br&gt;<p>hi</p><h1>test</h1>&lt;/body&gt;</html>", clean);
+		Assert.assertEquals("(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]br\n", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogWithXssElement2() throws IOException {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
+		String dirty = "<html><body><br><p><p><p><p><p><p><p></body></html>";
+		filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals("(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]br\n", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogWithXssAttribute() {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
+		String dirty = "<p src='test' href='test' what='test'>Hello</p>";
+		String expected = "<!-- Not Allowed Attribute Filtered --><p>Hello</p>";
+		String clean = filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals(expected, clean);
+		Assert.assertEquals("(Disabled Attribute)@[XSSFILTER_TEST]p src='test' href='test' what='test'\n", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogRemoveOption() {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced-remove.xml");
+		String dirty = "<html><head></head><body><h1>Hello</h1></body></html>";
+		String expected = "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><h1>Hello</h1>";
+		String clean = filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals(expected, clean);
+		Assert.assertEquals("(Removed Element)@[XSSFILTER_TEST]html\n(Removed Element)@[XSSFILTER_TEST]head\n(Removed Element)@[XSSFILTER_TEST]body\n", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogIEHackRemove() {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced-remove.xml");
+		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
+		String expected = "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]&gt;) --><h1></h1>";
+		String clean = filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals(expected, clean);
+		Assert.assertEquals("(Removed Element)@[XSSFILTER_TEST]<!--[if !supportMisalignedColumns]>\n", neloLogWriter.toString());
+	}
+	
+	@Test
+	public void neloLogIEHackAvailabe() {
+		StringWriter neloLogWriter = new StringWriter();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
+		String expected = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
+		String clean = filter.doFilterNelo(dirty, neloLogWriter);
+		Assert.assertEquals(expected, clean);
+		Assert.assertEquals("", neloLogWriter.toString());
 	}
 }
