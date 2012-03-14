@@ -52,9 +52,11 @@ public final class XssFilter {
 
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
-	private static String ELELMENT_NELO_MSG = " \n(Disabled Element)";
-	private static String ATTRIBUTE_NELO_MSG = " \n(Disabled Attribute)";
-	private static String ELELMENT_REMOVE_NELO_MSG = " \n(Removed Element)";
+	private static String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
+	private static String REMOVE_TAG_INFO_END = ") -->";
+	private static String ELELMENT_NELO_MSG = "(Disabled Element)";
+	private static String ATTRIBUTE_NELO_MSG = "(Disabled Attribute)";
+	private static String ELELMENT_REMOVE_NELO_MSG = "(Removed Element)";
 	private static String CONFIG = "lucy-xss.xml";
 	private static String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
@@ -65,7 +67,7 @@ public final class XssFilter {
 	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean isBlockingPrefixEnabled;
-
+	
 	private XssConfiguration config;
 
 	private static final Map<String, XssFilter> instanceMap = new HashMap<String, XssFilter>();
@@ -166,6 +168,8 @@ public final class XssFilter {
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public void doFilter(String dirty, Writer writer) {
+		StringWriter neloLogWriter = new StringWriter();
+		
 		if (dirty == null || "".equals(dirty)) {
 			LOG.debug("target string is empty. doFilter() method end.");
 			return ;
@@ -175,10 +179,39 @@ public final class XssFilter {
 
 		if (contents != null && !contents.isEmpty()) {
 			try {
-				this.serialize(writer, contents);
+				this.serialize(writer, contents, neloLogWriter);
 			} catch (IOException ioe) {
 			}
 		}
+		
+		if (this.isNeloLogEnabled) {
+			LOG.error(neloLogWriter.toString());
+		}
+	}
+	
+	/**
+	 * 테스트 코드에서 neloLog 테스트를 위해 만든, 메소드. Access Modifier 가 default 여서 외부로 노출되지 않는다.
+	 * @param dirty
+	 * @param writer
+	 * @param neloLogWriter
+	 */
+	String doFilterNelo(String dirty, StringWriter neloLogWriter) {
+		StringWriter writer = new StringWriter();
+		if (dirty == null || "".equals(dirty)) {
+			LOG.debug("target string is empty. doFilter() method end.");
+			return null;
+		}
+
+		Collection<Content> contents = MarkupParser.parse(dirty);
+
+		if (contents != null && !contents.isEmpty()) {
+			try {
+				this.serialize(writer, contents, neloLogWriter);
+			} catch (IOException ioe) {
+			}
+		}
+		
+		return writer.toString();
 	}
 
 	/**
@@ -224,21 +257,21 @@ public final class XssFilter {
 		return "";
 	}
 
-	private void serialize(Writer writer, Collection<Content> contents) throws IOException {
+	private void serialize(Writer writer, Collection<Content> contents, StringWriter neloLogWriter) throws IOException {
 		if (contents != null && !contents.isEmpty()) {
 			for (Content c : contents) {
 				if (c instanceof Comment || c instanceof Text || c instanceof Description) {
 					c.serialize(writer);
 				} else if (c instanceof IEHackExtensionElement) {
-					this.serialize(writer, IEHackExtensionElement.class.cast(c));
+					this.serialize(writer, IEHackExtensionElement.class.cast(c), neloLogWriter);
 				} else if (c instanceof Element) {
-					this.serialize(writer, Element.class.cast(c));
+					this.serialize(writer, Element.class.cast(c), neloLogWriter);
 				}
 			}
 		}
 	}
 
-	private void serialize(Writer writer, IEHackExtensionElement ie) throws IOException {
+	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
 
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
 
@@ -255,14 +288,24 @@ public final class XssFilter {
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents());
+				if (this.isNeloLogEnabled) {
+					neloLogWriter.write(this.neloElementRemoveMSG);
+					neloLogWriter.write(ie.getName() + "\n");
+				}
+				if (!this.withoutComment) {
+					writer.write(REMOVE_TAG_INFO_START);
+					writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
+					writer.write(REMOVE_TAG_INFO_END);
+				}
+				
+				this.serialize(writer, ie.getContents(), neloLogWriter);
 			}
 		} else {
 			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // 공백제거처리
 			writer.write(stdName);
 
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents());
+				this.serialize(writer, ie.getContents(), neloLogWriter);
 			}
 
 			if (ie.isClosed()) {
@@ -271,22 +314,25 @@ public final class XssFilter {
 		}
 	}
 
-	private void serialize(Writer writer, Element e) throws IOException {
-		StringWriter neloLogWriter = new StringWriter();
-		boolean hasElementXss = false;
+	private void serialize(Writer writer, Element e, StringWriter neloLogWriter) throws IOException {
 		boolean hasAttrXss = false;
-		boolean hasElementRemoved = false;
-
-		if (this.isNeloLogEnabled) {
-			neloLogWriter.write(e.getName());
-		}
-
 		checkRuleRemove(e);
 
 		if (e.isRemoved()) {
-			hasElementRemoved = true;
+			if (this.isNeloLogEnabled) {
+				neloLogWriter.write(this.neloElementRemoveMSG);
+				neloLogWriter.write(e.getName() + "\n");
+			}
+			
+			if (!this.withoutComment) {
+				writer.write(REMOVE_TAG_INFO_START);
+				writer.write(e.getName());
+				writer.write(REMOVE_TAG_INFO_END);
+			}
+			
+			
 			if (!e.isEmpty()) {
-				this.serialize(writer, e.getContents());
+				this.serialize(writer, e.getContents(), neloLogWriter);
 			}
 		} else {
 			if (!e.isDisabled()) {
@@ -294,7 +340,10 @@ public final class XssFilter {
 			}
 
 			if (e.isDisabled()) {
-				hasElementXss = true;
+				if (this.isNeloLogEnabled) {
+					neloLogWriter.write(this.neloElementMSG);
+					neloLogWriter.write(e.getName() + "\n");
+				}
 
 				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					e.setName(this.blockingPrefix + e.getName());
@@ -326,13 +375,14 @@ public final class XssFilter {
 
 			if (atts != null && !atts.isEmpty()) {
 
+				StringBuffer attrStr = new StringBuffer();
 				for (Attribute att : atts) {
 
 					if (!e.isDisabled() && att.isDisabled()) {
 
 						hasAttrXss = true;
 						if (this.isNeloLogEnabled) {
-							neloLogWriter.write(" " + att.getName() + "=" + att.getValue());
+							attrStr.append(" " + att.getName() + "=" + att.getValue());
 						}
 
 						continue;
@@ -340,6 +390,14 @@ public final class XssFilter {
 					} else {
 						writer.write(' ');
 						att.serialize(writer);
+					}
+				}
+				
+				if (hasAttrXss) {
+					if (this.isNeloLogEnabled) {
+						neloLogWriter.write(this.neloAttrMSG);
+						neloLogWriter.write(e.getName());
+						neloLogWriter.write(attrStr.toString() + "\n");
 					}
 				}
 
@@ -355,7 +413,7 @@ public final class XssFilter {
 			}
 
 			if (!e.isEmpty()) {
-				this.serialize(writer, e.getContents());
+				this.serialize(writer, e.getContents(), neloLogWriter);
 			}
 
 			if (e.isClosed()) {
@@ -370,19 +428,6 @@ public final class XssFilter {
 				}
 			}
 		}
-
-		if (this.isNeloLogEnabled && (hasElementXss || hasAttrXss || hasElementRemoved)) {
-			if (hasElementRemoved) {
-				neloLogWriter.write(this.neloElementRemoveMSG);
-			} else if (hasElementXss) {
-				neloLogWriter.write(this.neloElementMSG);
-			} else if (hasAttrXss) {
-				neloLogWriter.write(this.neloAttrMSG);
-			}
-
-			LOG.error(neloLogWriter.toString());
-		}
-
 	}
 
 	private void checkRuleRemove(Element e) {

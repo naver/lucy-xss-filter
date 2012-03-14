@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<white-url>
+		<pattern>http://serviceapi.nmv.naver.com/*</pattern>
+		<pattern>http://scrap.ad.naver.com/*</pattern>
+		<pattern>http://flvs.daum.net/flvPlayer.swf*</pattern>
+		<pattern>http://dory.mncast.com/mncHMovie.swf*</pattern>
+		<pattern>http://www.youtube.com/v/*</pattern>
+		<pattern>http://play.mgoon.com/Video/*</pattern>
+		<pattern>http://doc.mgoon.com/player/*</pattern>
+		<pattern>http://play.mgoon.com/Game/*</pattern>
+		<pattern>http://play.mgoon.com/Photo/*</pattern>
+		<pattern>http://flvr.pandora.tv/flv2pan/*</pattern>
+		<pattern>http://imgcdn.pandora.tv/gplayer/pandora_EGplayer.swf*</pattern>
+		<pattern>http://play.tagstory.com/player/*</pattern>
+</white-url>

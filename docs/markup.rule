@@ -37,4 +37,11 @@ text		::= [^<]* | ('<' [^<]*) |[#x00]+[^<]*
  http://www.xml.com/pub/a/2001/07/25/namingparts.html "xml 네이밍 룰 관련"
  http://xsd.stylusstudio.com/2003Sep/post05008.htm "CombiningChar 와 Extender 에 대한 질문?"
  
+기존엔 ^/=<># 특수 문자 및 모든 공백(스패이스, 개행문자, 탭 등)을 제외한 모든 문자가 태그 이름이 될 수 있었다.
+왜냐면 태그 룰이 tagName ::= [^?!'"/<>#x20#x9#xD#xA]+ 였기 때문이다.
+지금은 한글 및 기타 중국어, 일본어 이름 태그는 텍스트로 인식한다. 즉, 알파벳과 숫자, 일부 특수문자 만 태그 이름으로
+(html 및 xml 표준) 올수 있도록 수정되었다. 
+ 
+ 
  * 1.1.9-SNAPSHOT 버전에, 메일팀 OOM 이슈 관련해서 토큰 생성을 줄이기 위해,letter, digit, nameChar, startEnd 토큰 룰을 제거해서, 부모 토큰 룰에 합쳤다.
+ 
