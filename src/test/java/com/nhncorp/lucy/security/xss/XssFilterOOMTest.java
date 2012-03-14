@@ -10,6 +10,9 @@ package com.nhncorp.lucy.security.xss;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -27,6 +30,8 @@ public class XssFilterOOMTest extends XssFilterTestCase {
 	private static final String BIG_HTML_FILES_6M_REMOVE_IEHACK = "본문이 큰 html 메일_IEHack제거_6M.html";
 	private static final String BIG_HTML_FILES_6M_REMOVE_HTML_BODY_TAG = "본문이 큰 html 메일_6M_remove_html_body_tag.html";
 	private static final String BIG_HTML_FILES_3M = "본문이 큰 html 메일_용량줄임.html";
+	private static final String BIG_HTML_FILES_1_4_M = "bigHtml_1.4M.html";
+	private static final String BIG_HTML_FILES_1_7_M = "bigHtmlxssFilterGuide_1.7M.html";
 
 	@Ignore
 	@Test
@@ -56,6 +61,31 @@ public class XssFilterOOMTest extends XssFilterTestCase {
 		String target = readString(BIG_HTML_FILES_6M);
 		String result = filter.doFilter(target);
 		Assert.assertTrue(target.equals(result));
+	}	
+	
+	@Ignore
+	@Test
+	public void test6MFileSizeCaseConcurrentRun() throws Exception {
+		ExecutorService service = Executors.newFixedThreadPool(100);
+        final CountDownLatch latch = new CountDownLatch(10);
+            for (int i = 0; i < 10; i++) {
+                final int index = i;
+                service.execute(new Runnable() {
+                    public void run() {
+                    	XssFilter filter = XssFilter.getInstance();
+                		String target = "";
+						try {
+							target = readString(BIG_HTML_FILES_6M);
+							String result = filter.doFilter(target);
+						} catch (Exception e) {
+						} finally {
+							latch.countDown();
+						}
+                		
+                    }
+                });
+            }
+            latch.await();
 	}
 	
 	@Ignore
@@ -94,6 +124,38 @@ public class XssFilterOOMTest extends XssFilterTestCase {
 	public void test62MFileSizeCase() throws Exception {
 		XssFilter filter = XssFilter.getInstance();
 		String target = readString(BIG_HTML_FILES_62M);
-		filter.doFilter(target);
+		//filter.doFilter(target);
+		Writer writer;
+		writer = new BufferedWriter(new FileWriter("d:/test62MFile.html"));
+		filter.doFilter(target, writer);
+	}
+	
+	@Ignore
+	@Test
+	public void test6MFileSizeCaseWithNelo() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo.xml");
+		String target = readString(BIG_HTML_FILES_6M);
+		String result = filter.doFilter(target);
+		Assert.assertTrue(target.equals(result));
+	}
+	
+	@Ignore
+	@Test
+	public void testBigHtml_1_4_M() throws Exception {
+		XssFilter filter = XssFilter.getInstance();
+		String target = readString(BIG_HTML_FILES_1_4_M);
+		Writer writer;
+		writer = new BufferedWriter(new FileWriter("d:/testBigHtml_1_4_M_mem_advanced.html"));
+		filter.doFilter(target, writer);
+	}
+	
+	@Ignore
+	@Test
+	public void testBigHtml_1_7_M() throws Exception {
+		XssFilter filter = XssFilter.getInstance();
+		String target = readString(BIG_HTML_FILES_1_7_M);
+		Writer writer;
+		writer = new BufferedWriter(new FileWriter("d:/testBigHtml_1_7_M_mem_advanced.html"));
+		filter.doFilter(target, writer);
 	}
 }
