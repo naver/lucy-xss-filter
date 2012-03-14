@@ -54,9 +54,9 @@ public final class XssFilter {
 	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
 	private static String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
 	private static String REMOVE_TAG_INFO_END = ") -->";
-	private static String ELELMENT_NELO_MSG = "(Disabled Element)";
-	private static String ATTRIBUTE_NELO_MSG = "(Disabled Attribute)";
-	private static String ELELMENT_REMOVE_NELO_MSG = "(Removed Element)";
+	private static String ELELMENT_NELO_MSG = " (Disabled Element)";
+	private static String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
+	private static String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
 	private static String CONFIG = "lucy-xss.xml";
 	private static String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
@@ -122,9 +122,9 @@ public final class XssFilter {
 				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
 				filter.withoutComment = withoutComment;
-				filter.neloElementMSG = ELELMENT_NELO_MSG + "@[" + filter.service + "]";
-				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG + "@[" + filter.service + "]";
-				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG + "@[" + filter.service + "]";
+				filter.neloElementMSG = ELELMENT_NELO_MSG;
+				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
+				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
 				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
 				instanceMap.put(fileName, filter);
@@ -185,7 +185,10 @@ public final class XssFilter {
 		}
 		
 		if (this.isNeloLogEnabled) {
-			LOG.error(neloLogWriter.toString());
+			String neloStr = neloLogWriter.toString();
+			if (neloStr!=null && neloStr.length() > 0) {
+				LOG.error("@[" + this.service + "]" + neloStr);
+			}
 		}
 	}
 	
@@ -195,7 +198,8 @@ public final class XssFilter {
 	 * @param writer
 	 * @param neloLogWriter
 	 */
-	String doFilterNelo(String dirty, StringWriter neloLogWriter) {
+	String doFilterNelo(String dirty) {
+		StringWriter neloLogWriter = new StringWriter();
 		StringWriter writer = new StringWriter();
 		if (dirty == null || "".equals(dirty)) {
 			LOG.debug("target string is empty. doFilter() method end.");
@@ -211,7 +215,17 @@ public final class XssFilter {
 			}
 		}
 		
-		return writer.toString();
+		String neloStr = neloLogWriter.toString();
+		
+		if (this.isNeloLogEnabled) {
+			if (neloStr!=null && neloStr.length() > 0) {
+				return "@[" + this.service + "]" + neloStr;
+			} else {
+				return neloStr;
+			}
+		} else {
+			return "";
+		}
 	}
 
 	/**

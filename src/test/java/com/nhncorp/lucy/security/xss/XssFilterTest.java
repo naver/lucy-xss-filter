@@ -828,85 +828,66 @@ public class XssFilterTest extends XssFilterTestCase {
 	
 	@Test
 	public void neloLogNoXss() throws IOException {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String targetStr = readString(NORMAL_HTML_FILE);
-		String clean = filter.doFilterNelo(targetStr, neloLogWriter);
-		Assert.assertEquals(targetStr, clean);
-		Assert.assertEquals("", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(targetStr);
+		Assert.assertEquals("", neloStr);
 	}
 	
 	@Test
 	public void neloLogWithXssInvalidFile() throws IOException {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String targetStr = readString(INVALID_HTML_FILE);
-		String clean = filter.doFilterNelo(targetStr, neloLogWriter);
-		Assert.assertNotSame(targetStr, clean);
-		String expectedNeloStr = "(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]form\n(Disabled Attribute)@[XSSFILTER_TEST]h2 align=\"center\"\n(Disabled Element)@[XSSFILTER_TEST]input\n(Disabled Element)@[XSSFILTER_TEST]input\n";
-		Assert.assertEquals(expectedNeloStr, neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(targetStr);
+		String expectedNeloStr = "@[XSSFILTER_TEST] (Disabled Element)body\n (Disabled Element)form\n (Disabled Attribute)h2 align=\"center\"\n (Disabled Element)input\n (Disabled Element)input\n";
+		Assert.assertEquals(expectedNeloStr, neloStr);
 	}
 	
 	@Test
 	public void neloLogWithXssElement1() throws IOException {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String dirty = "<html><body><br></br><p>hi</p><h1>test</h1></body></html>";
-		String clean = filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals("<html><!-- Not Allowed Tag Filtered -->&lt;body&gt;<!-- Not Allowed Tag Filtered -->&lt;br&gt;&lt;/br&gt;<p>hi</p><h1>test</h1>&lt;/body&gt;</html>", clean);
-		Assert.assertEquals("(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]br\n", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("@[XSSFILTER_TEST] (Disabled Element)body\n (Disabled Element)br\n", neloStr);
 	}
 	
 	@Test
 	public void neloLogWithXssElement2() throws IOException {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String dirty = "<html><body><br><p><p><p><p><p><p><p></body></html>";
-		filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals("(Disabled Element)@[XSSFILTER_TEST]body\n(Disabled Element)@[XSSFILTER_TEST]br\n", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("@[XSSFILTER_TEST] (Disabled Element)body\n (Disabled Element)br\n", neloStr);
 	}
 	
 	@Test
 	public void neloLogWithXssAttribute() {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String dirty = "<p src='test' href='test' what='test'>Hello</p>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><p>Hello</p>";
-		String clean = filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals(expected, clean);
-		Assert.assertEquals("(Disabled Attribute)@[XSSFILTER_TEST]p src='test' href='test' what='test'\n", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("@[XSSFILTER_TEST] (Disabled Attribute)p src='test' href='test' what='test'\n", neloStr);
 	}
 	
 	@Test
 	public void neloLogRemoveOption() {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced-remove.xml");
 		String dirty = "<html><head></head><body><h1>Hello</h1></body></html>";
-		String expected = "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><h1>Hello</h1>";
-		String clean = filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals(expected, clean);
-		Assert.assertEquals("(Removed Element)@[XSSFILTER_TEST]html\n(Removed Element)@[XSSFILTER_TEST]head\n(Removed Element)@[XSSFILTER_TEST]body\n", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("@[XSSFILTER_TEST] (Removed Element)html\n (Removed Element)head\n (Removed Element)body\n", neloStr);
 	}
 	
 	@Test
 	public void neloLogIEHackRemove() {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced-remove.xml");
 		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
-		String expected = "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]&gt;) --><h1></h1>";
-		String clean = filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals(expected, clean);
-		Assert.assertEquals("(Removed Element)@[XSSFILTER_TEST]<!--[if !supportMisalignedColumns]>\n", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("@[XSSFILTER_TEST] (Removed Element)<!--[if !supportMisalignedColumns]>\n", neloStr);
 	}
 	
 	@Test
 	public void neloLogIEHackAvailabe() {
-		StringWriter neloLogWriter = new StringWriter();
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
 		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
-		String expected = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
-		String clean = filter.doFilterNelo(dirty, neloLogWriter);
-		Assert.assertEquals(expected, clean);
-		Assert.assertEquals("", neloLogWriter.toString());
+		String neloStr = filter.doFilterNelo(dirty);
+		Assert.assertEquals("", neloStr);
 	}
 }
