@@ -162,12 +162,12 @@ public class XssFilterTest extends XssFilterTestCase {
 	public void testBase64DecodingTest() {
 
 		XssFilter filter = XssFilter.getInstance("xss.xml");
-		String dirty = "<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnZW1iZWRfc2NyaXB0X2FsZXJ0Jyk8L3NjcmlwdD4=\">";
+		String dirty = "<embed src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\">";
 		String expected = "<!-- Not Allowed Attribute Filtered --><embed>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
-		String dirty2 = "<object data=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnb2JqZWN0X3NjcmlwdF9hbGVydCcpPC9zY3JpcHQ+\"></object>";
+		String dirty2 = "<object data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\"></object>";
 		String expected2 = "<!-- Not Allowed Attribute Filtered --><object></object>";
 		String clean2 = filter.doFilter(dirty2);
 		Assert.assertEquals(expected2, clean2);
@@ -274,7 +274,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	public void testNoCommentXSSFilter() {
 
 		XssFilter filter = XssFilter.getInstance("lucy-xss5.xml", true);
-		String dirty = "<embed src=\"data:text/html;base64,PHNjcmlwdD5hbGVydCgnZW1iZWRfc2NyaXB0X2FsZXJ0Jyk8L3NjcmlwdD4=\"></embed>";
+		String dirty = "<embed src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\"></embed>";
 		String expected = "<embed></embed>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
@@ -292,7 +292,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
 
 		String clean = filter.doFilter(dirty);
-		String expected = "<!-- Not Allowed Attribute Filtered --><EMBED type=\"image/svg+xml\"></EMBED>";
+		String expected = "<!-- Not Allowed Attribute Filtered --><EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\"></EMBED>";
 		Assert.assertEquals(expected, clean);
 	}
 
@@ -889,5 +889,28 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
 		String neloStr = filter.doFilterNelo(dirty);
 		Assert.assertEquals("", neloStr);
+	}
+	
+	/**
+	 * src에 script 패턴이 존재 시 무조건 필터링 되는 문제 테스트
+	 */
+	@Test
+	public void notAllowedPatternSrcAttribute() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+
+		String dirty = "<img src='http://sstorym.cafe24.com/deScription/lereve/lelogo.gif' width='700'>";
+		String expected = "<img src='http://sstorym.cafe24.com/deScription/lereve/lelogo.gif' width='700'>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='scription/lereve/lelogo.gif' width='700'>";
+		expected = "<img src='scription/lereve/lelogo.gif' width='700'>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='script:/lereve/lelogo.gif' width='700'>";
+		expected = "<!-- Not Allowed Attribute Filtered --><img width='700'>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
 	}
 }
