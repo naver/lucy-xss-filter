@@ -284,6 +284,7 @@ public final class XssConfiguration {
 		String disable = element.getAttribute("disable");
 		//Base64Decoding
 		String base64Decoding = element.getAttribute("base64Decoding");
+		String exceptionTagList = element.getAttribute("exceptionTagList");
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -301,6 +302,18 @@ public final class XssConfiguration {
 
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {
 			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
+		}
+		
+		if (exceptionTagList!= null && exceptionTagList.length() > 0) {
+			String[] tokens = exceptionTagList.split(",");
+			if (tokens!=null) {
+				for (int i =0;i<tokens.length;i++) {
+					if (tokens[i] != null ) {
+						String exceptionTag = tokens[i].trim();
+						rule.addExceptionTag(exceptionTag);
+					}
+				}
+			}
 		}
 
 		//Base64Decoding
@@ -415,7 +428,7 @@ public final class XssConfiguration {
 		Set<String> attGroup = null;
 
 		if (override) {
-			attGroup = this.tagGroups.get(name);
+			attGroup = this.attGroups.get(name);
 		}
 
 		if (attGroup == null) {

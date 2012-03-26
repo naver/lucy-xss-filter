@@ -291,6 +291,7 @@ public final class XssFilter {
 
 		if (iEHExRule != null) {
 			iEHExRule.checkEndTag(ie);
+			iEHExRule.checkDisabled(ie);
 			iEHExRule.excuteListener(ie);
 		} else {
 			ie.setEnabled(false);
@@ -480,7 +481,9 @@ public final class XssFilter {
 				if (attRule == null) {
 					att.setEnabled(false);
 				} else {
-					attRule.checkDisabled(att);
+					if (!attRule.getExceptionTagList().contains(e.getName())) {
+						attRule.checkDisabled(att);
+					}
 					attRule.checkAttributeValue(att);
 					attRule.executeListener(att);
 				}
