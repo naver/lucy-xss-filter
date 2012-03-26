@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+	<attributeRule>
+		<attribute name="class" disable="true" exceptionTagList="table,span">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+		</attribute>
+	</attributeRule>
+	<elementRule>
+		<element name="span" override="false">
+			<attributes>
+			</attributes>
+		</element>
+	</elementRule>
+</config>

