@@ -913,4 +913,54 @@ public class XssFilterTest extends XssFilterTestCase {
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
+	
+	/**
+	 * 모든 태그에서 class 속성을 허용하지 않고, table 태그에서만 class 속성을 허용 - 메일웹개발팀 이우철
+	 */
+	@Test
+	public void disableClassAttrExceptTable() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail-table-class-available.xml");
+		// exceptionTagList 에 포함 된 element 는 attribute 의 disable 속성에 영향을 안 받도록 예외처리가 잘 되는지 확인.
+		String dirty = "<table class='test'></table>";
+		String expected = "<table class='test'></table>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// exceptionTagList 에 없는 태그들은 attribute 의 disable 속성이 true 되어 있으면 필터링 되는지 확인.
+		dirty = "<div class='test'></div>";
+		expected = "<!-- Not Allowed Attribute Filtered --><div></div>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// exceptionTagList로 예외처리가 되었어도, element 의 속성요소로 설정이 안되어 있는 경우 disable 되는지 확인
+		dirty = "<span class='test'></span>";
+		expected = "<!-- Not Allowed Attribute Filtered --><span></span>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// exceptionTagList로 예외처리가 되었어도, value 가 문제 있을 경우 disable 되는지 확인
+		dirty = "<table class='script'></table>";
+		expected = "<!-- Not Allowed Attribute Filtered --><table></table>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+	}
+	
+	@Test
+	public void hrefAttackTest() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\">";
+		String expected = "<LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\">";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void styleAttackTest() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<DIV STYLE=\"background-image: url(javascript:alert('XSS'))\">";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;DIV STYLE=\"background-image: url(javascript:alert('XSS'))\"&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
 }
