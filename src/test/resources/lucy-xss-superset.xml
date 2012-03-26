@@ -4,12 +4,12 @@
 	extends="lucy-xss-default.xml">
 
 	<elementRule>
-		<element name="body" disable="true" />
+		<element name="body" disable="true" /> <!-- <BODY ONLOAD=alert("XSS")>, <BODY BACKGROUND="javascript:alert('XSS')"> -->
 		<element name="embed" disable="true" />
-		<element name="iframe" disable="true" />
+		<element name="iframe" disable="true" /> <!-- <IFRAME SRC=”http://hacker-site.com/xss.html”> -->
 		<element name="meta" disable="true" />
 		<element name="object" disable="true" />
-		<element name="script" disable="true" />
+		<element name="script" disable="true" /> <!-- <SCRIPT> alert(“XSS”); </SCRIPT> -->
 		<element name="style" disable="true" />
 	</elementRule>
 	

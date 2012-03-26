@@ -29,6 +29,7 @@ public final class AttributeRule {
 	private boolean disabled;
 	private List<Pattern> patterns;
 	private List<Pattern> npatterns;
+	private List<String> exceptionTagList = new ArrayList<String>();
 
 	//Base64Decoding on the browser supporting HTML5
 	private boolean base64Decoding;
@@ -189,5 +190,13 @@ public final class AttributeRule {
 
 	public List<AttributeListener> getListeners() {
 		return Collections.unmodifiableList(this.listeners);
+	}
+	
+	public void addExceptionTag(String exceptionTag) {
+		exceptionTagList.add(exceptionTag);
+	}
+	
+	public List<String> getExceptionTagList() {
+		return exceptionTagList;
 	}
 }
