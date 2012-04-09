@@ -11,6 +11,7 @@
 		<ref name="strike"/>
 		<ref name="big"/>
 		<ref name="small"/>
+		<ref name="center"/>
 	</elementGroup>
 	
 	<elementGroup name="Phrase">
