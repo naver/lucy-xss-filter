@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset-sax.xml">
+	<attributeRule>
+		<attribute name="class" disable="true" exceptionTagList="table,span">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="href">
+		    <notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+		    <notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+		    <allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|mailto:|x-msg:).+]]></allowedPattern>
+		    <allowedPattern><![CDATA[(?i)['"]?\s*(javascript:m\.util\.viewEmbed\(.\\*).+]]></allowedPattern>
+		    <allowedPattern><![CDATA[(?i)['"]?\s*(javascript:mUtil\.viewEmbed\(.\\*).+]]></allowedPattern>
+ 		 </attribute>
+		</attributeRule>
+	<elementRule>
+		<element name="IEHackExtension">
+		</element>
+	</elementRule>
+</config>

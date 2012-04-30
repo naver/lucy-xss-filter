@@ -95,20 +95,41 @@ public final class AttributeRule {
 			if (this.isBase64Decoding()) {
 				value = this.decodeWithBase64(value);
 			}
+			
+			boolean isPatternsExist = this.patterns != null && !this.patterns.isEmpty();
+			boolean isNPatternsExist = this.npatterns != null && !this.npatterns.isEmpty();
+			
 
-			if (this.patterns != null && !this.patterns.isEmpty()) {
-				for (Pattern p : this.patterns) {
-					if (p.matcher(value).matches()) {
-						return;
-					}
-				}
-				att.setEnabled(false);
-				return;
-			} else if (this.npatterns != null && !this.npatterns.isEmpty()) {
+			if(isPatternsExist && isNPatternsExist) {
 				for (Pattern p : this.npatterns) {
 					if (p.matcher(value).find()) {
 						att.setEnabled(false);
 						break;
+					}
+				}
+				
+				for (Pattern p : this.patterns) {
+					if (p.matcher(value).matches()) {
+						att.setEnabled(true);
+						break;
+					}
+				}
+				
+			} else {
+				if (isPatternsExist) {
+					for (Pattern p : this.patterns) {
+						if (p.matcher(value).matches()) {
+							return;
+						}
+					}
+					att.setEnabled(false);
+					return;
+				} else if (isNPatternsExist) {
+					for (Pattern p : this.npatterns) {
+						if (p.matcher(value).find()) {
+							att.setEnabled(false);
+							break;
+						}
 					}
 				}
 			}

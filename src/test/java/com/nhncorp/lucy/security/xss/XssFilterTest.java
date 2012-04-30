@@ -14,6 +14,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -32,6 +37,13 @@ public class XssFilterTest extends XssFilterTestCase {
 	private static final String NORMAL_HTML_FILES[] = {"xss-normal1.html"};
 	private static final String NORMAL_HTML_FILE = "xss-normal1.html";
 	private static final String INVALID_HTML_FILE = "xss-invalid1.html";
+	
+	private static final String[] targetString = {"<script></script>", "<body text='test'><p>Hello</p></body>", "<img src='script:/lereve/lelogo.gif' width='700'>"};
+	private static final String[] expectedString = {"<!-- Not Allowed Tag Filtered -->&lt;script&gt;&lt;/script&gt;", "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;<p>Hello</p>&lt;/body&gt;", "<!-- Not Allowed Attribute Filtered --><img width='700'>"};
+	
+	private static final String[] configFile = {"lucy-xss-superset.xml","lucy-xss-superset.xml", "lucy-xss-blog-removetag.xml"};
+	private static final String[] targetStringOnOtherConfig = {"<img src='script:/lereve/lelogo.gif' width='700'>", "<!--[if !supportMisalignedColumns]--><h1>Hello</h1><!--[endif]-->", "<html><head></head><body><p>Hello</p></body>"};
+	private static final String[] expectedStringOnOtherConfig = {"<!-- Not Allowed Attribute Filtered --><img width='700'>", "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]--&gt;) --><h1>Hello</h1>", "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>"};
 
 	@Test
 	// 정상적인 HTML 페이지를 통과 시키는지 검사한다.(필터링 전후가 동일하면 정상)
@@ -43,6 +55,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	// JavaScript와 같은 공격적인 코드를 필터링 하는지 검사한다.(필터링 전후가 틀려야 정상)
 	public void testDirtyCodeFiltering() throws Exception {
@@ -56,9 +69,10 @@ public class XssFilterTest extends XssFilterTestCase {
 	@Test
 	// 시스템을 공격하는 코드를 필터링 하는지 검사한다.(필터링 전후가 틀려야 정상)
 	public void testCrackCodeFiltering() throws Exception {
-		XssFilter filter = XssFilter.getInstance("lucy-xss-mine.xml");
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 		for (String invalid : readString(INVALID_HTML_FILES)) {
 			String clean = filter.doFilter(invalid);
+			System.out.println("clean : " + clean);
 			Assert.assertFalse("\n" + invalid + "\n" + clean, invalid.equals(clean));
 		}
 	}
@@ -73,8 +87,8 @@ public class XssFilterTest extends XssFilterTestCase {
 	// (lucy-xss.xml과 lucy-xss2.xml의 필터링 결과가 틀려야 정상)
 	public void testConfigutaionLoading() throws Exception {
 		XssFilter filter = XssFilter.getInstance();
-		XssFilter sameFilter = XssFilter.getInstance("lucy-xss.xml");
-		XssFilter otherFilter = XssFilter.getInstance("lucy-xss2.xml");
+		XssFilter sameFilter = XssFilter.getInstance("lucy-xss-superset.xml");
+		XssFilter otherFilter = XssFilter.getInstance("lucy-xss.xml");
 
 		String dirty = "<applet><!-- abc --></applet>";
 
@@ -87,7 +101,6 @@ public class XssFilterTest extends XssFilterTestCase {
 		System.out.println("sameClean : " + sameClean);
 		System.out.println("otherClean : " + otherClean);
 
-		Assert.assertFalse("\n" + dirty + "\n" + clean, dirty.equals(clean));
 		Assert.assertTrue("\n" + clean + "\n" + sameClean, clean.equals(sameClean));
 		Assert.assertFalse("\n" + clean + "\n" + otherClean, clean.equals(otherClean));
 	}
@@ -350,7 +363,7 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		dirty = "<!--[if !IE]><-->";
 		clean = filter.doFilter(dirty);
-		expected = "&lt;--&gt;";
+		expected = "<!-- Removed Tag Filtered (&lt;!--[if !IE]&gt;) -->&lt;--&gt;";
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<!--> <![endif]-->";
@@ -464,7 +477,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		System.out.println(clean);
 		Assert.assertEquals(expected, clean);
 	}
-
+	
 	@Test
 	public void testIEHackTagWithoutCloseTag() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
@@ -472,7 +485,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		// IE Hack 에서는 Close 태그가 없으면 주석으로 인식되서 뒤에 있는 엘리먼트들 노출에 문제가 생길 수 있다. Close 태그가 없거나 broken 일 때 IE Hack Start 태그를 제거하는 식으로 변경하자.
 		String dirty = "<!--[if !IE]><h1>abcd</h1>";
 		String clean = filter.doFilter(dirty);
-		String expected = "<h1>abcd</h1>";
+		String expected = "<!-- Removed Tag Filtered (&lt;!--[if !IE]&gt;) --><h1>abcd</h1>";
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<!--[if]><h1>abcd</h1><![endif]-->";
@@ -482,7 +495,7 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		dirty = "<!--[if !IE]><h1>abcd</h1><![endif]--";
 		clean = filter.doFilter(dirty);
-		expected = "<h1>abcd</h1>&lt;![endif]--";
+		expected = "<!-- Removed Tag Filtered (&lt;!--[if !IE]&gt;) --><h1>abcd</h1>&lt;![endif]--";
 		Assert.assertEquals(expected, clean);
 
 	}
@@ -614,6 +627,9 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 	}
 
+	/**
+	 * 엘리먼트 네이밍 테스트
+	 */
 	@Test
 	public void testElementNaming() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mail2.xml");
@@ -630,6 +646,11 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		dirty = "<_a>";
 		expected = "<blocking__a>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<_a></_a>";
+		expected = "<blocking__a></blocking__a>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
@@ -649,6 +670,9 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 	}
 
+	/**
+	 * blockingPrefix 테스트
+	 */
 	@Test
 	public void mailDisableVerifyRequest() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-mailteam-body-test.xml");
@@ -787,7 +811,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String valid = "http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com</script><img src=pooo.png onerror=alert(/V/)>";
 		String clean = filter.doFilter(valid);
 		System.out.println("clean : " + clean);
-		Assert.assertEquals("http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com&lt;/script&gt;<!-- Not Allowed Attribute Filtered --><img>" , clean);
+		Assert.assertEquals("http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com&lt;/script&gt;<!-- Not Allowed Attribute Filtered --><img src=pooo.png>" , clean);
 		
 		// 인코딩 된 쿼리
 		valid = "http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com%3C/script%3E%3Cimg%20src=pooo.png%20onerror=alert(/V/)%3E";
@@ -946,11 +970,26 @@ public class XssFilterTest extends XssFilterTestCase {
 		
 	}
 	
+	/**
+	 * Href 속성에서 javascript 패턴 존재하는지 테스트
+	 */
 	@Test
 	public void hrefAttackTest() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<a HREF=\"javascript:alert('XSS');\"></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered --><a></a>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * Link 태그가 escape 되는지 테스트
+	 */
+	@Test
+	public void linkAttackTest() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "<LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\">";
-		String expected = "<LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\">";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;LINK REL=\"stylesheet\" HREF=\"javascript:alert('XSS');\"&gt;";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -962,5 +1001,200 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected = "<!-- Not Allowed Tag Filtered -->&lt;DIV STYLE=\"background-image: url(javascript:alert('XSS'))\"&gt;";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
+	}
+	
+
+	@Test
+	public void illegalAttributeEnd() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<colgroup width=\"";
+		String expected = "<colgroup width=\">";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void endTagWithoutStartTag() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "</p>";
+		String expected = "&lt;/p&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void html5TagVideo() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<video></video>";
+		String expected = "<video></video>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<video width=\"320\" height=\"240\" controls=\"controls\"><source src=\"movie.mp4\" type=\"video/mp4\"></video>";
+		expected = dirty;
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<video width=\"320\" height=\"240\" controls=\"controls\"><source src=\"movie.mp4\" type=\"video/mp4\" pubdate=\"\"></video>";
+		expected = "<video width=\"320\" height=\"240\" controls=\"controls\"><!-- Not Allowed Attribute Filtered --><source src=\"movie.mp4\" type=\"video/mp4\"></video>"; // pubdate=\"\" 필터링 됨
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void html5TagVideoInDiv() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<div><video></video></div>";
+		String expected = "<div><video></video></div>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void embedNoWhitelistFlashCall() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<embed type=\"text/html\" src=\"http://www.w3schools.com/html5/helloworld.swf\"";
+		String expected = "<embed type=\"text/html\" src=\"http://www.w3schools.com/html5/helloworld.swf\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void withoutCommentMultiThreadTest() {
+		String expectedWithComment = "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;&lt;/body&gt;";
+		String expectedWithoutComment = "&lt;body text='test'&gt;&lt;/body&gt;";
+		
+		ExecutorService service = Executors.newFixedThreadPool(10);
+		int count = 2;
+		final CountDownLatch latch = new CountDownLatch(count);
+		final ConcurrentHashMap<Integer, String> result = new ConcurrentHashMap<Integer, String>();
+		
+		try {
+			for(int i=0; i< count; i++) {
+				final int index = i;
+				service.execute(new Runnable() {
+					
+					public void run() {
+						try {
+							XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml", index % 2 == 0?false:true); // 짝수면 주석추가, 홀수면 주석생략
+							String dirty = "<body text='test'></body>";
+							
+							String clean = filter.doFilter(dirty);
+							System.out.println("clean : " + clean);
+							result.put(index, clean);
+						} finally {
+							latch.countDown();
+						}
+					}
+				});
+			}
+			
+			latch.await();
+			
+		} catch (Exception e) {
+			 throw new RuntimeException(e);
+		} finally {
+			service.shutdown();
+		}
+		
+		Enumeration<Integer> keys = result.keys();
+		while(keys.hasMoreElements()) {
+			Integer nextKey = keys.nextElement();
+			if (nextKey%2 == 0) { // 짝수면 주석이 있어야함
+				Assert.assertEquals(expectedWithComment, result.get(nextKey));
+			} else { // 홀수면 주석 생략되어야함.
+				Assert.assertEquals(expectedWithoutComment, result.get(nextKey));
+			}
+		}
+	}
+	
+	@Test
+	public void variousInputMultiThreadTest() {
+		ExecutorService service = Executors.newFixedThreadPool(100);
+		int runCount = 10000;
+		final CountDownLatch latch = new CountDownLatch(runCount);
+		final ConcurrentHashMap<Integer, String> result = new ConcurrentHashMap<Integer, String>();
+		
+		try {
+			for(int i=0; i< runCount; i++) {
+				final int index = i;
+				service.execute(new Runnable() {
+					
+					public void run() {
+						try {
+							XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+							String dirty = targetString[index % targetString.length];
+							String clean = filter.doFilter(dirty);
+							result.put(index, clean);
+						} finally {
+							latch.countDown();
+						}
+					}
+				});
+			}
+			
+			latch.await();
+			
+		} catch (Exception e) {
+			 throw new RuntimeException(e);
+		} finally {
+			service.shutdown();
+		}
+		
+		Enumeration<Integer> keys = result.keys();
+		while(keys.hasMoreElements()) {
+			Integer nextKey = keys.nextElement();
+			Assert.assertEquals(expectedString[nextKey % targetString.length], result.get(nextKey));
+		}
+	}
+	
+	@Test
+	public void variousInputVariousConfigMultiThreadTest() {
+		ExecutorService service = Executors.newFixedThreadPool(100);
+		int runCount = 10000;
+		final CountDownLatch latch = new CountDownLatch(runCount);
+		final ConcurrentHashMap<Integer, String> result = new ConcurrentHashMap<Integer, String>();
+		
+		try {
+			for(int i=0; i< runCount; i++) {
+				final int index = i;
+				service.execute(new Runnable() {
+					
+					public void run() {
+						try {
+							XssFilter filter = XssFilter.getInstance(configFile[index % configFile.length]);
+							String dirty = targetStringOnOtherConfig[index % targetStringOnOtherConfig.length];
+							String clean = filter.doFilter(dirty);
+							result.put(index, clean);
+						} finally {
+							latch.countDown();
+						}
+					}
+				});
+			}
+			
+			latch.await();
+			
+		} catch (Exception e) {
+			 throw new RuntimeException(e);
+		} finally {
+			service.shutdown();
+		}
+		
+		Enumeration<Integer> keys = result.keys();
+		while(keys.hasMoreElements()) {
+			Integer nextKey = keys.nextElement();
+			Assert.assertEquals(expectedStringOnOtherConfig[nextKey % targetStringOnOtherConfig.length], result.get(nextKey));
+		}
+	}
+	
+	@Test
+	public void shopCharTest() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "#Test";
+		String clean = filter.doFilter(dirty);
+		System.out.println("dirty : " + dirty);
+		System.out.println("clean : " + clean);
+		Assert.assertTrue("\n" + dirty + "\n" + clean, dirty.equals(clean));
 	}
 }
