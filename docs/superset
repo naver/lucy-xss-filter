@@ -1,0 +1,9 @@
+
+<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+
+
+허규[보안분석]XSS공격패턴 중에 이러한 케이스가 아마 있을거에요
+<IMG SRC="jav&#x0D;ascript:alert('XSS');">
+&#x0D 이렇게 넣어도 브라우저단에서는 동작하는 경우가 있어서,
+해당 HEX코드값을 걸러내는...
+필터하는 역할을 하기 위해 넣었습니다.

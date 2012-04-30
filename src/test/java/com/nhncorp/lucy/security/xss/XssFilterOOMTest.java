@@ -25,6 +25,7 @@ import org.junit.Test;
  */
 public class XssFilterOOMTest extends XssFilterTestCase {
 	private static final String BIG_HTML_FILES_6M = "본문이 큰 html 메일_6M.html";
+	private static final String BIG_HTML_FILES_31M = "본문이 큰 html 메일_31M.html";
 	private static final String BIG_HTML_FILES_62M = "본문이 큰 html 메일_62M.html";
 	private static final String BIG_EML_FILES_8M = "본문이_큰_html_메일.eml";
 	private static final String BIG_HTML_FILES_6M_REMOVE_IEHACK = "본문이 큰 html 메일_IEHack제거_6M.html";
@@ -57,12 +58,30 @@ public class XssFilterOOMTest extends XssFilterTestCase {
 	@Ignore
 	@Test
 	public void test6MFileSizeCase() throws Exception {
-		XssFilter filter = XssFilter.getInstance();
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml", true);
 		String target = readString(BIG_HTML_FILES_6M);
 		String result = filter.doFilter(target);
 		Assert.assertTrue(target.equals(result));
-	}	
+	}
 	
+	@Ignore
+	@Test
+	public void test31MFileSizeCase() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String target = readString(BIG_HTML_FILES_31M);
+		String result = filter.doFilter(target);
+		Assert.assertTrue(target.equals(result));
+	}
+	
+	@Ignore
+	@Test
+	public void test62MFileSizeCase() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String target = readString(BIG_HTML_FILES_62M);
+		String result = filter.doFilter(target);
+		Assert.assertTrue(target.equals(result));
+	}
+
 	@Ignore
 	@Test
 	public void test6MFileSizeCaseConcurrentRun() throws Exception {
@@ -121,7 +140,7 @@ public class XssFilterOOMTest extends XssFilterTestCase {
 	
 	@Ignore
 	@Test
-	public void test62MFileSizeCase() throws Exception {
+	public void test62MFileSizeCaseFile() throws Exception {
 		XssFilter filter = XssFilter.getInstance();
 		String target = readString(BIG_HTML_FILES_62M);
 		//filter.doFilter(target);
