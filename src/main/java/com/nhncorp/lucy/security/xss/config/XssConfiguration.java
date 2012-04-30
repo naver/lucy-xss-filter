@@ -272,6 +272,7 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(ElementListener.class.cast(obj));
 				} catch (Exception ex) {
+					System.out.println(name + "태그의 " + className + "(ElementListener) 설정 중 오류 발생. xml 설정을 확인하세요. " + ex.toString());
 					// ignore
 				}
 			}
@@ -339,6 +340,7 @@ public final class XssConfiguration {
 					Object obj = Class.forName(className.trim()).newInstance();
 					rule.addListener(AttributeListener.class.cast(obj));
 				} catch (Exception ex) {
+					System.out.println(name + "속성의 " + className + "(AttributeListener) 설정 중 오류 발생. xml 설정을 확인하세요. " + ex.toString());
 					// ignore
 				}
 			}
