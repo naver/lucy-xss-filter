@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+	extends="lucy-xss-superset-sax.xml">
+
+	<elementRule>
+		<element name="embed" disable="false">
+		</element>
+	</elementRule>
+	
+	<attributeRule>
+		<attribute name="src">
+			<notAllowedPattern><![CDATA[(?i:file:[/]{1,3}[a-zA-Z]:[^>]*)]]></notAllowedPattern>
+		</attribute>
+	</attributeRule>
+</config>

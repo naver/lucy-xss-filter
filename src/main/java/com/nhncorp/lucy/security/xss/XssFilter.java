@@ -57,7 +57,7 @@ public final class XssFilter {
 	private static String ELELMENT_NELO_MSG = " (Disabled Element)";
 	private static String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
 	private static String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
-	private static String CONFIG = "lucy-xss.xml";
+	private static String CONFIG = "lucy-xss-superset.xml";
 	private static String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
 	private boolean isNeloLogEnabled;
@@ -70,7 +70,7 @@ public final class XssFilter {
 	
 	private XssConfiguration config;
 
-	private static final Map<String, XssFilter> instanceMap = new HashMap<String, XssFilter>();
+	private static final Map<FilterRepositoryKey, XssFilter> instanceMap = new HashMap<FilterRepositoryKey, XssFilter>();
 
 	private XssFilter(XssConfiguration config) {
 		this.config = config;
@@ -114,8 +114,11 @@ public final class XssFilter {
 		**/
 		try {
 			synchronized (XssFilter.class) {
-				XssFilter filter = instanceMap.get(fileName);
+				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
+				
+				XssFilter filter = instanceMap.get(key);
 				if (filter != null) {
+					filter.withoutComment = withoutComment;
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
@@ -127,7 +130,7 @@ public final class XssFilter {
 				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
 				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
-				instanceMap.put(fileName, filter);
+				instanceMap.put(key, filter);
 				return filter;
 			}
 		} catch (Exception e) {
@@ -302,7 +305,6 @@ public final class XssFilter {
 		}
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-			if (!ie.isEmpty()) {
 				if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloElementRemoveMSG);
 					neloLogWriter.write(ie.getName() + "\n");
@@ -313,8 +315,9 @@ public final class XssFilter {
 					writer.write(REMOVE_TAG_INFO_END);
 				}
 				
-				this.serialize(writer, ie.getContents(), neloLogWriter);
-			}
+				if (!ie.isEmpty()) {
+					this.serialize(writer, ie.getContents(), neloLogWriter);
+				}
 		} else {
 			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // 공백제거처리
 			writer.write(stdName);

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+
+	<elementRule>
+		<element name="link" disable="true" />
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListener
+			</listener>
+		</element>
+	</elementRule>
+</config>
