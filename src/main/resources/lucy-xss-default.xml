@@ -25,6 +25,8 @@
 		<ref name="cite"/>
 		<ref name="abbr"/>
 		<ref name="acronym"/>
+		<ref name="bdi"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="mark"/> <!-- HTML5 added at 2012.04.10 -->
 	</elementGroup>
 	
 	<elementGroup name="Special">
@@ -43,6 +45,9 @@
 		<ref name="span"/>
 		<ref name="bdo"/>
 		<ref name="iframe"/>
+		<ref name="progress"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="meter"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="time"/> <!-- HTML5 added at 2012.04.10 -->
 	</elementGroup>
 	
 	<elementGroup name="Formctrl">
@@ -51,6 +56,10 @@
 		<ref name="textarea"/>
 		<ref name="label"/>
 		<ref name="button"/>
+		<ref name="command"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="datalist"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="keygen"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="output"/> <!-- HTML5 added at 2012.04.10 -->
 	</elementGroup>
 	
 	<elementGroup name="Inline">
@@ -88,11 +97,33 @@
 		<ref name="table"/>
 		<ref name="fieldset"/>
 		<ref name="address"/>
+		<ref name="details"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="figure"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="article"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="aside"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="footer"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="header"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="hgroup"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="nav"/> <!-- HTML5 added at 2012.04.10 -->
+		<ref name="section"/> <!-- HTML5 added at 2012.04.10 -->
+	</elementGroup>
+	
+	<!-- HTML5 added at 2012.04.10 -->
+	<elementGroup name="EmbeddedContent">
+		<ref name="img"/>
+		<ref name="iframe"/>
+		<ref name="embed"/>
+		<ref name="object"/>
+		<ref name="param"/>
+		<ref name="video"/>
+		<ref name="audio"/>
+		<ref name="canvas"/>
 	</elementGroup>
 	
 	<elementGroup name="Flow">
 		<ref name="Block"/>
 		<ref name="Inline"/>
+		<ref name="EmbeddedContent"/> <!-- HTML5 added at 2012.04.10 -->
 	</elementGroup>
 	
 	<attributeGroup name="Core">
@@ -110,6 +141,19 @@
 	<attributeGroup name="Attrs">
 		<ref name="Core"/>
 		<ref name="I18n"/>
+	</attributeGroup>
+	
+	<!-- HTML5 added at 2012.04.10 -->
+	<attributeGroup name="Html5GlobalAttr">
+		<ref name="Attrs"/>
+		<ref name="tabindex"/>
+		<ref name="accesskey"/>
+		<ref name="contenteditable"/>
+		<ref name="contextmenu"/>
+		<ref name="draggable"/>
+		<ref name="dropzone"/>
+		<ref name="hidden"/>
+		<ref name="spellcheck"/>
 	</attributeGroup>
 	
 	<attributeGroup name="Cellhalign">
@@ -138,6 +182,8 @@
 				<ref name="shape"/>
 				<ref name="coords"/>
 				<ref name="tabindex"/>
+				<ref name="media"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline">
@@ -151,6 +197,7 @@
 		<element name="abbr" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -169,6 +216,7 @@
 		<element name="adress" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -206,12 +254,17 @@
 				<ref name="alt"/>
 				<ref name="tabindex"/>
 				<ref name="accesskey"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="hreflang"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="media"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="type"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
 		<element name="b" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -222,6 +275,7 @@
 			<attributes>
 				<ref name="href"/>
 				<ref name="target"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -237,6 +291,7 @@
 		<element name="bdo" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -256,6 +311,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="cite"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Block"/>
@@ -271,6 +327,7 @@
 				<ref name="vlink"/>
 				<ref name="alink"/>
 				<ref name="bgcolor"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Block"/>
@@ -283,6 +340,7 @@
 			<attributes>
 				<ref name="Core"/>
 				<ref name="clear"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -295,6 +353,14 @@
 				<ref name="disabled"/>
 				<ref name="tabindex"/>
 				<ref name="accesskey"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autofocus"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formaction"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formenctype"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formmethod"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formnovalidate"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formtarget"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow">
@@ -312,6 +378,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="align"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -330,6 +397,7 @@
 		<element name="cite" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -339,6 +407,7 @@
 		<element name="code" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -352,6 +421,7 @@
 				<ref name="width"/>
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -362,6 +432,7 @@
 				<ref name="width"/>
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="col"/>
@@ -371,6 +442,7 @@
 		<element name="dd">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -382,6 +454,7 @@
 				<ref name="Attrs"/>
 				<ref name="cite"/>
 				<ref name="datetime"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -391,6 +464,7 @@
 		<element name="dfn" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -411,6 +485,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="align"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -421,6 +496,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="compact"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="dt"/>
@@ -431,6 +507,7 @@
 		<element name="dt">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -440,6 +517,7 @@
 		<element name="em" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -460,6 +538,7 @@
 				<ref name="type"/>
 				<ref name="width"/>
 				<ref name="units"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="param"/>
@@ -469,6 +548,10 @@
 		<element name="fieldset" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="disabled"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="name"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="legend"/>
@@ -497,6 +580,9 @@
 				<ref name="accept"/>
 				<ref name="name"/>
 				<ref name="accept-charset"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autocomplete"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="novalidate"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Block">
@@ -537,6 +623,7 @@
 		<element name="h1" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -546,6 +633,7 @@
 		<element name="h2" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -555,6 +643,7 @@
 		<element name="h3" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -564,6 +653,7 @@
 		<element name="h4" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -573,6 +663,7 @@
 		<element name="h5" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -582,6 +673,7 @@
 		<element name="h6" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -592,6 +684,7 @@
 			<attributes>
 				<ref name="I18n"/>
 				<ref name="profile"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="title"/>
@@ -600,6 +693,7 @@
 				<ref name="link"/>
 				<ref name="base"/>
 				<ref name="object"/>
+				<ref name="command"/>
 			</elements>
 		</element>
 
@@ -610,6 +704,7 @@
 				<ref name="noshade"/>
 				<ref name="size"/>
 				<ref name="width"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -617,6 +712,8 @@
 			<attributes>
 				<ref name="I18n"/>
 				<ref name="version"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="manifest"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="head"/>
@@ -627,6 +724,7 @@
 		<element name="i" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -646,6 +744,10 @@
 				<ref name="align"/>
 				<ref name="height"/>
 				<ref name="width"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="sandbox"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="seamless"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="srcdoc"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -663,6 +765,7 @@
 				<ref name="width"/>
 				<ref name="usemap"/>
 				<ref name="ismap"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -684,6 +787,25 @@
 				<ref name="tabindex"/>
 				<ref name="accesskey"/>
 				<ref name="accept"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autocomplete"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autofocus"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formaction"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formenctype"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formmethod"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formnovalidate"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="formtarget"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="height"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="list"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="max"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="min"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="multiple"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="pattern"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="placeholder"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="required"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="step"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="width"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -692,6 +814,7 @@
 				<ref name="Attrs"/>
 				<ref name="cite"/>
 				<ref name="datetime"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -708,6 +831,7 @@
 		<element name="kbd" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -719,6 +843,8 @@
 				<ref name="Attrs"/>
 				<ref name="accesskey"/>
 				<ref name="for"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline">
@@ -734,6 +860,7 @@
 				<ref name="Attrs"/>
 				<ref name="accesskey"/>
 				<ref name="align"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -746,6 +873,7 @@
 				<ref name="type"/>
 				<ref name="value"/>
 				<ref name="compact"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -762,6 +890,8 @@
 				<ref name="rel"/>
 				<ref name="rev"/>
 				<ref name="media"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="sizes"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -769,6 +899,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="name"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Block"/>
@@ -802,6 +933,9 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="compact"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="label"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="type"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="li"/>
@@ -815,6 +949,8 @@
 				<ref name="http-equiv"/>
 				<ref name="name"/>
 				<ref name="scheme"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="charset"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -846,6 +982,7 @@
 		<element name="noscript" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Block"/>
@@ -868,6 +1005,8 @@
 				<ref name="type"/>
 				<ref name="width"/>
 				<ref name="usemap"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -881,6 +1020,8 @@
 				<ref name="type"/>
 				<ref name="start"/>
 				<ref name="compact"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="reversed"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="li"/>
@@ -892,6 +1033,7 @@
 				<ref name="Attrs"/>
 				<ref name="disabled"/>
 				<ref name="label"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="option"/>
@@ -905,12 +1047,14 @@
 				<ref name="disabled"/>
 				<ref name="label"/>
 				<ref name="value"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
 		<element name="p">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -924,6 +1068,7 @@
 				<ref name="type"/>
 				<ref name="value"/>
 				<ref name="valuetype"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -931,6 +1076,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="width"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline">
@@ -950,6 +1096,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="cite"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -961,6 +1108,7 @@
 				<ref name="Attrs"/>
 				<ref name="name"/>
 				<ref name="rbspan"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline">
@@ -975,15 +1123,18 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="name"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="rt"/>
+				<ref name="rp"/> <!-- HTML5 added at 2012.04.10 -->
 			</elements>
 		</element>
 
 		<element name="s" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -993,6 +1144,7 @@
 		<element name="samp" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1005,6 +1157,8 @@
 				<ref name="defer"/>
 				<ref name="src"/>
 				<ref name="type"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="async"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -1016,6 +1170,9 @@
 				<ref name="multiple"/>
 				<ref name="disabled"/>
 				<ref name="tabindex"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autofocus"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="optgroup"/>
@@ -1026,6 +1183,7 @@
 		<element name="small" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1036,6 +1194,7 @@
 			<attributes>
 				<ref name="Attrs"/>
 				<ref name="align"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1054,6 +1213,7 @@
 		<element name="strong" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1066,12 +1226,15 @@
 				<ref name="type"/>
 				<ref name="media"/>
 				<ref name="title"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="scoped"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
 		<element name="sub" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1081,6 +1244,7 @@
 		<element name="sup" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1098,6 +1262,7 @@
 				<ref name="summary"/>
 				<ref name="width"/>
 				<ref name="bgcolor"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="caption"/>
@@ -1115,6 +1280,7 @@
 				<ref name="Attrs"/>
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="tr"/>
@@ -1133,6 +1299,7 @@
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
 				<ref name="bgcolor"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -1149,6 +1316,13 @@
 				<ref name="readonly"/>
 				<ref name="tabindex"/>
 				<ref name="accesskey"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="autofocus"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="form"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="maxlength"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="placeholder"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="required"/> <!-- HTML5 added at 2012.04.10 -->
+				<ref name="wrap"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -1157,6 +1331,7 @@
 				<ref name="Attrs"/>
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="tr"/>
@@ -1175,6 +1350,7 @@
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
 				<ref name="bgcolor"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Flow"/>
@@ -1186,6 +1362,7 @@
 				<ref name="Attrs"/>
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="tr"/>
@@ -1195,6 +1372,7 @@
 		<element name="title" endTag="true">
 			<attributes>
 				<ref name="I18n"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
 
@@ -1204,6 +1382,7 @@
 				<ref name="Cellhalign"/>
 				<ref name="Cellvalign"/>
 				<ref name="bgcolor"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="td"/>
@@ -1223,6 +1402,7 @@
 		<element name="u" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1234,6 +1414,7 @@
 				<ref name="Attrs"/>
 				<ref name="compact"/>
 				<ref name="type"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="li"/>
@@ -1243,6 +1424,7 @@
 		<element name="var" endTag="true">
 			<attributes>
 				<ref name="Attrs"/>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 			<elements>
 				<ref name="Inline"/>
@@ -1250,6 +1432,9 @@
 		</element>
 
 		<element name="wbr">
+			<attributes>
+				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
+			</attributes>
 		</element>
 
 		<element name="xml" endTag="true">
@@ -1264,9 +1449,312 @@
 				<ref name="align"/>
 			</attributes>
 		</element>
+		
+	<!-- HTML5 added at 2012.04.10 Start-->
+		<element name="article" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="aside" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="audio" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="autoplay"/>
+				<ref name="controls"/>
+				<ref name="loop"/>
+				<ref name="preload"/>
+				<ref name="src"/>
+			</attributes>
+			<elements>
+				<ref name="source"/>
+				<ref name="track"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="bdi" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="canvas" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="height"/>
+				<ref name="width"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="command">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="checked"/>
+				<ref name="disabled"/>
+				<ref name="icon"/>
+				<ref name="label"/>
+				<ref name="radiogroup"/>
+				<ref name="type"/>
+			</attributes>
+		</element>
+		<element name="datalist" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="option"/>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="details" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="open"/>
+			</attributes>
+			<elements>
+				<ref name="legend"/>
+				<ref name="summary"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="figcaption" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="figure" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="figcaption"/>
+				<ref name="legend"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="footer" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="header" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="hgroup" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Heading"/>
+			</elements>
+		</element>
+		<element name="keygen">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="autofocus"/>
+				<ref name="challenge"/>
+				<ref name="disabled"/>
+				<ref name="form"/>
+				<ref name="keytype"/>
+				<ref name="name"/>
+			</attributes>
+		</element>
+		<element name="mark" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="meter" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="form"/>
+				<ref name="high"/>
+				<ref name="low"/>
+				<ref name="max"/>
+				<ref name="min"/>
+				<ref name="optimum"/>
+				<ref name="value"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="nav" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="output" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="for"/>
+				<ref name="form"/>
+				<ref name="name"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="progress" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="max"/>
+				<ref name="value"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="rp">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="section" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+		<element name="source">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="media"/>
+				<ref name="src"/>
+				<ref name="type"/>
+			</attributes>
+		</element>
+		<element name="summary" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="time" endTag="true">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="datetime"/>
+				<ref name="pubdate"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+			</elements>
+		</element>
+		<element name="track">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="default"/>
+				<ref name="kind"/>
+				<ref name="label"/>
+				<ref name="src"/>
+				<ref name="srclang"/>
+			</attributes>
+		</element>
+		<element name="video">
+			<attributes>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="autoplay"/>
+				<ref name="controls"/>
+				<ref name="height"/>
+				<ref name="loop"/>
+				<ref name="muted"/>
+				<ref name="poster"/>
+				<ref name="preload"/>
+				<ref name="src"/>
+				<ref name="width"/>
+			</attributes>
+			<elements>
+				<ref name="source"/>
+				<ref name="track"/>
+				<ref name="Flow"/>
+			</elements>
+		</element>
+	<!-- HTML5 added at 2012.04.10 End-->
 	</elementRule>
 
 	<attributeRule>
+	<!-- HTML5 added at 2012.04.10 Start-->
+		<attribute name="autoplay"/>
+		<attribute name="controls"/>
+		<attribute name="preload"/>
+		<attribute name="autofocus"/>
+		<attribute name="form"/>
+		<attribute name="formaction"/>
+		<attribute name="formenctype"/>
+		<attribute name="formmethod"/>
+		<attribute name="formnovalidate"/>
+		<attribute name="formtarget"/>
+		<attribute name="icon"/>
+		<attribute name="radiogroup"/>
+		<attribute name="open"/>
+		<attribute name="autocomplete"/>
+		<attribute name="novalidate"/>
+		<attribute name="manifest"/>
+		<attribute name="sandbox"/>
+		<attribute name="seamless"/>
+		<attribute name="srcdoc"/>
+		<attribute name="list"/>
+		<attribute name="max"/>
+		<attribute name="min"/>
+		<attribute name="pattern"/>
+		<attribute name="placeholder"/>
+		<attribute name="required"/>
+		<attribute name="step"/>
+		<attribute name="challenge"/>
+		<attribute name="keytype"/>
+		<attribute name="sizes"/>
+		<attribute name="high"/>
+		<attribute name="low"/>
+		<attribute name="optimum"/>
+		<attribute name="async"/>
+		<attribute name="scoped"/>
+		<attribute name="wrap"/>
+		<attribute name="pubdate"/>
+		<attribute name="default"/>
+		<attribute name="kind"/>
+		<attribute name="srclang"/>
+		<attribute name="muted"/>
+		<attribute name="poster"/>
+	<!-- HTML5 added at 2012.04.10 End-->
+		
 		<attribute name="abbr"/>
 		<attribute name="accept"/>
 		<attribute name="accept-charset"/>

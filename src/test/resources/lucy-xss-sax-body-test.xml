@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+	extends="lucy-xss-superset-sax.xml">
+	
+	<elementGroup name="Block" override="true">
+		<ref name="o:p"/>
+	</elementGroup>
+	
+	<elementGroup name="NewElementGroup">
+		<ref name="newElement1"/>
+		<ref name="newElement2"/>
+	</elementGroup>
+	
+	<elementGroup name="Special" override="true">
+		<ref name="embed"/>
+	</elementGroup>
+	
+	<attributeGroup name="BorderColor">
+		<ref name="bordercolordark"/>
+		<ref name="bordercolorlight"/>
+	</attributeGroup>
+
+	<attributeGroup name="Attrs">
+		<ref name="BorderColor"/>
+	</attributeGroup>
+	
+	<elementRule>
+		<attribute name="bordercolordark" />	
+		<attribute name="bordercolorlight" />
+	
+		<element name="body">
+			<elements>
+				<ref name="Inline"/>
+				<ref name="style"/>
+				<ref name="xml"/>
+			</elements>
+		</element>
+	
+		<element name="newElement1"/>
+		<element name="newElement2"/>
+		
+		<element name="body" disable="false" />
+		<element name="iframe" disable="true" />
+		<element name="meta" disable="true" />
+		<element name="object" disable="true" />
+		<element name="script" disable="true" />
+		<element name="style" disable="true" />
+		
+		<element name="a" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.AnchorListener</listener>
+		</element>
+		
+		<element name="embed" disable="false">
+		</element> 
+		 
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListener</listener>
+		</element>
+		
+		<!-- 
+			하위 컴포넌트를 삭제해야하는 태그들은 DeleteTagContentListener를 사용
+			style, script, title, xml (PHP 기준)
+		 -->
+		<element name="style" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="script" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="title" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="xml" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.DeleteTagContentListener</listener>
+		</element>
+		
+		<element name="p">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+				<ref name="table"/>
+				<ref name="NewElementGroup"/>
+			</elements>
+		</element>
+		
+		<element name="o:p">
+			<attributes>
+				<ref name="Attrs"/>
+			</attributes>
+			<elements>
+				<ref name="Inline"/>
+				<ref name="table"/>
+			</elements>
+		</element>
+		
+		
+		
+	</elementRule>
+	
+	<blockingPrefix enable="true" prefix="x"/>
+	
+	<attributeRule>
+		<attribute name="background">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="href">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+		</attribute>
+	</attributeRule>
+</config>
