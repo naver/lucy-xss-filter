@@ -39,11 +39,11 @@ public class XssFilterTest extends XssFilterTestCase {
 	private static final String INVALID_HTML_FILE = "xss-invalid1.html";
 	
 	private static final String[] targetString = {"<script></script>", "<body text='test'><p>Hello</p></body>", "<img src='script:/lereve/lelogo.gif' width='700'>"};
-	private static final String[] expectedString = {"<!-- Not Allowed Tag Filtered -->&lt;script&gt;&lt;/script&gt;", "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;<p>Hello</p>&lt;/body&gt;", "<!-- Not Allowed Attribute Filtered --><img width='700'>"};
+	private static final String[] expectedString = {"<!-- Not Allowed Tag Filtered -->&lt;script&gt;&lt;/script&gt;", "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;<p>Hello</p>&lt;/body&gt;", "<!-- Not Allowed Attribute Filtered ( src='script:/lereve/lelogo.gif') --><img width='700'>"};
 	
 	private static final String[] configFile = {"lucy-xss-superset.xml","lucy-xss-superset.xml", "lucy-xss-blog-removetag.xml"};
 	private static final String[] targetStringOnOtherConfig = {"<img src='script:/lereve/lelogo.gif' width='700'>", "<!--[if !supportMisalignedColumns]--><h1>Hello</h1><!--[endif]-->", "<html><head></head><body><p>Hello</p></body>"};
-	private static final String[] expectedStringOnOtherConfig = {"<!-- Not Allowed Attribute Filtered --><img width='700'>", "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]--&gt;) --><h1>Hello</h1>", "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>"};
+	private static final String[] expectedStringOnOtherConfig = {"<!-- Not Allowed Attribute Filtered ( src='script:/lereve/lelogo.gif') --><img width='700'>", "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]--&gt;) --><h1>Hello</h1>", "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>"};
 
 	@Test
 	// 정상적인 HTML 페이지를 통과 시키는지 검사한다.(필터링 전후가 동일하면 정상)
@@ -176,12 +176,12 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		XssFilter filter = XssFilter.getInstance("xss.xml");
 		String dirty = "<embed src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\">";
-		String expected = "<!-- Not Allowed Attribute Filtered --><embed>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><embed>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
 		String dirty2 = "<object data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\"></object>";
-		String expected2 = "<!-- Not Allowed Attribute Filtered --><object></object>";
+		String expected2 = "<!-- Not Allowed Attribute Filtered ( data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><object></object>";
 		String clean2 = filter.doFilter(dirty2);
 		Assert.assertEquals(expected2, clean2);
 	}
@@ -305,7 +305,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
 
 		String clean = filter.doFilter(dirty);
-		String expected = "<!-- Not Allowed Attribute Filtered --><EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\"></EMBED>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( AllowScriptAccess=\"always\") --><EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\"></EMBED>";
 		Assert.assertEquals(expected, clean);
 	}
 
@@ -811,7 +811,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String valid = "http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com</script><img src=pooo.png onerror=alert(/V/)>";
 		String clean = filter.doFilter(valid);
 		System.out.println("clean : " + clean);
-		Assert.assertEquals("http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com&lt;/script&gt;<!-- Not Allowed Attribute Filtered --><img src=pooo.png>" , clean);
+		Assert.assertEquals("http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com&lt;/script&gt;<!-- Not Allowed Attribute Filtered ( onerror=alert(/V/)) --><img src=pooo.png>" , clean);
 		
 		// 인코딩 된 쿼리
 		valid = "http://m.id.hangame.com/searchInfo.nhn?type=FINDID&nxtURL=http://m.tera.hangame.com%3C/script%3E%3Cimg%20src=pooo.png%20onerror=alert(/V/)%3E";
@@ -835,7 +835,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 
 		String dirty = "<p src='test'>Hello</p>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><p>Hello</p>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( src='test') --><p>Hello</p>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -933,7 +933,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 		
 		dirty = "<img src='script:/lereve/lelogo.gif' width='700'>";
-		expected = "<!-- Not Allowed Attribute Filtered --><img width='700'>";
+		expected = "<!-- Not Allowed Attribute Filtered ( src='script:/lereve/lelogo.gif') --><img width='700'>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -952,19 +952,19 @@ public class XssFilterTest extends XssFilterTestCase {
 		
 		// exceptionTagList 에 없는 태그들은 attribute 의 disable 속성이 true 되어 있으면 필터링 되는지 확인.
 		dirty = "<div class='test'></div>";
-		expected = "<!-- Not Allowed Attribute Filtered --><div></div>";
+		expected = "<!-- Not Allowed Attribute Filtered ( class='test') --><div></div>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 		
 		// exceptionTagList로 예외처리가 되었어도, element 의 속성요소로 설정이 안되어 있는 경우 disable 되는지 확인
 		dirty = "<span class='test'></span>";
-		expected = "<!-- Not Allowed Attribute Filtered --><span></span>";
+		expected = "<!-- Not Allowed Attribute Filtered ( class='test') --><span></span>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 		
 		// exceptionTagList로 예외처리가 되었어도, value 가 문제 있을 경우 disable 되는지 확인
 		dirty = "<table class='script'></table>";
-		expected = "<!-- Not Allowed Attribute Filtered --><table></table>";
+		expected = "<!-- Not Allowed Attribute Filtered ( class='script') --><table></table>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 		
@@ -977,7 +977,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	public void hrefAttackTest() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "<a HREF=\"javascript:alert('XSS');\"></a>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><a></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( HREF=\"javascript:alert('XSS');\") --><a></a>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -1036,7 +1036,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 		
 		dirty = "<video width=\"320\" height=\"240\" controls=\"controls\"><source src=\"movie.mp4\" type=\"video/mp4\" pubdate=\"\"></video>";
-		expected = "<video width=\"320\" height=\"240\" controls=\"controls\"><!-- Not Allowed Attribute Filtered --><source src=\"movie.mp4\" type=\"video/mp4\"></video>"; // pubdate=\"\" 필터링 됨
+		expected = "<video width=\"320\" height=\"240\" controls=\"controls\"><!-- Not Allowed Attribute Filtered ( pubdate=\"\") --><source src=\"movie.mp4\" type=\"video/mp4\"></video>"; // pubdate=\"\" 필터링 됨
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -1196,5 +1196,35 @@ public class XssFilterTest extends XssFilterTestCase {
 		System.out.println("dirty : " + dirty);
 		System.out.println("clean : " + clean);
 		Assert.assertTrue("\n" + dirty + "\n" + clean, dirty.equals(clean));
+	}
+	
+	@Test
+	public void shopCharTest2() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String clean = filter.doFilter("span", "id", "test as");
+		System.out.println(clean);
+	}
+	
+	/**
+	 * 속성에 주석 닫는 태그(--&gt;) 있을 경우에 이스케이프가 잘 되는지 확인.
+	 * 속성에 주석 닫는 태그가 있으면 주석으로 처리하는 로직이 깨질 수 있어서 방어해야함.
+	 * @throws Exception
+	 */
+	@Test
+	public void atributeComment() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<p tt='-->'>Hello</p>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( tt='--&gt;') --><p>Hello</p>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void noAtribute() throws Exception {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<p>Hello</p>";
+		String expected = "<p>Hello</p>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
 	}
 }
