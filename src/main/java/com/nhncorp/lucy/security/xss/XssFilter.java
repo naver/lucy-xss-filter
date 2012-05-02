@@ -51,7 +51,8 @@ public final class XssFilter {
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
 
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
-	private static String BAD_ATT_INFO = "<!-- Not Allowed Attribute Filtered -->";
+	private static String BAD_ATT_INFO_START = "<!-- Not Allowed Attribute Filtered (";
+	private static String BAD_ATT_INFO_END = ") -->";
 	private static String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
 	private static String REMOVE_TAG_INFO_END = ") -->";
 	private static String ELELMENT_NELO_MSG = " (Disabled Element)";
@@ -379,47 +380,53 @@ public final class XssFilter {
 
 				}
 			} else {
-				if (e.existDisabledAttribute()) {
-					if (!this.withoutComment) {
-						writer.write(BAD_ATT_INFO);
-					}
+				if (!this.withoutComment && e.existDisabledAttribute()) {
+					writer.write(BAD_ATT_INFO_START);
 				}
-
-				writer.write('<');
-				writer.write(e.getName());
+				
 			}
 
 			Collection<Attribute> atts = e.getAttributes();
 
+			StringWriter attrSw = new StringWriter();
+			StringWriter attrXssSw = new StringWriter();
+			
 			if (atts != null && !atts.isEmpty()) {
-
-				StringBuffer attrStr = new StringBuffer();
 				for (Attribute att : atts) {
-
 					if (!e.isDisabled() && att.isDisabled()) {
-
 						hasAttrXss = true;
-						if (this.isNeloLogEnabled) {
-							attrStr.append(" " + att.getName() + "=" + att.getValue());
+						
+						if (this.isNeloLogEnabled || !this.withoutComment) {
+							attrXssSw.write(' ');
+							att.serialize(attrXssSw);
 						}
-
-						continue;
-
 					} else {
-						writer.write(' ');
-						att.serialize(writer);
+						attrSw.write(' ');
+						att.serialize(attrSw);
 					}
+				}
+			}
+			
+			if (hasAttrXss) {
+				String attrXssString = attrXssSw.toString();
+				if (this.isNeloLogEnabled) {
+					neloLogWriter.write(this.neloAttrMSG);
+					neloLogWriter.write(e.getName());
+					neloLogWriter.write(attrXssString + "\n");
 				}
 				
-				if (hasAttrXss) {
-					if (this.isNeloLogEnabled) {
-						neloLogWriter.write(this.neloAttrMSG);
-						neloLogWriter.write(e.getName());
-						neloLogWriter.write(attrStr.toString() + "\n");
-					}
+				if (!this.withoutComment) {
+					writer.write(attrXssString);
+					writer.write(BAD_ATT_INFO_END);
 				}
-
 			}
+			
+			if (!e.isDisabled()) {
+				writer.write('<');
+				writer.write(e.getName());
+			}
+			
+			writer.write(attrSw.toString());
 
 			if (e.isStartClosed()) {
 
