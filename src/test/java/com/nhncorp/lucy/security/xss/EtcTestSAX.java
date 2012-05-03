@@ -77,7 +77,7 @@ public class EtcTestSAX {
 	public void hrefPatternJavascriptMail() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-sax-href-mail.xml");
 		String dirty = "<a href=\"javascript:alert(1);\"></a>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><a></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href=\"javascript:alert(1);\") --><a></a>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -86,7 +86,7 @@ public class EtcTestSAX {
 	public void hrefPatternTest() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = "<a href=\"javascript:mUtil.viewEmbed('29522','http://jeokhojae.netorage.com:8711/harddisk/user/K00113.wmv','640','450');\"><img src=http://static.naver.com/mail4/img_noti_embed_1.gif></img></span></a>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><a><img src=http://static.naver.com/mail4/img_noti_embed_1.gif></img></span></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href=\"javascript:mUtil.viewEmbed('29522','http://jeokhojae.netorage.com:8711/harddisk/user/K00113.wmv','640','450');\") --><a><img src=http://static.naver.com/mail4/img_noti_embed_1.gif></img></span></a>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -113,7 +113,7 @@ public class EtcTestSAX {
 	public void hrefPatternJavascript() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = "<a href=\"javascript:alert(1);\"></a>";
-		String expected = "<!-- Not Allowed Attribute Filtered --><a></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href=\"javascript:alert(1);\") --><a></a>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -132,7 +132,7 @@ public class EtcTestSAX {
 	public void hexCodeAttackPaatern2() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "page=1\"><img src=http://a.com\fonerror=\"alert(document.cookie)"; // \f => %0b (form feed)
-		String expected = "page=1\"&gt;<!-- Not Allowed Attribute Filtered --><img src=http://a.com>";
+		String expected = "page=1\"&gt;<!-- Not Allowed Attribute Filtered ( onerror=\"alert(document.cookie)) --><img src=http://a.com>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
