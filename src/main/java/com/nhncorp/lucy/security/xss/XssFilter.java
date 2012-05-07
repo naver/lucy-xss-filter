@@ -174,7 +174,7 @@ public final class XssFilter {
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
 		
-		if (dirty == null || "".equals(dirty)) {
+		if (dirty == null || dirty.length() == 0) {
 			LOG.debug("target string is empty. doFilter() method end.");
 			return ;
 		}
@@ -246,7 +246,7 @@ public final class XssFilter {
 	 * @return
 	 */
 	public String doFilter(String tagName, String attName, String dirtyAttValue) {
-		if (tagName == null || "".equals(tagName) || attName == null || "".equals(attName) || dirtyAttValue == null || "".equals(dirtyAttValue)) {
+		if (tagName == null || tagName.length() == 0 || attName == null || attName.length() == 0 || dirtyAttValue == null || dirtyAttValue.length() == 0) {
 			return "";
 		}
 
@@ -263,10 +263,12 @@ public final class XssFilter {
 					this.checkRule(tag);
 
 					Attribute att = tag.getAttribute(attName);
-					if (att.isDisabled()) {
-						return "";
-					} else {
-						return att.getValue();
+					if (att != null) {
+						if (att.isDisabled()) {
+							return "";
+						} else {
+							return att.getValue();
+						}
 					}
 				}
 			}

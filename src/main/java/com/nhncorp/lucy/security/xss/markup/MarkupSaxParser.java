@@ -70,7 +70,7 @@ public final class MarkupSaxParser {
 	 */
 	public static Collection<Content> parse(String input) {
 		
-		if (input == null || "".equals(input)) {
+		if (input == null || input.length() == 0) {
 			return null;
 		}
 		
@@ -91,7 +91,7 @@ public final class MarkupSaxParser {
 			
 			} else if ("comment".equals(tokenName)) {
 				String comment = t.getText();
-				if (comment != null && !"".equals(comment)) {
+				if (comment != null && comment.length() != 0) {
 					comment = comment.substring(4, comment.length() - 3);
 				}
 				result.add(new Comment(comment));
@@ -108,15 +108,21 @@ public final class MarkupSaxParser {
 				result.add(element);
 				
 			} else if ("startTag".equals(tokenName)) {
-				Element element = new Element(t.getChild("tagName").getText());
+				Token tagNameToken = t.getChild("tagName");
+				
+				if (tagNameToken == null) {
+					continue;
+				}
+				
+				Element element = new Element(tagNameToken.getText());
 				List<Token> attTokens = t.getChildren("attribute");
 				if (attTokens != null) {
 					for (Token attToken : attTokens) {
 						Token attName = attToken.getChild("attName");
 						Token attValue = attToken.getChild("attValue");
-						if (attValue == null) {
+						if (attName!=null && attValue == null) {
 							element.putAttribute(new Attribute(attName.getText()));
-						} else {
+						} else if (attName!=null && attValue != null) {
 							element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
 						}
 					}
@@ -144,12 +150,12 @@ public final class MarkupSaxParser {
 				boolean flag = false;
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
-					Element e = null;
+					Element e;
 					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
 						if (e instanceof IEHackExtensionElement) {
-							Content c = null;
+							Content c;
 							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c == e) {									
+								if (c instanceof Element && c == e) {									
 									e.setClose(true);
 									tmp.clear();
 									break;
@@ -178,17 +184,23 @@ public final class MarkupSaxParser {
 				}
 				
 			} else if ("endTag".equals(tokenName)) {
+				Token tagNameToken = t.getChild("tagName");
+				
 				boolean flag = false;
-				String tagName = t.getChild("tagName").getText();
-
+				if (tagNameToken == null) {
+					continue;
+				}
+				
+				String tagName = tagNameToken.getText();
+				
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
-					Element e = null; 
+					Element e; 
 					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
 						if (tagName.equalsIgnoreCase(e.getName())) {
-							Content c = null;
+							Content c;
 							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c == e) {									
+								if (c instanceof Element && c == e) {									
 									e.setClose(true);
 									tmp.clear();
 									break;
@@ -239,7 +251,7 @@ public final class MarkupSaxParser {
 		StringBuffer buffer = new StringBuffer();
 		try {
 			char[] cbuf = new char[1024];
-			int rc = 0;
+			int rc;
 			while ((rc = reader.read(cbuf)) > 0) {
 				buffer.append(cbuf, 0, rc);
 			}

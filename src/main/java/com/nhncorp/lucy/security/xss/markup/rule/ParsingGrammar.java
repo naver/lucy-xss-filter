@@ -43,7 +43,7 @@ public final class ParsingGrammar {
 			InputStream input = ParsingGrammar.class.getResourceAsStream(RULE_FILE);
 			reader = new BufferedReader(new InputStreamReader(input));
 			StringBuffer buffer = null;
-			String line = null;
+			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("//")) {
 					if (buffer != null) {
@@ -124,24 +124,6 @@ public final class ParsingGrammar {
 		return token;
 	}
 	
-	public Token nextTokenOld(CharArraySegment input) {
-		if (input == null || input.length() <= 0) {
-			return null;
-		}
-		
-		NonTerminal start = instance.getRule(START_SYMBOL);
-		
-		Token token = new Token(start.getRuleName());
-		if (!start.sliceTokens(token, input, instance)) {
-			return null;
-		}
-		
-		List<Token> children = token.getChildren();
-		Token t = children.get(0);
-		
-		return t;
-	}
-	
 	private void readNotation(String notation) {
 		if (!notation.contains(DEFINE)) {
 			return ;
@@ -156,8 +138,8 @@ public final class ParsingGrammar {
 	}
 	
 	private void builRules(Group parent, CharArraySegment input) {
-		RuleType type = null;
-		CharArraySegment segment = null;
+		RuleType type;
+		CharArraySegment segment;
 	
 		ArrayList<ParsingRule> tmp = new ArrayList<ParsingRule>();
 		ParsingRule preRule = null;

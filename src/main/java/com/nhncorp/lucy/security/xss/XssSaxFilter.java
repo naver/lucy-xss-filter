@@ -110,7 +110,7 @@ public final class XssSaxFilter {
 	private boolean isWhiteUrl(String url) {
 		try {
 			WhiteUrlList list = WhiteUrlList.getInstance();
-			if (list.contains(url)) {
+			if (list != null && list.contains(url)) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -222,7 +222,7 @@ public final class XssSaxFilter {
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
 		
-		if (dirty == null || "".equals(dirty)) {
+		if (dirty == null || dirty.length() == 0) {
 			LOG.debug("target string is empty. doFilter() method end.");
 			return ;
 		}
@@ -264,7 +264,7 @@ public final class XssSaxFilter {
 				
 				} else if ("comment".equals(tokenName)) {
 					String comment = t.getText();
-					if (comment != null && !"".equals(comment)) {
+					if (comment != null && comment.length() != 0) {
 						comment = comment.substring(4, comment.length() - 3);
 					}
 					Comment content = new Comment(comment);
@@ -275,19 +275,26 @@ public final class XssSaxFilter {
 					this.serialize(writer, element, neloLogWriter);
 					
 				} else if ("startTag".equals(tokenName)) {
-					String tagName = t.getChild("tagName").getText();
+					Token tagNameToken = t.getChild("tagName");
+					if(tagNameToken == null) {
+						continue;
+					}
+					
+					String tagName = tagNameToken.getText();
 					doObjectParamStartTagProcess(stackForObjectTag,
 							stackForAllowNetworkingValue, t, tagName);
 					Element element = new Element(tagName);
 					List<Token> attTokens = t.getChildren("attribute");
 					if (attTokens != null) {
 						for (Token attToken : attTokens) {
-							Token attName = attToken.getChild("attName");
-							Token attValue = attToken.getChild("attValue");
-							if (attValue == null) {
-								element.putAttribute(new Attribute(attName.getText()));
-							} else {
-								element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
+							if(attToken != null) {
+								Token attName = attToken.getChild("attName");
+								Token attValue = attToken.getChild("attValue");
+								if (attName!=null && attValue == null) {
+									element.putAttribute(new Attribute(attName.getText()));
+								} else if (attName!=null && attValue != null){
+									element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
+								}
 							}
 						}
 					}
@@ -311,7 +318,13 @@ public final class XssSaxFilter {
 						//writer.write(t.getText());
 					}
 				} else if ("endTag".equals(tokenName)) {
-					String tagName = t.getChild("tagName").getText();
+					Token tagNameToken = t.getChild("tagName");
+					
+					if(tagNameToken == null) {
+						continue;
+					}
+					
+					String tagName = tagNameToken.getText();
 					
 					if ("object".equalsIgnoreCase(tagName) && stackForObjectTag.size() > 0) {
 						doObjectEndTagProcess(writer, neloLogWriter,
@@ -377,14 +390,20 @@ public final class XssSaxFilter {
 					Token attName = attToken.getChild("attName");
 					Token attValue = attToken.getChild("attValue");
 					if (attName!=null && "name".equalsIgnoreCase(attName.getText())) {
-						stackForObjectTag.push(attValue.getText());
-						
-						if (containsURLName(attValue.getText())) {
-							containsURLName = true;
+						if (attValue != null) {
+							stackForObjectTag.push(attValue.getText());
+							
+							if (containsURLName(attValue.getText())) {
+								containsURLName = true;
+							}
 						}
-					} else if(attName!=null && containsURLName && "value".equalsIgnoreCase(attName.getText()) && isWhiteUrl(attValue.getText())) {
+					} else if(attName!=null && containsURLName && "value".equalsIgnoreCase(attName.getText())) {
 						stackForAllowNetworkingValue.pop();
-						stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
+						if (isWhiteUrl(attValue.getText())) {
+							stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
+						} else {
+							stackForAllowNetworkingValue.push("\"internal\""); // whiteUrl 이 아닐 경우 allowNetworking 설정은 internal 로 변경
+						}
 					}
 				}
 			}
