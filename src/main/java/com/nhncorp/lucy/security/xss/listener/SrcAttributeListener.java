@@ -24,13 +24,9 @@ public class SrcAttributeListener implements AttributeListener {
 	}
 
 	private boolean isWhiteUrl(String url) {
-		try {
-			WhiteUrlList list = WhiteUrlList.getInstance();
-			if (list!=null && list.contains(url)) {
-				return true;
-			}
-		} catch (Exception e) {
-			// ignore
+		WhiteUrlList list = WhiteUrlList.getInstance();
+		if (list!=null && list.contains(url)) {
+			return true;
 		}
 		return false;
 	}

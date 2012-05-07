@@ -6,6 +6,7 @@
  */
 package com.nhncorp.lucy.security.xss.listener;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -33,28 +34,39 @@ public final class WhiteUrlList {
 	public volatile static WhiteUrlList instance;
 	private List<Pattern> patterns;
 
-	private WhiteUrlList() throws Exception {
+	private WhiteUrlList() {
 		java.net.URL url = XssConfiguration.class.getResource(CONFIG);
-		InputStream is = new java.io.FileInputStream(url.getFile());
+		InputStream is = null;
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Element root = builder.parse(is).getDocumentElement();
-		NodeList list = root.getElementsByTagName("pattern");
-		if (list != null && list.getLength() > 0) {
-			this.patterns = new ArrayList<Pattern>();
-			for (int i = 0; i < list.getLength(); i++) {
-				String value = list.item(i).getTextContent();
-				if (value != null) {
-					this.patterns.add(buildPattern(value.trim()));
+		try {
+			is = new java.io.FileInputStream(url.getFile());
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Element root = builder.parse(is).getDocumentElement();
+			NodeList list = root.getElementsByTagName("pattern");
+			if (list != null && list.getLength() > 0) {
+				this.patterns = new ArrayList<Pattern>();
+				for (int i = 0; i < list.getLength(); i++) {
+					String value = list.item(i).getTextContent();
+					if (value != null) {
+						this.patterns.add(buildPattern(value.trim()));
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			if (is !=null ) {
+				try {
+					is.close();
+				} catch (IOException e) {
 				}
 			}
 		}
 
-		is.close();
 	}
 
-	public static WhiteUrlList getInstance() throws Exception {
+	public static WhiteUrlList getInstance() {
 		//Double checking
 		//if (instance == null) {
 		synchronized (WhiteUrlList.class) {
