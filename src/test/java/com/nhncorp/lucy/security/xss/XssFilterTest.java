@@ -111,7 +111,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss3.xml");
 
 		String dirty = "<EMBED src=\"http://medlabum.com/cafe/0225/harisu.wmv\" width=\"425\" height=\"344\">";
-		String expected = "<EMBED src=\"http://medlabum.com/cafe/0225/harisu.wmv\" width=\"425\" height=\"344\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		String expected = "<EMBED src=\"http://medlabum.com/cafe/0225/harisu.wmv\" width=\"425\" height=\"344\" type=\"video/x-ms-wmv\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
 		String clean = filter.doFilter(dirty);
 		Assert.assertTrue("\n" + dirty + "\n" + clean + "\n" + expected, expected.equals(clean));
 	}
@@ -174,14 +174,14 @@ public class XssFilterTest extends XssFilterTestCase {
 	//HTML5 적용된 브라우저에서 Base64 인코딩된 XSS 우회 공격을 필터링한다.
 	public void testBase64DecodingTest() {
 
-		XssFilter filter = XssFilter.getInstance("xss.xml");
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed.xml");
 		String dirty = "<embed src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\">";
-		String expected = "<!-- Not Allowed Attribute Filtered ( src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><embed>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( src=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><embed invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
 		String dirty2 = "<object data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\"></object>";
-		String expected2 = "<!-- Not Allowed Attribute Filtered ( data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><object></object>";
+		String expected2 = "<!-- Not Allowed Attribute Filtered ( data=\"data:text/html;base64,c2NyaXB0OmFsZXJ0KCdlbWJlZF9zY3JpcHRfYWxlcnQnKQ==\") --><object><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
 		String clean2 = filter.doFilter(dirty2);
 		Assert.assertEquals(expected2, clean2);
 	}
@@ -296,17 +296,6 @@ public class XssFilterTest extends XssFilterTestCase {
 		String expected2 = "&lt;script&gt;&lt;/script&gt;";
 		String clean2 = filter.doFilter(dirty2);
 		Assert.assertEquals(expected2, clean2);
-	}
-
-	@Test
-	public void testDetectedBase64EncodingAttect() {
-		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo.xml");
-
-		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
-
-		String clean = filter.doFilter(dirty);
-		String expected = "<!-- Not Allowed Attribute Filtered ( AllowScriptAccess=\"always\") --><EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\"></EMBED>";
-		Assert.assertEquals(expected, clean);
 	}
 
 	@Test
@@ -1051,15 +1040,6 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 	
 	@Test
-	public void embedNoWhitelistFlashCall() {
-		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
-		String dirty = "<embed type=\"text/html\" src=\"http://www.w3schools.com/html5/helloworld.swf\"";
-		String expected = "<embed type=\"text/html\" src=\"http://www.w3schools.com/html5/helloworld.swf\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
-		String clean = filter.doFilter(dirty);
-		Assert.assertEquals(expected, clean);
-	}
-	
-	@Test
 	public void withoutCommentMultiThreadTest() {
 		String expectedWithComment = "<!-- Not Allowed Tag Filtered -->&lt;body text='test'&gt;&lt;/body&gt;";
 		String expectedWithoutComment = "&lt;body text='test'&gt;&lt;/body&gt;";
@@ -1224,6 +1204,503 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "<p>Hello</p>";
 		String expected = "<p>Hello</p>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * EmbedListener.java 테스트
+	 * embed 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크, type 추가를 통한 방어
+	 */
+	@Test
+	public void embedListenerWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed.xml");
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<embed type=\"text/html\" src=\"http://serviceapi.nmv.naver.com/\" >";
+		String expected = "<embed type=\"text/html\" src=\"http://serviceapi.nmv.naver.com/\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"all\">" ;
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+			
+		// type 속성 체크 테스트(위험)
+		dirty = "<embed type=\"text/html\" src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed type=\"text/html\" src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\"";
+		expected = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<embed type=\"\" src=\"http://www.w3schools.com/html5/helloworld.swf\">";
+		expected = "<embed type=\"application/x-shockwave-flash\" src=\"http://www.w3schools.com/html5/helloworld.swf\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<embed type=\"\" src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed type=\"\" src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<embed src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\">";
+		expected = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시?) - 통과시키자.
+		dirty = "<embed src=\"http://www.w3schools.com/\">";
+		expected = "<embed src=\"http://www.w3schools.com/\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면??? ) - 통과시키지 말자.
+		dirty = "<embed src=\"http://test.mireene.com/test.test\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://test.mireene.com/test.test\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * EmbedSecurityListener.java 테스트 - EmbedListener + http content-type 체크
+	 * embed 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크 + @(http content-type 체크) type 추가를 통한 방어
+	 */
+	@Test
+	public void embedSecurityListenerWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<embed type=\"text/html\" src=\"http://serviceapi.nmv.naver.com/\" >";
+		String expected = "<embed type=\"text/html\" src=\"http://serviceapi.nmv.naver.com/\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"all\">" ;
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+			
+		// type 속성 체크 테스트(위험)
+		dirty = "<embed type=\"text/html\" src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed type=\"text/html\" src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\"";
+		expected = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<embed type=\"\" src=\"http://www.w3schools.com/html5/helloworld.swf\">";
+		expected = "<embed type=\"application/x-shockwave-flash\" src=\"http://www.w3schools.com/html5/helloworld.swf\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<embed type=\"\" src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed type=\"\" src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<embed src=\"http://test.mireene.com/xss.html\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://test.mireene.com/xss.html\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\">";
+		expected = "<embed src=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\" invokeURLs=\"false\" autostart=\"false\" allowScriptAccess=\"never\" allowNetworking=\"internal\">";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+		dirty = "<embed src=\"http://www.w3schools.com/\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://www.w3schools.com/\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<embed src=\"http://www.w3schools.com/\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://www.w3schools.com/\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면) - 통과시키지 말자.
+		dirty = "<embed src=\"http://test.mireene.com/test.test\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://test.mireene.com/test.test\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 에 확장자가 없고 존재하지(404 Not found) 않으면? - 통과시키지 말자.
+		dirty = "<embed src=\"http://test.mireene.com/\">";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://test.mireene.com/\"&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * ObjectListener.java 테스트
+	 * object 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크, type 추가를 통한 방어
+	 * url이 object 태그가 아닌 자식 태그인 param 태그의 src, href, movie 이름을 갖는 데이타로 올 경우 
+	 */
+	@Test
+	public void objectListenerParamTagUrlWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed.xml");
+		
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<object type=\"text/html\"><param name=\"src\" value=\"http://serviceapi.nmv.naver.com/\"></object>";
+		String expected = "<object type=\"text/html\"><param name=\"src\" value=\"http://serviceapi.nmv.naver.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"all\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(위험)
+		dirty = "<object type=\"text/html\"><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"text/html\"&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<object type=\"\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<object type=\"\"><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"\"&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<object><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<object><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시?) - 통과시키자.
+		dirty = "<object><param name=\"src\" value=\"http://www.w3schools.com/\"></object>";
+		expected = "<object><param name=\"src\" value=\"http://www.w3schools.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면??? ) - 통과시키지 말자.
+		dirty = "<object><param name=\"src\" value=\"http://test.mireene.com/xss.test\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.test\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		
+	}
+	
+	/**
+	 * ObjectListener.java 테스트 - EmbedListener + http content-type 체크
+	 * object 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크, type 추가를 통한 방어
+	 * url이 param 태그가 아닌, object의 data 속성으로 올 경우에도, 위 테스트 메소드(objectListenerParamTagUrlWhitelistAndTypeCheck)에서 수행한 테스트들이 성공해야한다.
+	 */
+	@Test
+	public void objectListenerDataAttributeWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed.xml");
+		
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<object type=\"text/html\" data=\"http://serviceapi.nmv.naver.com/\"></object>";
+		String expected = "<object type=\"text/html\" data=\"http://serviceapi.nmv.naver.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"all\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(위험)
+		dirty = "<object type=\"text/html\" data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"text/html\" data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<object type=\"\" data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<object type=\"\" data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"\" data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<object data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<object data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object data=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시?) - 통과시키자.
+		dirty = "<object data=\"http://www.w3schools.com/\"></object>";
+		expected = "<object data=\"http://www.w3schools.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면??? ) - 통과시키지 말자.
+		dirty = "<object data=\"http://test.mireene.com/xss.test\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://test.mireene.com/xss.test\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+
+	/**
+	 * ObjectSecurityListener.java 테스트 - ObjectListener + http content-type 체크
+	 * object 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크, type 추가를 통한 방어
+	 * url이 object 태그가 아닌 자식 태그인 param 태그의 src, href, movie 이름을 갖는 데이타로 올 경우 
+	 */
+	@Test
+	public void objectSecurityListenerParamTagUrlWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+		
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<object type=\"text/html\"><param name=\"src\" value=\"http://serviceapi.nmv.naver.com/\"></object>";
+		String expected = "<object type=\"text/html\"><param name=\"src\" value=\"http://serviceapi.nmv.naver.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"all\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(위험)
+		dirty = "<object type=\"text/html\"><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"text/html\"&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<object type=\"\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<object type=\"\"><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"\"&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<object><param name=\"src\" value=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.html\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<object><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\"><param name=\"src\" value=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+		dirty = "<object><param name=\"src\" value=\"http://www.w3schools.com/\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://www.w3schools.com/\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면) - 통과시키지 말자.
+		dirty = "<object><param name=\"src\" value=\"http://test.mireene.com/xss.test\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://test.mireene.com/xss.test\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 에 확장자가 없고 존재하지(404 Not found) 않으면? - 통과시키지 말자.
+		dirty = "<object><param name=\"src\" value=\"http://test.mireene.com/\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object&gt;<param name=\"src\" value=\"http://test.mireene.com/\">&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+	}
+	
+	/**
+	 * ObjectSecurityListener.java 테스트 - ObjectListener + http content-type 체크
+	 * object 관련 취약성 대응 - 화이트리스트 체크 및 type 속성 체크, url 파일 확장자 체크, type 추가를 통한 방어
+	 * url이 param 태그가 아닌, object의 data 속성으로 올 경우에도, 위 테스트 메소드(objectListenerParamTagUrlWhitelistAndTypeCheck)에서 수행한 테스트들이 성공해야한다.
+	 */
+	@Test
+	public void objectSecurityListenerDataAttributeWhitelistAndTypeCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+		
+		// white url이면 html 도 통과시킨다.
+		String dirty = "<object type=\"text/html\" data=\"http://serviceapi.nmv.naver.com/\"></object>";
+		String expected = "<object type=\"text/html\" data=\"http://serviceapi.nmv.naver.com/\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"all\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 체크 테스트(위험)
+		dirty = "<object type=\"text/html\" data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"text/html\" data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		
+		// type 속성 체크 테스트(일반)
+		dirty = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (일반)
+		dirty = "<object type=\"\" data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object type=\"application/x-shockwave-flash\" data=\"http://www.w3schools.com/html5/helloworld.swf\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// type 속성 값 공백일 경우에는 확장자 체크해서 type 속성 변경해주나? (위험)
+		dirty = "<object type=\"\" data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object type=\"\" data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+		// url 확장자 체크 테스트(위험)
+		dirty = "<object data=\"http://test.mireene.com/xss.html\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://test.mireene.com/xss.html\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(일반)
+		dirty = "<object data=\"http://www.w3schools.com/html5/helloworld.swf\"></object>";
+		expected = "<object data=\"http://www.w3schools.com/html5/helloworld.swf\" type=\"application/x-shockwave-flash\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+		dirty = "<object data=\"http://www.w3schools.com/\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://www.w3schools.com/\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		// url 확장자 체크 테스트(url의 확장자로 등록된게 아니면) - 통과시키지 말자.
+		dirty = "<object data=\"http://test.mireene.com/xss.test\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://test.mireene.com/xss.test\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+				
+		// url 에 확장자가 없고 존재하지(404 Not found) 않으면? - 통과시키지 말자.
+		dirty = "<object data=\"http://test.mireene.com/\"></object>";
+		expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://test.mireene.com/\"&gt;&lt;/object&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Ignore
+	@Test
+	public void objectSecurityListenerManyTimes() {
+		for(int i=0; i<1000000;i++) {
+			XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+			
+			// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+			String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=" + i + "\"></object>";
+			filter.doFilter(dirty);
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
+	@Test
+	public void objectSecurityListenerCache() {
+		for(int i=0; i<10;i++) {
+			XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+			
+			// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+			String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=23\"></object>";
+			filter.doFilter(dirty);
+		}
+	}
+	
+
+	@Test
+	public void objectSecurityListenerCacheDiffConfig() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+		String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=23\"></object>";
+		filter.doFilter(dirty);
+		
+		filter = XssFilter.getInstance("lucy-xss-embed-security2.xml");
+		// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+		dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=23\"></object>";
+		filter.doFilter(dirty);
+	}
+	
+	@Test
+	public void objectSecurityListenerCacheEachThread() {
+		
+		ExecutorService service = Executors.newFixedThreadPool(5);
+		final CountDownLatch latch = new CountDownLatch(10);
+		for(int i=0; i< 10; i++) {
+			service.execute(new Runnable() {
+				public void run() {
+					try {
+					XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+					
+					// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+					String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=23\"></object>";
+					filter.doFilter(dirty);
+					} finally {
+						latch.countDown();
+					}
+				}
+			});
+		}
+		
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	@Test
+	public void objectListenerOnSuperset() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<object data=\"http://serviceapi.nmv.naver.com/\"></object>";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://serviceapi.nmv.naver.com/\"&gt;&lt;/object&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void embedListenerOnSuperset() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<embed src=\"http://serviceapi.nmv.naver.com/\">";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://serviceapi.nmv.naver.com/\"&gt;";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}

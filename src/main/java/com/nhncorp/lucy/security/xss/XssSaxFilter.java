@@ -24,6 +24,7 @@ import com.nhncorp.lucy.security.xss.config.AttributeRule;
 import com.nhncorp.lucy.security.xss.config.ElementRule;
 import com.nhncorp.lucy.security.xss.config.XssConfiguration;
 import com.nhncorp.lucy.security.xss.config.XssSaxConfiguration;
+import com.nhncorp.lucy.security.xss.listener.SecurityUtils;
 import com.nhncorp.lucy.security.xss.listener.WhiteUrlList;
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 import com.nhncorp.lucy.security.xss.markup.Comment;
@@ -244,7 +245,7 @@ public final class XssSaxFilter {
 	 */
 	private void parseAndFilter(String dirty, Writer writer, StringWriter neloLogWriter) throws IOException {
 		if (dirty != null && dirty.length() > 0) {
-			LinkedList<String> stackForObjectTag = new LinkedList<String>();
+			LinkedList<Element> stackForObjectTag = new LinkedList<Element>();
 			LinkedList<String> stackForAllowNetworkingValue = new LinkedList<String>();
 			
 			CharArraySegment charArraySegment = new CharArraySegment(dirty);
@@ -277,8 +278,7 @@ public final class XssSaxFilter {
 					}
 					
 					String tagName = tagNameToken.getText();
-					doObjectParamStartTagProcess(stackForObjectTag,
-							stackForAllowNetworkingValue, t, tagName);
+					//doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, t, tagName);
 					Element element = new Element(tagName);
 					List<Token> attTokens = t.getChildren("attribute");
 					if (attTokens != null) {
@@ -302,6 +302,9 @@ public final class XssSaxFilter {
 
 					}
 					
+					doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, element);
+						
+					
 					this.serialize(writer, element, neloLogWriter);
 					
 				} else if ("iEHExEndTag".endsWith(tokenName)) {
@@ -322,17 +325,23 @@ public final class XssSaxFilter {
 					
 					String tagName = tagNameToken.getText();
 					
+					boolean isObjectDisabled = false;
 					if ("object".equalsIgnoreCase(tagName) && stackForObjectTag.size() > 0) {
-						doObjectEndTagProcess(writer, neloLogWriter,
+						isObjectDisabled = doObjectEndTagProcess(writer, neloLogWriter,
 								stackForObjectTag, stackForAllowNetworkingValue);
 						
 					}
 					
 					Element e = new Element(tagName);
+					
 					checkRuleRemove(e);
 
 					if (e.isRemoved()) {
 					} else {
+						if (isObjectDisabled) {
+							e.setEnabled(false);
+						}
+						
 						if (!e.isDisabled()) {
 							checkRule(e);
 						}
@@ -368,6 +377,60 @@ public final class XssSaxFilter {
 	/**
 	 * @param stackForObjectTag
 	 * @param stackForAllowNetworkingValue
+	 * @param element
+	 */
+	private void doObjectParamStartTagProcess(
+			LinkedList<Element> stackForObjectTag,
+			LinkedList<String> stackForAllowNetworkingValue, Element element) {
+		
+		if ("object".equalsIgnoreCase(element.getName())) {
+			stackForObjectTag.push(element);
+			boolean isDataWhiteUrl = false;
+			
+			Attribute dataUrl = element.getAttribute("data");
+			
+			if (dataUrl != null) { // data 속성이 존재하면 체크
+				String dataUrlStr = dataUrl.getValue();
+				System.out.println("dataUrlStr : " + dataUrlStr);
+				isDataWhiteUrl = this.isWhiteUrl(dataUrlStr);
+				
+				// URL MIME 체크
+				boolean isVulnerable = SecurityUtils.checkVulnerable(element, dataUrlStr, isDataWhiteUrl);
+				
+				if (isVulnerable) {
+					element.setEnabled(false);
+					return;
+				}
+			}
+			
+			if (isDataWhiteUrl) {
+				stackForAllowNetworkingValue.push("\"all\""); // data속성의 url 값이 white url이면 allowNetworking 디폴트는 설정은 all
+			} else {
+				stackForAllowNetworkingValue.push("\"internal\""); // allowNetworking 디폴트는 설정은 internal
+			}
+		} else if (stackForObjectTag.size() > 0 && "param".equalsIgnoreCase(element.getName())) {
+			Attribute nameAttr = element.getAttribute("name");
+			Attribute valueAttr = element.getAttribute("value");
+			
+			if(nameAttr != null && valueAttr != null) {
+				stackForObjectTag.push(element);
+				if (containsURLName(nameAttr.getValue())) {
+					stackForAllowNetworkingValue.pop();
+					boolean whiteUrl = isWhiteUrl(valueAttr.getValue());
+					
+					if (whiteUrl) {
+						stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
+					} else {
+						stackForAllowNetworkingValue.push("\"internal\""); // whiteUrl 이 아닐 경우 allowNetworking 설정은 internal 로 변경
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param stackForObjectTag
+	 * @param stackForAllowNetworkingValue
 	 * @param t
 	 * @param tagName
 	 */
@@ -377,7 +440,31 @@ public final class XssSaxFilter {
 			String tagName) {
 		if ("object".equalsIgnoreCase(tagName)) {
 			stackForObjectTag.push("<object>");
-			stackForAllowNetworkingValue.push("\"internal\""); // allowNetworking 디폴트는 설정은 internal
+			List<Token> attTokens = t.getChildren("attribute");
+			boolean isDataWhiteUrl = false;
+			
+			if (attTokens != null) {
+				
+				for (Token attToken : attTokens) {
+					Token attName = attToken.getChild("attName");
+					Token attValue = attToken.getChild("attValue");
+					if (attName!=null && "data".equalsIgnoreCase(attName.getText())) {
+						if (attValue != null) {
+							if (isWhiteUrl(attValue.getText())) {
+								isDataWhiteUrl = true;
+							} else {
+								isDataWhiteUrl = false;
+							}
+						}
+					}
+				}
+			}
+			
+			if (isDataWhiteUrl) {
+				stackForAllowNetworkingValue.push("\"all\""); // data속성의 url 값이 white url이면 allowNetworking 디폴트는 설정은 all
+			} else {
+				stackForAllowNetworkingValue.push("\"internal\""); // allowNetworking 디폴트는 설정은 internal
+			}
 		} else if (stackForObjectTag.size() > 0 && "param".equalsIgnoreCase(tagName)) {
 			List<Token> attTokens = t.getChildren("attribute");
 			if (attTokens != null) {
@@ -413,20 +500,32 @@ public final class XssSaxFilter {
 	 * @param stackForAllowNetworkingValue
 	 * @throws IOException
 	 */
-	private void doObjectEndTagProcess(Writer writer, StringWriter neloLogWriter,
-			LinkedList<String> stackForObjectTag,
+	private boolean doObjectEndTagProcess(Writer writer, StringWriter neloLogWriter,
+			LinkedList<Element> stackForObjectTag,
 			LinkedList<String> stackForAllowNetworkingValue) throws IOException {
 		List<String> paramNameList = new ArrayList<String>();
 		
+		Element item = null;
+		
 		while(stackForObjectTag.size()>0) {
-			String item = stackForObjectTag.pop();
-			if ("<object>".equals(item)) {
+			item = stackForObjectTag.pop();
+			if ("object".equalsIgnoreCase(item.getName())) {
 				break;
 			} else {
-				paramNameList.add(item);
+				Attribute nameAttr = item.getAttribute("name");
+				if (nameAttr != null) {
+					paramNameList.add(nameAttr.getValue());
+				}
 			}
 			
 		}
+		
+		if (item==null || !"object".equalsIgnoreCase(item.getName())) {
+			return false;
+		} else if (item!=null && item.isDisabled()) {
+			return true;
+		}
+		
 		// PARAMLIST (보안 파라미터(param) 설정)에 없는 param(paramNameList)을 확인해서 object 태그를 닫기 전에 추가해준다.
 		for (int index = 0 ; index < PARAMLIST.length; index++) {
 			Pattern pattern = PARAMLIST[index];
@@ -526,9 +625,9 @@ public final class XssSaxFilter {
 						System.out.println("발생 할 수 없는 로직입니다.");
 				}
 			}
-			
-			
 		}
+		
+		return false;
 	}
 
 	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
