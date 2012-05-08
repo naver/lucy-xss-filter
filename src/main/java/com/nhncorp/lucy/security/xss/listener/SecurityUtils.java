@@ -155,7 +155,9 @@ public class SecurityUtils {
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally{
-			con.disconnect();
+			if(con != null) {
+				con.disconnect();
+			}
 		}
 		
 		return result;
