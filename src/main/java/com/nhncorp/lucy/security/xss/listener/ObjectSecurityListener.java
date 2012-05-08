@@ -19,7 +19,9 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * @author Web Platform Development Team
  * 
  */
-public class ObjectListener implements ElementListener {
+public class ObjectSecurityListener implements ElementListener {
+	ContentTypeCacheRepo contentTypeCacheRepo = new ContentTypeCacheRepo();
+	
 	private static final Pattern INVOKEURLS = Pattern
 			.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
 	private static final Pattern AUTOSTART = Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?");
@@ -76,11 +78,10 @@ public class ObjectListener implements ElementListener {
 		
 		if (dataUrl != null) { // data 속성이 존재하면 체크
 			String dataUrlStr = dataUrl.getValue();
-			System.out.println("dataUrlStr : " + dataUrlStr);
 			boolean isDataUrlWhite = this.isWhiteUrl(dataUrlStr);
 	
 			// URL MIME 체크
-			boolean isVulnerable = SecurityUtils.checkVulnerable(e, dataUrlStr, isDataUrlWhite);
+			boolean isVulnerable = SecurityUtils.checkVulnerableWithHttp(e, dataUrlStr, isDataUrlWhite, contentTypeCacheRepo);
 			
 			if (isVulnerable) {
 				e.setEnabled(false);
@@ -109,7 +110,7 @@ public class ObjectListener implements ElementListener {
 					}
 					
 					// URL MIME 체크
-					boolean isVulnerable = SecurityUtils.checkVulnerable(e, srcUrl, isWhiteUrl);
+					boolean isVulnerable = SecurityUtils.checkVulnerableWithHttp(e, srcUrl, isWhiteUrl, contentTypeCacheRepo);
 					
 					if (isVulnerable) {
 						e.setEnabled(false);

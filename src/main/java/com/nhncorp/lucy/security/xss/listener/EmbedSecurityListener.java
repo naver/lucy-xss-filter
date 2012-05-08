@@ -15,17 +15,17 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * @author Web Platform Development Team
  * 
  */
-public class EmbedListener implements ElementListener {
+public class EmbedSecurityListener implements ElementListener {
+	ContentTypeCacheRepo contentTypeCacheRepo = new ContentTypeCacheRepo();
 
 	public void handleElement(Element e) {
 		if (e.isDisabled()) {
 			return;
 		}
+		
 		String srcUrl = e.getAttributeValue("src");
 		boolean isWhiteUrl = this.isWhiteUrl(srcUrl);
-
-		// URL MIME 체크
-		boolean isVulnerable = SecurityUtils.checkVulnerable(e, srcUrl, isWhiteUrl);
+		boolean isVulnerable = SecurityUtils.checkVulnerableWithHttp(e, srcUrl, isWhiteUrl, contentTypeCacheRepo);
 		
 		if (isVulnerable) {
 			e.setEnabled(false);
