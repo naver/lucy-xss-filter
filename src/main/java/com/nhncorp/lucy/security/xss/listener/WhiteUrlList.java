@@ -35,6 +35,8 @@ public final class WhiteUrlList {
 	private List<Pattern> patterns;
 
 	private WhiteUrlList() {
+		this.patterns = new ArrayList<Pattern>();
+		
 		java.net.URL url = XssConfiguration.class.getResource(CONFIG);
 		InputStream is = null;
 
@@ -45,7 +47,6 @@ public final class WhiteUrlList {
 			Element root = builder.parse(is).getDocumentElement();
 			NodeList list = root.getElementsByTagName("pattern");
 			if (list != null && list.getLength() > 0) {
-				this.patterns = new ArrayList<Pattern>();
 				for (int i = 0; i < list.getLength(); i++) {
 					String value = list.item(i).getTextContent();
 					if (value != null) {
