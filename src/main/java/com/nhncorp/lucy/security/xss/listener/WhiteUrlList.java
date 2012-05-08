@@ -89,10 +89,12 @@ public final class WhiteUrlList {
 		if (url == null || "".equals(url)) {
 			return false;
 		}
-
-		for (Pattern p : this.patterns) {
-			if (p.matcher(url).matches()) {
-				return true;
+		
+		if (this.patterns!=null) {
+			for (Pattern p : this.patterns) {
+				if (p.matcher(url).matches()) {
+					return true;
+				}
 			}
 		}
 		return false;
