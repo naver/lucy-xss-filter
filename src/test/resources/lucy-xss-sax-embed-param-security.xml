@@ -5,6 +5,12 @@
 
 	<elementRule>
 		<element name="embed" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.EmbedSecurityListener</listener>
+		</element>
+		<element name="object" disable="false">
+		</element>
+		<element name="param" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ParamListener</listener>
 		</element>
 	</elementRule>
 	
