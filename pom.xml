@@ -374,7 +374,7 @@
 				<artifactId>maven-nhnstyle-plugin</artifactId>
 				<version>2.3.3</version>
 				<configuration>
-					<configLocation>checkstyle-UTF8(ver0.6).xml</configLocation>
+					<configLocation>checkstyle-UTF8(ver1.2).xml</configLocation>
 				</configuration>
 			</plugin>
 		</plugins>
