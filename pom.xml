@@ -273,12 +273,12 @@
 					<dependency>
 						<groupId>com.nhncorp.quality</groupId>
 						<artifactId>nhn-checkstyle</artifactId>
-						<version>1.1</version>
+						<version>1.2</version>
 					</dependency>
 					<dependency>
 						<groupId>com.nhncorp.quality</groupId>
 						<artifactId>checkstyle</artifactId>
-						<version>4.4-p5</version>
+						<version>4.4-p6</version>
 					</dependency>
 				</dependencies>
 			</plugin>
