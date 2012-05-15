@@ -1,5 +1,5 @@
 /*
- * @(#) XssFilter.java 2010. 8. 11
+ * @(#) XssSaxFilter.java 2010. 8. 11
  *
  * Copyright 2010 NHN Corp. All rights Reserved.
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
@@ -55,7 +55,6 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  *
  */
 public final class XssSaxFilter {
-
 	private static final Log LOG = LogFactory.getLog(XssSaxFilter.class);
 
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
@@ -76,28 +75,15 @@ public final class XssSaxFilter {
 	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean isBlockingPrefixEnabled;
-	
+
 	private XssSaxConfiguration config;
 
 	private static final Map<FilterRepositoryKey, XssSaxFilter> instanceMap = new HashMap<FilterRepositoryKey, XssSaxFilter>();
-	
-	
-	private static final Pattern[] PARAMLIST = {
-		Pattern.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:allowNetworking)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:autoplay)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:nojava)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?")};
-	
-	private static final Pattern[] URLNAMES = { Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"),
-		Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?") };
+
+	private static final Pattern[] PARAMLIST = {Pattern.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:allowNetworking)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:autoplay)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?"),
+		Pattern.compile("['\"]?\\s*(?i:nojava)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?")};
+
+	private static final Pattern[] URLNAMES = {Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?")};
 
 	private static boolean containsURLName(String name) {
 		for (Pattern p : URLNAMES) {
@@ -107,7 +93,7 @@ public final class XssSaxFilter {
 		}
 		return false;
 	}
-	
+
 	private boolean isWhiteUrl(String url) {
 		WhiteUrlList list = WhiteUrlList.getInstance();
 		if (list != null && list.contains(url)) {
@@ -160,12 +146,12 @@ public final class XssSaxFilter {
 		try {
 			synchronized (XssSaxFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
-				
+
 				XssSaxFilter filter = instanceMap.get(key);
 				if (filter != null) {
 					return filter;
 				}
-				
+
 				filter = new XssSaxFilter(XssSaxConfiguration.newInstance(fileName));
 				filter.withoutComment = withoutComment;
 				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
@@ -206,7 +192,7 @@ public final class XssSaxFilter {
 		doFilter(dirty, writer);
 		return writer.toString();
 	}
-	
+
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
 	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
@@ -218,26 +204,26 @@ public final class XssSaxFilter {
 	 */
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
-		
+
 		if (dirty == null || dirty.length() == 0) {
 			LOG.debug("target string is empty. doFilter() method end.");
-			return ;
+			return;
 		}
-		
+
 		try {
 			this.parseAndFilter(dirty, writer, neloLogWriter);
 		} catch (IOException ioe) {
 			LOG.error(ioe.getMessage(), ioe);
 		}
-		
+
 		if (this.isNeloLogEnabled) {
 			String neloStr = neloLogWriter.toString();
-			if (neloStr!=null && neloStr.length() > 0) {
+			if (neloStr != null && neloStr.length() > 0) {
 				LOG.error("@[" + this.service + "]" + neloStr);
 			}
 		}
 	}
-	
+
 	/**
 	 * @param writer
 	 * @param neloLogWriter
@@ -247,18 +233,18 @@ public final class XssSaxFilter {
 		if (dirty != null && dirty.length() > 0) {
 			LinkedList<Element> stackForObjectTag = new LinkedList<Element>();
 			LinkedList<String> stackForAllowNetworkingValue = new LinkedList<String>();
-			
+
 			CharArraySegment charArraySegment = new CharArraySegment(dirty);
 			Token t;
-			while ((t = MarkupSaxParser.parse(charArraySegment) )!=null) {
+			while ((t = MarkupSaxParser.parse(charArraySegment)) != null) {
 				String tokenName = t.getName();
-				
+
 				if ("description".equals(tokenName)) {
-					
+
 					String description = t.getText();
 					Description content = new Description(description);
 					content.serialize(writer);
-				
+
 				} else if ("comment".equals(tokenName)) {
 					String comment = t.getText();
 					if (comment != null && comment.length() != 0) {
@@ -266,46 +252,45 @@ public final class XssSaxFilter {
 					}
 					Comment content = new Comment(comment);
 					content.serialize(writer);
-				
+
 				} else if ("iEHExStartTag".endsWith(tokenName)) {
 					IEHackExtensionElement element = new IEHackExtensionElement(t.getText());
 					this.serialize(writer, element, neloLogWriter);
-					
+
 				} else if ("startTag".equals(tokenName)) {
 					Token tagNameToken = t.getChild("tagName");
-					if(tagNameToken == null) {
+					if (tagNameToken == null) {
 						continue;
 					}
-					
+
 					String tagName = tagNameToken.getText();
 					Element element = new Element(tagName);
 					List<Token> attTokens = t.getChildren("attribute");
 					if (attTokens != null) {
 						for (Token attToken : attTokens) {
-							if(attToken != null) {
+							if (attToken != null) {
 								Token attName = attToken.getChild("attName");
 								Token attValue = attToken.getChild("attValue");
-								if (attName!=null && attValue == null) {
+								if (attName != null && attValue == null) {
 									element.putAttribute(new Attribute(attName.getText()));
-								} else if (attName!=null && attValue != null){
+								} else if (attName != null && attValue != null) {
 									element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
 								}
 							}
 						}
 					}
-					
+
 					Token closeStartEnd = t.getChild("closeStartEnd");
-					
-					if(closeStartEnd != null) {
+
+					if (closeStartEnd != null) {
 						element.setStartClose(true);
 
 					}
-					
+
 					doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, element);
-						
-					
+
 					this.serialize(writer, element, neloLogWriter);
-					
+
 				} else if ("iEHExEndTag".endsWith(tokenName)) {
 					IEHackExtensionElement ie = new IEHackExtensionElement(t.getText());
 					checkIEHackRule(ie);
@@ -315,29 +300,28 @@ public final class XssSaxFilter {
 					}
 				} else if ("endTag".equals(tokenName)) {
 					Token tagNameToken = t.getChild("tagName");
-					
-					if(tagNameToken == null) {
+
+					if (tagNameToken == null) {
 						continue;
 					}
-					
+
 					String tagName = tagNameToken.getText();
-					
+
 					boolean isObjectDisabled = false;
 					if ("object".equalsIgnoreCase(tagName) && stackForObjectTag.size() > 0) {
-						isObjectDisabled = doObjectEndTagProcess(writer, neloLogWriter,
-								stackForObjectTag, stackForAllowNetworkingValue);
-						
+						isObjectDisabled = doObjectEndTagProcess(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue);
+
 					}
-					
+
 					Element e = new Element(tagName);
-					
+
 					checkRuleRemove(e);
 
 					if (!e.isRemoved()) {
 						if (isObjectDisabled) {
 							e.setEnabled(false);
 						}
-						
+
 						if (!e.isDisabled()) {
 							checkRule(e);
 						}
@@ -365,9 +349,7 @@ public final class XssSaxFilter {
 				}
 			}
 		}
-		
-		
-		
+
 	}
 
 	/**
@@ -375,30 +357,28 @@ public final class XssSaxFilter {
 	 * @param stackForAllowNetworkingValue
 	 * @param element
 	 */
-	private void doObjectParamStartTagProcess(
-			LinkedList<Element> stackForObjectTag,
-			LinkedList<String> stackForAllowNetworkingValue, Element element) {
-		
+	private void doObjectParamStartTagProcess(LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue, Element element) {
+
 		if ("object".equalsIgnoreCase(element.getName())) {
 			stackForObjectTag.push(element);
 			boolean isDataWhiteUrl = false;
-			
+
 			Attribute dataUrl = element.getAttribute("data");
-			
+
 			if (dataUrl != null) { // data 속성이 존재하면 체크
 				String dataUrlStr = dataUrl.getValue();
 				System.out.println("dataUrlStr : " + dataUrlStr);
 				isDataWhiteUrl = this.isWhiteUrl(dataUrlStr);
-				
+
 				// URL MIME 체크
 				boolean isVulnerable = SecurityUtils.checkVulnerable(element, dataUrlStr, isDataWhiteUrl);
-				
+
 				if (isVulnerable) {
 					element.setEnabled(false);
 					return;
 				}
 			}
-			
+
 			if (isDataWhiteUrl) {
 				stackForAllowNetworkingValue.push("\"all\""); // data속성의 url 값이 white url이면 allowNetworking 디폴트는 설정은 all
 			} else {
@@ -407,13 +387,13 @@ public final class XssSaxFilter {
 		} else if (stackForObjectTag.size() > 0 && "param".equalsIgnoreCase(element.getName())) {
 			Attribute nameAttr = element.getAttribute("name");
 			Attribute valueAttr = element.getAttribute("value");
-			
-			if(nameAttr != null && valueAttr != null) {
+
+			if (nameAttr != null && valueAttr != null) {
 				stackForObjectTag.push(element);
 				if (containsURLName(nameAttr.getValue())) {
 					stackForAllowNetworkingValue.pop();
 					boolean whiteUrl = isWhiteUrl(valueAttr.getValue());
-					
+
 					if (whiteUrl) {
 						stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
 					} else {
@@ -431,14 +411,12 @@ public final class XssSaxFilter {
 	 * @param stackForAllowNetworkingValue
 	 * @throws IOException
 	 */
-	private boolean doObjectEndTagProcess(Writer writer, StringWriter neloLogWriter,
-			LinkedList<Element> stackForObjectTag,
-			LinkedList<String> stackForAllowNetworkingValue) throws IOException {
+	private boolean doObjectEndTagProcess(Writer writer, StringWriter neloLogWriter, LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue) throws IOException {
 		List<String> paramNameList = new ArrayList<String>();
-		
+
 		Element item = null;
-		
-		while(stackForObjectTag.size()>0) {
+
+		while (stackForObjectTag.size() > 0) {
 			item = stackForObjectTag.pop();
 			if ("object".equalsIgnoreCase(item.getName())) {
 				break;
@@ -448,32 +426,32 @@ public final class XssSaxFilter {
 					paramNameList.add(nameAttr.getValue());
 				}
 			}
-			
+
 		}
-		
-		if (item==null || !"object".equalsIgnoreCase(item.getName())) {
+
+		if (item == null || !"object".equalsIgnoreCase(item.getName())) {
 			return false;
-		} else if (item!=null && item.isDisabled()) {
+		} else if (item != null && item.isDisabled()) {
 			return true;
 		}
-		
+
 		// PARAMLIST (보안 파라미터(param) 설정)에 없는 param(paramNameList)을 확인해서 object 태그를 닫기 전에 추가해준다.
-		for (int index = 0 ; index < PARAMLIST.length; index++) {
+		for (int index = 0; index < PARAMLIST.length; index++) {
 			Pattern pattern = PARAMLIST[index];
-			
+
 			boolean exist = false;
-			for(String paramName : paramNameList) {
+			for (String paramName : paramNameList) {
 				if (pattern.matcher(paramName).matches()) {
 					exist = true;
 					break;
 				}
 			}
-			
+
 			if (!exist) {
 				// 해당 패턴의 param 추가
-				switch(index) {
-					// <param name="invokeURLs" value="false" />
-					case 0 :
+				switch (index) {
+				// <param name="invokeURLs" value="false" />
+					case 0:
 						Element invokeURLs = new Element("param");
 						invokeURLs.putAttribute("name", "\"invokeURLs\"");
 						invokeURLs.putAttribute("value", "\"false\"");
@@ -481,7 +459,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="autostart" value="false" />
-					case 1 :
+					case 1:
 						Element autostart = new Element("param");
 						autostart.putAttribute("name", "\"autostart\"");
 						autostart.putAttribute("value", "\"false\"");
@@ -489,7 +467,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="allowScriptAccess" value="never" />
-					case 2 :
+					case 2:
 						Element allowScriptAccess = new Element("param");
 						allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
 						allowScriptAccess.putAttribute("value", "\"never\"");
@@ -498,15 +476,15 @@ public final class XssSaxFilter {
 
 					// <param name="allowNetworking" value="all|internal" />
 
-					case 3 :
+					case 3:
 						Element allowNetworking = new Element("param");
 						allowNetworking.putAttribute("name", "\"allowNetworking\"");
-						allowNetworking.putAttribute("value", stackForAllowNetworkingValue.size()==0?"\"internal\"":stackForAllowNetworkingValue.pop());
+						allowNetworking.putAttribute("value", stackForAllowNetworkingValue.size() == 0 ? "\"internal\"" : stackForAllowNetworkingValue.pop());
 						this.serialize(writer, allowNetworking, neloLogWriter);
 						break;
 
 					// <param name="autoplay" value="false" />
-					case 4 :
+					case 4:
 						Element autoplay = new Element("param");
 						autoplay.putAttribute("name", "\"autoplay\"");
 						autoplay.putAttribute("value", "\"false\"");
@@ -514,7 +492,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="enablehref" value="flase" />
-					case 5 :
+					case 5:
 						Element enablehref = new Element("param");
 						enablehref.putAttribute("name", "\"enablehref\"");
 						enablehref.putAttribute("value", "\"false\"");
@@ -522,7 +500,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="enablejavascript" value="flase" />
-					case 6 :
+					case 6:
 						Element enablejavascript = new Element("param");
 						enablejavascript.putAttribute("name", "\"enablejavascript\"");
 						enablejavascript.putAttribute("value", "\"false\"");
@@ -530,7 +508,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="nojava" value="true" />
-					case 7 :
+					case 7:
 						Element nojava = new Element("param");
 						nojava.putAttribute("name", "\"nojava\"");
 						nojava.putAttribute("value", "\"true\"");
@@ -538,7 +516,7 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="AllowHtmlPopupwindow" value="false" />
-					case 8 :
+					case 8:
 						Element allowHtmlPopupwindow = new Element("param");
 						allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
 						allowHtmlPopupwindow.putAttribute("value", "\"false\"");
@@ -546,18 +524,18 @@ public final class XssSaxFilter {
 						break;
 
 					// <param name="enableHtmlAccess" value="false" />
-					case 9 :
+					case 9:
 						Element enableHtmlAccess = new Element("param");
 						enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");
 						enableHtmlAccess.putAttribute("value", "\"false\"");
 						this.serialize(writer, enableHtmlAccess, neloLogWriter);
 						break;
-					default :
+					default:
 						System.out.println("발생 할 수 없는 로직입니다.");
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -578,9 +556,9 @@ public final class XssSaxFilter {
 			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // IE에서 핵이 그데로 노출되는 문제 방지 및 공백제거처리
 			writer.write(stdName);
 
-//			if (ie.isClosed()) {
-//				writer.write("<![endif]-->");
-//			}
+			//			if (ie.isClosed()) {
+			//				writer.write("<![endif]-->");
+			//			}
 		}
 	}
 
@@ -608,7 +586,7 @@ public final class XssSaxFilter {
 				neloLogWriter.write(this.neloElementRemoveMSG);
 				neloLogWriter.write(e.getName() + "\n");
 			}
-			
+
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(e.getName());
@@ -650,7 +628,7 @@ public final class XssSaxFilter {
 
 			StringWriter attrSw = new StringWriter();
 			StringWriter attrXssSw = new StringWriter();
-			
+
 			if (atts != null && !atts.isEmpty()) {
 				for (Attribute att : atts) {
 
@@ -667,7 +645,7 @@ public final class XssSaxFilter {
 					}
 				}
 			}
-			
+
 			if (hasAttrXss) {
 				String attrXssString = attrXssSw.toString();
 				if (this.isNeloLogEnabled) {
@@ -675,18 +653,18 @@ public final class XssSaxFilter {
 					neloLogWriter.write(e.getName());
 					neloLogWriter.write(attrXssString + "\n");
 				}
-				
+
 				if (!this.withoutComment) {
 					writer.write(attrXssString);
 					writer.write(BAD_ATT_INFO_END);
 				}
 			}
-			
+
 			if (!e.isDisabled()) {
 				writer.write('<');
 				writer.write(e.getName());
 			}
-			
+
 			writer.write(attrSw.toString());
 
 			if (e.isStartClosed()) {
@@ -696,17 +674,17 @@ public final class XssSaxFilter {
 				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
 			}
 
-//			if (e.isClosed()) {
-//				if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
-//					writer.write("&lt;/");
-//					writer.write(e.getName());
-//					writer.write("&gt;");
-//				} else {
-//					writer.write("</");
-//					writer.write(e.getName());
-//					writer.write('>');
-//				}
-//			}
+			//			if (e.isClosed()) {
+			//				if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
+			//					writer.write("&lt;/");
+			//					writer.write(e.getName());
+			//					writer.write("&gt;");
+			//				} else {
+			//					writer.write("</");
+			//					writer.write(e.getName());
+			//					writer.write('>');
+			//				}
+			//			}
 		}
 	}
 

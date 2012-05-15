@@ -1,5 +1,5 @@
 /*
- * @(#)EtcTest.java $version 2012. 4. 24.
+ * @(#)EtcTestSAX.java $version 2012. 4. 24.
  *
  * Copyright 2007 NHN Corp. All rights Reserved. 
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.

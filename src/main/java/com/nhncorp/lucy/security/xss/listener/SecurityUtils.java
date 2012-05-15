@@ -29,16 +29,16 @@ public class SecurityUtils {
 	 */
 	public static boolean checkVulnerable(Element e, String srcUrl, boolean isWhiteUrl) {
 		boolean isVulnerable = false;
-		
+
 		// embed/object 관련 취약성 대응 (XSSFILTERSUS-109)
-		if(isWhiteUrl) {
-			
+		if (isWhiteUrl) {
+
 		} else {
 			String type = e.getAttributeValue("type").trim();
 			type = StringUtils.strip(type, "'\"");
-			
+
 			if (type != null && type.length() != 0) {
-			
+
 				//허용된 type 인가?
 				if (!isAllowedType(type)) {
 					isVulnerable = true;
@@ -47,12 +47,12 @@ public class SecurityUtils {
 				//확장자 체크
 				String url = StringUtils.strip(srcUrl, "'\"");
 				String extension = FilenameUtils.getExtension(url);
-				
+
 				if (StringUtils.isEmpty(extension)) {
 					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 그냥 통과시킴. 보안상 hole 이지만 고객 불편을 줄이기 위함.
 				} else {
 					type = getTypeFromExtension(extension);
-					
+
 					//허용된 type 인가?
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
@@ -60,31 +60,30 @@ public class SecurityUtils {
 						e.putAttribute("type", "\"" + type + "\"");
 					}
 				}
-				
+
 			}
 		}
 		return isVulnerable;
 	}
-	
+
 	/**
 	 * @param e
 	 * @param srcUrl
 	 * @param isWhiteUrl
 	 * @return
 	 */
-	public static boolean checkVulnerableWithHttp(Element e, String srcUrl,
-			boolean isWhiteUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
+	public static boolean checkVulnerableWithHttp(Element e, String srcUrl, boolean isWhiteUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
 		boolean isVulnerable = false;
-		
+
 		// embed/object 관련 취약성 대응 (XSSFILTERSUS-109)
-		if(isWhiteUrl) {
-			
+		if (isWhiteUrl) {
+
 		} else {
 			String type = e.getAttributeValue("type").trim();
 			type = StringUtils.strip(type, "'\"");
-			
+
 			if (type != null && !"".equals(type)) {
-				
+
 				//허용된 type 인가?
 				if (!isAllowedType(type)) {
 					isVulnerable = true;
@@ -94,21 +93,21 @@ public class SecurityUtils {
 				String url = StringUtils.strip(srcUrl, "'\"");
 				String extension = FilenameUtils.getExtension(url);
 				extension = "";
-				
+
 				if (StringUtils.isEmpty(extension)) {
 					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 해당 url 을 head HTTP Method 를 이용해 content-type 식별
 					type = getContentTypeFromUrlConnection(url, contentTypeCacheRepo);
-					
+
 					//허용된 type 인가?
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
 					} else {
 						e.putAttribute("type", "\"" + type + "\"");
 					}
-					
+
 				} else {
 					type = getTypeFromExtension(extension);
-					
+
 					//허용된 type 인가?
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
@@ -116,12 +115,12 @@ public class SecurityUtils {
 						e.putAttribute("type", "\"" + type + "\"");
 					}
 				}
-				
+
 			}
 		}
 		return isVulnerable;
 	}
-	
+
 	public static String getContentTypeFromUrlConnection(String strUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
 		// cache 에 먼저 있는지확인.
 		String result = contentTypeCacheRepo.getContentTypeFromCache(strUrl);
@@ -129,9 +128,9 @@ public class SecurityUtils {
 		if (StringUtils.isNotEmpty(result)) {
 			return result;
 		}
-		
+
 		HttpURLConnection con = null;
-		
+
 		try {
 			URL url = new URL(strUrl);
 			con = (HttpURLConnection)url.openConnection();
@@ -139,31 +138,31 @@ public class SecurityUtils {
 			con.setConnectTimeout(1000);
 			con.setReadTimeout(1000);
 			con.connect();
-			
+
 			int resCode = con.getResponseCode();
-			
+
 			if (resCode != HttpURLConnection.HTTP_OK) {
 				System.err.println("error");
 			} else {
 				result = con.getContentType();
 				//System.out.println("content-type from response header: " + result);
-				
-				if (result!=null) {
+
+				if (result != null) {
 					contentTypeCacheRepo.addContentTypeToCache(strUrl, new ContentType(result, new Date()));
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} finally{
-			if(con != null) {
+		} finally {
+			if (con != null) {
 				con.disconnect();
 			}
 		}
-		
+
 		return result;
-		
+
 	}
-	
+
 	/**
 	 * @param extension
 	 * @return

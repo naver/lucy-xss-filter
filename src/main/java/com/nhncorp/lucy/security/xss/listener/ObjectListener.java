@@ -20,28 +20,18 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 
  */
 public class ObjectListener implements ElementListener {
-	private static final Pattern INVOKEURLS = Pattern
-			.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
+	private static final Pattern INVOKEURLS = Pattern.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
 	private static final Pattern AUTOSTART = Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?");
-	private static final Pattern ALLOWSCRIPTACCESS = Pattern
-			.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?");
-	private static final Pattern ALLOWNETWORKING = Pattern
-			.compile("['\"]?\\s*(?i:allowNetworking)\\s*['\"]?");
+	private static final Pattern ALLOWSCRIPTACCESS = Pattern.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?");
+	private static final Pattern ALLOWNETWORKING = Pattern.compile("['\"]?\\s*(?i:allowNetworking)\\s*['\"]?");
 	private static final Pattern AUTOPLAY = Pattern.compile("['\"]?\\s*(?i:autoplay)\\s*['\"]?");
-	private static final Pattern ENABLEHREF = Pattern
-			.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?");
-	private static final Pattern ENABLEJAVASCRIPT = Pattern
-			.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?");
+	private static final Pattern ENABLEHREF = Pattern.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?");
+	private static final Pattern ENABLEJAVASCRIPT = Pattern.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?");
 	private static final Pattern NOJAVA = Pattern.compile("['\"]?\\s*(?i:nojava)\\s*['\"]?");
-	private static final Pattern ALLOWHTMLPOPUPWINDOW = Pattern
-			.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?");
-	private static final Pattern ENABLEHTMLACCESS = Pattern
-			.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?");
+	private static final Pattern ALLOWHTMLPOPUPWINDOW = Pattern.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?");
+	private static final Pattern ENABLEHTMLACCESS = Pattern.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?");
 
-	private static final Pattern[] URLNAMES = { Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"),
-			Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"),
-			Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"),
-			Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?") };
+	private static final Pattern[] URLNAMES = {Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?")};
 
 	private static boolean containsURLName(String name) {
 		for (Pattern p : URLNAMES) {
@@ -67,57 +57,56 @@ public class ObjectListener implements ElementListener {
 		String allowNetworkingValue = "\"internal\"";
 		boolean isWhiteUrl = false;
 		boolean isSrcWhiteUrl = true;
-		
+
 		if (e.isDisabled()) {
 			return;
 		}
-		
+
 		Attribute dataUrl = e.getAttribute("data");
-		
+
 		if (dataUrl != null) { // data 속성이 존재하면 체크
 			String dataUrlStr = dataUrl.getValue();
 			System.out.println("dataUrlStr : " + dataUrlStr);
 			boolean isDataUrlWhite = this.isWhiteUrl(dataUrlStr);
-	
+
 			// URL MIME 체크
 			boolean isVulnerable = SecurityUtils.checkVulnerable(e, dataUrlStr, isDataUrlWhite);
-			
+
 			if (isVulnerable) {
 				e.setEnabled(false);
 				return;
 			}
-			
+
 			if (isDataUrlWhite) {
 				allowNetworkingValue = "\"all\"";
 			}
 		}
-		
+
 		List<Element> elements = e.getElements();
-		
+
 		if (elements != null) {
 			for (Element param : elements) {
-				if ("param".equalsIgnoreCase(param.getName())
-						&& containsURLName(param.getAttributeValue("name"))) {
-					
+				if ("param".equalsIgnoreCase(param.getName()) && containsURLName(param.getAttributeValue("name"))) {
+
 					String srcUrl = param.getAttributeValue("value");
-					
+
 					if (!this.isWhiteUrl(srcUrl)) {
 						isWhiteUrl = false;
 						isSrcWhiteUrl = false;
 					} else {
 						isWhiteUrl = true;
 					}
-					
+
 					// URL MIME 체크
 					boolean isVulnerable = SecurityUtils.checkVulnerable(e, srcUrl, isWhiteUrl);
-					
+
 					if (isVulnerable) {
 						e.setEnabled(false);
 						return;
 					}
 				}
 			}
-			
+
 			if (isWhiteUrl && isSrcWhiteUrl) {
 				allowNetworkingValue = "\"all\"";
 			}
@@ -246,7 +235,7 @@ public class ObjectListener implements ElementListener {
 
 	private boolean isWhiteUrl(String url) {
 		WhiteUrlList list = WhiteUrlList.getInstance();
-		if (list!=null && list.contains(url)) {
+		if (list != null && list.contains(url)) {
 			return true;
 		}
 

@@ -20,12 +20,11 @@ import com.nhncorp.lucy.security.xss.markup.IEHackExtensionElement;
 
 /**
  * 이 클래스는 패키지 외부에서 참조 되지 않는다.
- *
+ * 
  * @author Web Platform Development Team
- *
+ * 
  */
 public final class ElementRule {
-
 	private String name;
 	private boolean endTag;
 	private boolean disabled;

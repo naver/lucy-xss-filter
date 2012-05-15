@@ -26,7 +26,6 @@ import com.nhncorp.lucy.security.xss.markup.rule.ParsingRule.UNARY;
  * 
  */
 public final class ParsingGrammar {
-	
 	private static String RULE_FILE = "markup.rule";
 	private static String START_SYMBOL = "contents";
 	private static String DEFINE = "::=";
@@ -36,7 +35,7 @@ public final class ParsingGrammar {
 
 	private ParsingGrammar() {
 		this.rules = new HashMap<String, Group>();
-		
+
 		BufferedReader reader = null;
 		try {
 			InputStream input = ParsingGrammar.class.getResourceAsStream(RULE_FILE);
@@ -60,11 +59,11 @@ public final class ParsingGrammar {
 					buffer.append(line.trim());
 				}
 			}
-			
+
 			if (buffer != null) {
 				this.readNotation(buffer.toString());
 			}
-		} catch (IOException ioe) { 
+		} catch (IOException ioe) {
 			// ignore
 		} finally {
 			if (reader != null) {
@@ -76,7 +75,7 @@ public final class ParsingGrammar {
 			}
 		}
 	}
-	
+
 	/**
 	 * 이 메소드는 Instance 를 리턴한다.
 	 * 
@@ -89,7 +88,7 @@ public final class ParsingGrammar {
 	Group getRule(String ruleName) {
 		return this.rules.get(ruleName);
 	}
-	
+
 	/**
 	 * 이 메소드는 특정 Input String 에 대한 Tokenizing 을 수행한다.
 	 * 
@@ -100,34 +99,34 @@ public final class ParsingGrammar {
 		if (input == null || input.length() <= 0) {
 			return null;
 		}
-		
+
 		NonTerminal start = instance.getRule(START_SYMBOL);
-		
+
 		Token token = new Token(start.getRuleName());
 		if (!start.sliceTokens(token, new CharArraySegment(input), instance)) {
 			return null;
 		}
-		
+
 		return token;
 	}
-	
+
 	public Token nextToken(CharArraySegment input) {
 		if (input == null || input.length() <= 0) {
 			return null;
 		}
-		
+
 		NonTerminal start = instance.getRule(START_SYMBOL);
-		
+
 		Token startToken = new Token(start.getRuleName());
 		Token token = start.nextToken(startToken, input, instance);
 		return token;
 	}
-	
+
 	private void readNotation(String notation) {
 		if (!notation.contains(DEFINE)) {
-			return ;
+			return;
 		}
-		
+
 		String[] pair = notation.split(DEFINE);
 		String name = pair[0].trim();
 		String exp = pair[1].trim();
@@ -135,15 +134,15 @@ public final class ParsingGrammar {
 		this.builRules(group, new CharArraySegment(exp.toCharArray()));
 		this.rules.put(name, group);
 	}
-	
+
 	private void builRules(Group parent, CharArraySegment input) {
 		RuleType type;
 		CharArraySegment segment;
-	
+
 		ArrayList<ParsingRule> tmp = new ArrayList<ParsingRule>();
 		ParsingRule preRule = null;
 		while (input.hasRemaining()) {
-			type = RuleType.getType(input);	
+			type = RuleType.getType(input);
 			if (type == null) {
 				input.move();
 				continue;
@@ -152,17 +151,17 @@ public final class ParsingGrammar {
 				if (type == RuleType.LITERAL && segment.length() == 1) {
 					type = RuleType.CHARCODE;
 					char code = segment.getChar();
-					segment = new CharArraySegment(Integer.toHexString(code).toCharArray());					
+					segment = new CharArraySegment(Integer.toHexString(code).toCharArray());
 				}
 			}
 			switch (type) {
-				case LITERAL : {
+				case LITERAL: {
 					Literal literal = new Literal(segment.toString());
 					tmp.add(literal);
 					preRule = literal;
 					break;
 				}
-				case CHARCODESET : {
+				case CHARCODESET: {
 					if (preRule != null && parent.hasOrOperation() && preRule instanceof CharCodeSet) {
 						CharCodeSet set = CharCodeSet.class.cast(preRule);
 						set.setAll(new CharCodeSet(segment));
@@ -182,7 +181,7 @@ public final class ParsingGrammar {
 					}
 					break;
 				}
-				case CHARCODE : {
+				case CHARCODE: {
 					if (preRule != null && parent.hasOrOperation() && preRule instanceof CharCodeSet) {
 						CharCodeSet set = CharCodeSet.class.cast(preRule);
 						set.set(CharCode.parse(segment.toString()));
@@ -200,10 +199,10 @@ public final class ParsingGrammar {
 						CharCode code = new CharCode(CharCode.parse(segment.toString()));
 						tmp.add(code);
 						preRule = code;
-					}					
+					}
 					break;
 				}
-				case UNARY : {
+				case UNARY: {
 					UNARY unary = UNARY.getValue(segment.charAt(0));
 					if (preRule != null && unary != UNARY.ONE) {
 						if (preRule.isRepeat() && unary == UNARY.OPTION) {
@@ -214,7 +213,7 @@ public final class ParsingGrammar {
 					}
 					break;
 				}
-				case OPERATOR : {
+				case OPERATOR: {
 					OPERATOR op = OPERATOR.getValue(segment.charAt(0));
 					if (op != null) {
 						if (tmp.size() > 1) {
@@ -230,7 +229,7 @@ public final class ParsingGrammar {
 					}
 					break;
 				}
-				case GROUP : {
+				case GROUP: {
 					Group group = new Group();
 					this.builRules(group, segment);
 					if (group.getRuleCount() == 1) {
@@ -243,15 +242,15 @@ public final class ParsingGrammar {
 					}
 					break;
 				}
-				case REFERENCE : {
+				case REFERENCE: {
 					Reference ref = new Reference(segment.toString());
 					tmp.add(ref);
 					preRule = ref;
 					break;
 				}
-			}			
+			}
 		}
-		
+
 		if (tmp.size() > 1 && parent.hasOrOperation()) {
 			Group group = new Group();
 			group.addAll(tmp);
@@ -259,10 +258,10 @@ public final class ParsingGrammar {
 		} else {
 			parent.addAll(tmp);
 		}
-		
+
 		if (parent.getRuleCount() == 1) {
 			parent.setOperator(null);
-		}	
+		}
 	}
 
 	private enum RuleType {
@@ -272,7 +271,7 @@ public final class ParsingGrammar {
 				char ch = input.getChar();
 				return ch == '"' || ch == '\'';
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
 				char ch = input.getChar();
 				int pos = input.move().posOf(ch);
@@ -280,32 +279,31 @@ public final class ParsingGrammar {
 				input.move(result.length() + 1);
 				return result;
 			}
-		}
-		, 
+		},
 		CHARCODESET {
 			boolean startAt(CharArraySegment input) {
 				return input.getChar() == '[';
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
 				int pos = input.move(1).posOf(']');
 				CharArraySegment result = input.subSegment(input.pos(), pos);
 				input.move(result.length() + 1);
 				return result;
 			}
-		}
-		, CHARCODE {
+		},
+		CHARCODE {
 			boolean startAt(CharArraySegment input) {
 				return input.startWith("#x");
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
 				int start = input.move(2).pos();
 				int end = start;
 				while (input.hasRemaining()) {
-					char ch = input.getChar();					
-					if (CharArraySegment.isHexChar(ch)){
-						end = input.move(1).pos();						
+					char ch = input.getChar();
+					if (CharArraySegment.isHexChar(ch)) {
+						end = input.move(1).pos();
 					} else {
 						break;
 					}
@@ -313,32 +311,32 @@ public final class ParsingGrammar {
 
 				return input.subSegment(start, end);
 			}
-		}
-		, UNARY {
+		},
+		UNARY {
 			boolean startAt(CharArraySegment input) {
 				char ch = input.getChar();
 				return ch == '?' || ch == '*' || ch == '+';
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
-				return input.move(1).subSegment(input.pos() -1, input.pos());
+				return input.move(1).subSegment(input.pos() - 1, input.pos());
 			}
-		}
-		, OPERATOR {
+		},
+		OPERATOR {
 			boolean startAt(CharArraySegment input) {
 				char ch = input.getChar();
 				return ch == '|' || ch == '-';
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
-				return input.move(1).subSegment(input.pos() -1, input.pos());
+				return input.move(1).subSegment(input.pos() - 1, input.pos());
 			}
-		}
-		, GROUP {
+		},
+		GROUP {
 			boolean startAt(CharArraySegment input) {
 				return input.getChar() == '(';
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
 				int start = input.move(1).pos();
 				int end = start;
@@ -358,20 +356,20 @@ public final class ParsingGrammar {
 					}
 					input.move(1);
 				}
-				
+
 				return input.subSegment(start, end);
 			}
-		}
-		, REFERENCE {
+		},
+		REFERENCE {
 			boolean startAt(CharArraySegment input) {
 				return Character.isLetter(input.getChar());
 			}
-			
+
 			CharArraySegment sliceFrom(CharArraySegment input) {
 				int start = input.pos();
 				int end = start;
 				while (input.hasRemaining()) {
-					if (Character.isLetterOrDigit(input.getChar())){						
+					if (Character.isLetterOrDigit(input.getChar())) {
 						end = input.move(1).pos();
 					} else {
 						break;
@@ -380,10 +378,10 @@ public final class ParsingGrammar {
 				return input.subSegment(start, end);
 			}
 		};
-		
+
 		static RuleType getType(CharArraySegment input) {
 			RuleType result = null;
-			for(RuleType type : RuleType.values()) {
+			for (RuleType type : RuleType.values()) {
 				if (type.startAt(input)) {
 					result = type;
 					break;
@@ -391,9 +389,9 @@ public final class ParsingGrammar {
 			}
 			return result;
 		}
-		
+
 		abstract boolean startAt(CharArraySegment input);
-		
+
 		abstract CharArraySegment sliceFrom(CharArraySegment input);
 	}
 }

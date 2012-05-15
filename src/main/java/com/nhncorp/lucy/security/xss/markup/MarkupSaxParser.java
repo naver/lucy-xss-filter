@@ -1,5 +1,5 @@
 /*
- * @(#) MarkupParser.java 2010. 8. 11 
+ * @(#) MarkupSaxParser.java 2010. 8. 11 
  *
  * Copyright 2010 NHN Corp. All rights Reserved. 
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
@@ -41,14 +41,13 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  * 
  */
 public final class MarkupSaxParser {
-	
 	private static ParsingGrammar grammar = ParsingGrammar.getInstance();
-	
-	private MarkupSaxParser() {}
-	
-	
+
+	private MarkupSaxParser() {
+	}
+
 	public static Token parse(CharArraySegment charArraySegment) {
 		Token t = grammar.nextToken(charArraySegment);
-		return t; 
+		return t;
 	}
 }
