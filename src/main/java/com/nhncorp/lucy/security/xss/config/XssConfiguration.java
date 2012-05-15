@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.nhncorp.lucy.security.xss.event.AttributeListener;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
@@ -100,7 +101,7 @@ public final class XssConfiguration {
 		return config;
 	}
 
-	private static XssConfiguration create(DocumentBuilder builder, String file) {
+	private static XssConfiguration create(DocumentBuilder builder, String file) throws SAXException, IOException {
 		XssConfiguration config = null;
 
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
@@ -153,8 +154,6 @@ public final class XssConfiguration {
 				config.enableBlockingPrefix(Element.class.cast(list.item(i)));
 			}
 
-		} catch (Exception ex) {
-			return null;
 		} finally {
 			if (is != null) {
 				try {
