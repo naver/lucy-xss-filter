@@ -17,24 +17,23 @@ import java.util.List;
  * 
  */
 public final class Token {
-
 	private String name;
-	private CharArraySegment value;	
+	private CharArraySegment value;
 	private ArrayList<Token> children;
 
 	Token(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * 이 메소드는 토큰 이름을 리턴한다.
 	 * 
 	 * @return	토큰 이름.
 	 */
 	public String getName() {
-		return (this.name == null)? "" : this.name;
+		return (this.name == null) ? "" : this.name;
 	}
-	
+
 	void setValue(CharArraySegment value) {
 		this.value = value;
 		if (value == null && this.children != null) {
@@ -42,19 +41,19 @@ public final class Token {
 			this.children = null;
 		}
 	}
-	
+
 	void appendValue(CharArraySegment value) {
 		if (this.value == null) {
 			this.value = new CharArraySegment(value.getArray(), value.index(0), value.length());
-		} else {	
+		} else {
 			this.value.concate(value);
 		}
 	}
-	
+
 	CharArraySegment getValue() {
 		return this.value;
 	}
-	
+
 	/**
 	 * 이 메소드는 토큰이 유지 하고 있는 String 값을 리턴한다.
 	 * 
@@ -63,37 +62,37 @@ public final class Token {
 	public String getText() {
 		if (this.value == null) {
 			return "";
-		} 
+		}
 		return this.value.toString();
 	}
-	
+
 	void addChild(Token child) {
 		if (child == null || child.value == null) {
-			return ;
+			return;
 		}
-	
+
 		this.appendValue(child.value);
 		if (this.children == null) {
 			this.children = new ArrayList<Token>();
 		}
-		
+
 		if (!this.getName().equals(child.getName())) {
 			this.children.add(child);
 		} else if (child.getChildCount() > 0) {
 			this.children.addAll(child.getChildren());
 		}
 	}
-	
+
 	void addChildren(List<Token> children) {
 		if (children == null || children.isEmpty()) {
-			return ;
+			return;
 		}
-		
+
 		for (Token node : children) {
 			this.addChild(node);
 		}
 	}
-	
+
 	/**
 	 * 이 메소드는 특정 index 에 해당하는 하위 토큰을 리턴한다.
 	 * 
@@ -102,9 +101,9 @@ public final class Token {
 	 * @throws IndexOutOfBoundsException	Index 값이 해당 범위를 벗어 날때 발생.
 	 */
 	public Token getChild(int index) {
-		return (this.children == null)? null : this.children.get(index);
+		return (this.children == null) ? null : this.children.get(index);
 	}
-	
+
 	/**
 	 * 이 메소드는 특정 토큰 이름에 해당하는 첫 번째 하위 토큰을 리턴한다.
 	 * 
@@ -115,7 +114,7 @@ public final class Token {
 		if (this.children == null || this.children.isEmpty()) {
 			return null;
 		}
-		
+
 		Token child = null;
 		for (Token c : this.children) {
 			if (c.getName().equals(name)) {
@@ -123,10 +122,10 @@ public final class Token {
 				break;
 			}
 		}
-		
+
 		return child;
 	}
-	
+
 	/**
 	 * 이 메소드는 모든 하위 토큰들을 리턴한다.
 	 * 
@@ -135,7 +134,7 @@ public final class Token {
 	public List<Token> getChildren() {
 		return this.children;
 	}
-	
+
 	/**
 	 * 이 메소드는 특정 토큰 이름에 해당하는 하위 토큰들을 리턴한다.
 	 * 
@@ -146,27 +145,27 @@ public final class Token {
 		if (this.children == null || this.children.isEmpty()) {
 			return null;
 		}
-		
+
 		ArrayList<Token> list = null;
 		for (Token c : this.children) {
 			if (c.getName().equals(name)) {
-				list = (list == null)? new ArrayList<Token>() : list;
+				list = (list == null) ? new ArrayList<Token>() : list;
 				list.add(c);
 			}
 		}
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * 이 메소드는 모든 하위 토큰들의 갯수를 리턴한다.
 	 * 
 	 * @return	모든 하위 토큰들의 갯수.
 	 */
 	public int getChildCount() {
-		return (this.children == null)? 0 : this.children.size();
+		return (this.children == null) ? 0 : this.children.size();
 	}
-	
+
 	/**
 	 * 이 메소드는 토큰을 Tree 형태의 String 으로 표현한다.
 	 */
@@ -174,23 +173,22 @@ public final class Token {
 	public String toString() {
 		return this.toString(0);
 	}
-	
+
 	private String toString(int level) {
 		StringBuffer indentSb = new StringBuffer();
-		
+
 		for (int i = 0; i < level; i++) {
 			indentSb.append("\t");
 		}
-		
-		StringBuffer buffer = new StringBuffer(String.format("%s%s : [%s]" 
-				, indentSb.toString(), this.getName(), this.getText()));
+
+		StringBuffer buffer = new StringBuffer(String.format("%s%s : [%s]", indentSb.toString(), this.getName(), this.getText()));
 		if (this.getChildCount() > 0) {
 			for (Token child : this.getChildren()) {
 				buffer.append("\n");
 				buffer.append(child.toString(level + 1));
 			}
 		}
-		
+
 		return buffer.toString();
 	}
 }

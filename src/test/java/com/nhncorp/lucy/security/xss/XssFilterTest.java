@@ -549,6 +549,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	}
 
 	@Test
+	
 	public void testElementRemoveOPTag() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-blog-removetag.xml");
 

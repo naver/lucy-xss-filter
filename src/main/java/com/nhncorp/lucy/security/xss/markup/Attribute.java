@@ -17,7 +17,6 @@ import java.io.Writer;
  * 
  */
 public class Attribute {
-
 	/**
 	 * Attribute 이름에 해당하는 멤버 변수이다.
 	 */
@@ -33,7 +32,7 @@ public class Attribute {
 	 * 기본값은 {@code true}.
 	 */
 	protected boolean enabled = true;
-	
+
 	/**
 	 * Name 으로 초기화하는 생성자.
 	 * 
@@ -42,7 +41,7 @@ public class Attribute {
 	public Attribute(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Name 과 Value 로 초기화하는 생성자.
 	 * 
@@ -53,15 +52,15 @@ public class Attribute {
 		this.name = name;
 		this.value = value;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute name 을 반환한다. 만약 Name 이 널이면, ""을 반환한다.
 	 * @return	Attribute name.
 	 */
 	public String getName() {
-		return (this.name == null)? "" : this.name;
+		return (this.name == null) ? "" : this.name;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute value 을 반환한다. 만약 value 가 널이면, ""을 반환한다.<br/> 
 	 * 값은 인용부호를 포함한다. 그 이유는 인용부호가 없이 값이 세팅 될 수도 있기 때문이다. 
@@ -69,9 +68,9 @@ public class Attribute {
 	 * @return	Attribute value.
 	 */
 	public String getValue() {
-		return (this.value == null)? "" : this.value;
+		return (this.value == null) ? "" : this.value;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 의 값을 세팅한다.
 	 * 자동으로 인용부호를 할당 하지 않으므로 인용부호를 사용할 경우 value 에 포함시켜야 한다.
@@ -81,7 +80,7 @@ public class Attribute {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 의 값이 존재하는지 그렇지 않은지 여부를 반환한다.
 	 * 만약 값이 존재하지 않으면 {@code true}, 존재하면 {@code false} 을 반환한다.
@@ -89,9 +88,9 @@ public class Attribute {
 	 * @return	값이 존재하지 않으면 {@code true}, 존재하면 {@code false}.
 	 */
 	public boolean isMinimized() {
-		return (this.value == null)? true : false;
+		return (this.value == null) ? true : false;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 의 {@code String} 형태로 표현한다.
 	 * 포멧은 (Name=Value) 또는 (Name) 형태로 리턴된다.  
@@ -101,11 +100,12 @@ public class Attribute {
 		StringWriter writer = new StringWriter();
 		try {
 			this.serialize(writer);
-		} catch(IOException ioe) {}
-		
+		} catch (IOException ioe) {
+		}
+
 		return writer.toString();
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 를 직렬화한다.
 	 * 포멧은 (Name=Value) 또는 (Name) 형태로 수행된다.
@@ -116,38 +116,38 @@ public class Attribute {
 	 */
 	public void serialize(Writer writer) throws IOException {
 		if (writer == null) {
-			return ;
+			return;
 		}
-		
+
 		writer.write(this.getName());
 		if (!this.isMinimized()) {
 			writer.write('=');
 			String value = this.getValue();
 			int pos = 0;
 			int length = value.length();
-			
+
 			for (int i = 0; i < length; i++) {
 				if (value.charAt(i) == '<') {
 					if (i > pos) {
-						writer.write(value, pos, i - pos);							
-					}						
+						writer.write(value, pos, i - pos);
+					}
 					writer.write("&lt;");
 					pos = i + 1;
 				} else if (value.charAt(i) == '>') {
 					if (i > pos) {
-						writer.write(value, pos, i - pos);							
-					}	
+						writer.write(value, pos, i - pos);
+					}
 					writer.write("&gt;");
 					pos = i + 1;
 				}
 			}
-			
+
 			if (length > pos) {
 				writer.write(value, pos, length - pos);
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 이 비활성 되어 있는지 여부를 리턴한다.
 	 * {@link com.nhncorp.lucy.security.xss.XssFilter XssCleaner}에서 사용.
@@ -157,7 +157,7 @@ public class Attribute {
 	public boolean isDisabled() {
 		return !this.enabled;
 	}
-	
+
 	/**
 	 * 이 메소드는 Attribute 를 활성 또는 비활성 시킨다.
 	 * 

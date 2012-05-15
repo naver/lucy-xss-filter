@@ -15,14 +15,13 @@ import java.util.BitSet;
  * 
  */
 class CharCodeSet extends Terminal {
-
 	private BitSet bits;
 
 	public CharCodeSet() {
 		bits = new BitSet(0xFFFF);
 	}
 
-	public CharCodeSet(char...codes) {
+	public CharCodeSet(char... codes) {
 		this();
 		for (char code : codes) {
 			this.bits.set(code);
@@ -37,32 +36,32 @@ class CharCodeSet extends Terminal {
 	public void setRange(int frcode, int tocode) {
 		this.bits.set(frcode, tocode + 1);
 	}
-	
+
 	public void set(int code) {
 		this.bits.set(code);
 	}
-	
+
 	public void flip(int code) {
 		this.bits.flip(code);
 	}
-	
+
 	public void setAll(CharCodeSet other) {
 		if (other != null) {
 			this.bits.or(other.bits);
-		}		
+		}
 	}
-	
+
 	public void flipAll(CharCodeSet other) {
 		if (other != null) {
 			other.bits.flip(1, 0xFFFF);
 			this.bits.and(other.bits);
 		}
 	}
-	
+
 	public void flipAll() {
 		this.bits.flip(1, 0xFFFF);
 	}
-	
+
 	private void setPattern(CharArraySegment pattern) {
 		boolean reverse = false;
 		boolean range = false;
@@ -81,9 +80,9 @@ class CharCodeSet extends Terminal {
 				int start = pattern.move(2).pos();
 				int end = start;
 				while (pattern.hasRemaining()) {
-					char ch = pattern.getChar();					
-					if (CharArraySegment.isHexChar(ch)){
-						end = pattern.move().pos();						
+					char ch = pattern.getChar();
+					if (CharArraySegment.isHexChar(ch)) {
+						end = pattern.move().pos();
 					} else {
 						break;
 					}
@@ -92,7 +91,7 @@ class CharCodeSet extends Terminal {
 			} else {
 				pattern.move(1);
 			}
-			
+
 			if (range) {
 				this.setRange(tmp, curr);
 				range = false;
@@ -101,45 +100,41 @@ class CharCodeSet extends Terminal {
 				tmp = curr;
 			}
 		}
-		
+
 		if (reverse) {
 			this.flipAll();
-		}		
+		}
 	}
-	
+
 	public boolean matches(char code) {
 		return this.bits.get(code);
 	}
-	
+
 	// attValue를 위한 Customizing 로직
 	private boolean matches(CharArraySegment input) {
 		char code = input.getChar();
-		
+
 		if (input.length() > input.pos() + 1) {
 			char next = input.charAt(input.pos() + 1);
-			if (code == '<' 
-				&& (next == '\'' || next == '"' || next == '<'
-					|| next == 0x20 || next == 0x9 || next == 0xD || next == 0xA)) {
+			if (code == '<' && (next == '\'' || next == '"' || next == '<' || next == 0x20 || next == 0x9 || next == 0xD || next == 0xA)) {
 				return true;
-			} 
-		} 
-		
+			}
+		}
+
 		return this.matches(code);
 	}
-	
+
 	public boolean sliceToken(Token parent, CharArraySegment input) {
 		boolean isTokenized = false;
-		
+
 		int start = -1;
-		int end = -1;		
+		int end = -1;
 		do {
 			if (input == null || !input.hasRemaining()) {
 				break;
 			}
-			
-			if (this.matches(input.getChar()) 
-					|| ("attValue".equals(parent.getName()) 
-							&& this.matches(input))) {
+
+			if (this.matches(input.getChar()) || ("attValue".equals(parent.getName()) && this.matches(input))) {
 				if (start < 0) {
 					start = input.pos();
 					end = input.move().pos();
@@ -149,25 +144,25 @@ class CharCodeSet extends Terminal {
 			} else {
 				break;
 			}
-		} while(this.isRepeat());
-		
+		} while (this.isRepeat());
+
 		if (start >= 0 && end >= start) {
 			parent.appendValue(input.subSegment(start, end));
 			isTokenized = true;
 		}
-		
+
 		return isTokenized;
 	}
-	
+
 	public int matchPos(CharArraySegment input) {
-		int pos = -1;	
+		int pos = -1;
 		for (int i = input.pos(); i < input.length(); i++) {
 			if (this.matches(input.charAt(i))) {
 				pos = i;
 				break;
 			}
 		}
-		
+
 		return pos;
 	}
 }

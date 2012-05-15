@@ -34,7 +34,6 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  *
  */
 public final class XssConfiguration {
-
 	private static String DEFAULT_CONFIG = "/lucy-xss-default.xml";
 
 	private Map<String, ElementRule> tags;
@@ -303,12 +302,12 @@ public final class XssConfiguration {
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {
 			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
-		
-		if (exceptionTagList!= null && exceptionTagList.length() > 0) {
+
+		if (exceptionTagList != null && exceptionTagList.length() > 0) {
 			String[] tokens = exceptionTagList.split(",");
-			if (tokens!=null) {
-				for (int i =0;i<tokens.length;i++) {
-					if (tokens[i] != null ) {
+			if (tokens != null) {
+				for (int i = 0; i < tokens.length; i++) {
+					if (tokens[i] != null) {
 						String exceptionTag = tokens[i].trim();
 						rule.addExceptionTag(exceptionTag);
 					}
