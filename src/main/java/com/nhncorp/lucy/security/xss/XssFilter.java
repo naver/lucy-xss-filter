@@ -47,7 +47,6 @@ import com.nhncorp.lucy.security.xss.markup.Text;
  *
  */
 public final class XssFilter {
-
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
 
 	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
@@ -68,7 +67,7 @@ public final class XssFilter {
 	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean isBlockingPrefixEnabled;
-	
+
 	private XssConfiguration config;
 
 	private static final Map<FilterRepositoryKey, XssFilter> instanceMap = new HashMap<FilterRepositoryKey, XssFilter>();
@@ -116,7 +115,7 @@ public final class XssFilter {
 		try {
 			synchronized (XssFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
-				
+
 				XssFilter filter = instanceMap.get(key);
 				if (filter != null) {
 					filter.withoutComment = withoutComment;
@@ -161,7 +160,7 @@ public final class XssFilter {
 		doFilter(dirty, writer);
 		return writer.toString();
 	}
-	
+
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
 	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
@@ -173,10 +172,10 @@ public final class XssFilter {
 	 */
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
-		
+
 		if (dirty == null || dirty.length() == 0) {
 			LOG.debug("target string is empty. doFilter() method end.");
-			return ;
+			return;
 		}
 
 		Collection<Content> contents = MarkupParser.parse(dirty);
@@ -187,15 +186,15 @@ public final class XssFilter {
 			} catch (IOException ioe) {
 			}
 		}
-		
+
 		if (this.isNeloLogEnabled) {
 			String neloStr = neloLogWriter.toString();
-			if (neloStr!=null && neloStr.length() > 0) {
+			if (neloStr != null && neloStr.length() > 0) {
 				LOG.error("@[" + this.service + "]" + neloStr);
 			}
 		}
 	}
-	
+
 	/**
 	 * 테스트 코드에서 neloLog 테스트를 위해 만든, 메소드. Access Modifier 가 default 여서 외부로 노출되지 않는다.
 	 * @param dirty
@@ -218,11 +217,11 @@ public final class XssFilter {
 			} catch (IOException ioe) {
 			}
 		}
-		
+
 		String neloStr = neloLogWriter.toString();
-		
+
 		if (this.isNeloLogEnabled) {
-			if (neloStr!=null && neloStr.length() > 0) {
+			if (neloStr != null && neloStr.length() > 0) {
 				return "@[" + this.service + "]" + neloStr;
 			} else {
 				return neloStr;
@@ -308,19 +307,19 @@ public final class XssFilter {
 		}
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-				if (this.isNeloLogEnabled) {
-					neloLogWriter.write(this.neloElementRemoveMSG);
-					neloLogWriter.write(ie.getName() + "\n");
-				}
-				if (!this.withoutComment) {
-					writer.write(REMOVE_TAG_INFO_START);
-					writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
-					writer.write(REMOVE_TAG_INFO_END);
-				}
-				
-				if (!ie.isEmpty()) {
-					this.serialize(writer, ie.getContents(), neloLogWriter);
-				}
+			if (this.isNeloLogEnabled) {
+				neloLogWriter.write(this.neloElementRemoveMSG);
+				neloLogWriter.write(ie.getName() + "\n");
+			}
+			if (!this.withoutComment) {
+				writer.write(REMOVE_TAG_INFO_START);
+				writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
+				writer.write(REMOVE_TAG_INFO_END);
+			}
+
+			if (!ie.isEmpty()) {
+				this.serialize(writer, ie.getContents(), neloLogWriter);
+			}
 		} else {
 			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // 공백제거처리
 			writer.write(stdName);
@@ -344,14 +343,13 @@ public final class XssFilter {
 				neloLogWriter.write(this.neloElementRemoveMSG);
 				neloLogWriter.write(e.getName() + "\n");
 			}
-			
+
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(e.getName());
 				writer.write(REMOVE_TAG_INFO_END);
 			}
-			
-			
+
 			if (!e.isEmpty()) {
 				this.serialize(writer, e.getContents(), neloLogWriter);
 			}
@@ -385,19 +383,19 @@ public final class XssFilter {
 				if (!this.withoutComment && e.existDisabledAttribute()) {
 					writer.write(BAD_ATT_INFO_START);
 				}
-				
+
 			}
 
 			Collection<Attribute> atts = e.getAttributes();
 
 			StringWriter attrSw = new StringWriter();
 			StringWriter attrXssSw = new StringWriter();
-			
+
 			if (atts != null && !atts.isEmpty()) {
 				for (Attribute att : atts) {
 					if (!e.isDisabled() && att.isDisabled()) {
 						hasAttrXss = true;
-						
+
 						if (this.isNeloLogEnabled || !this.withoutComment) {
 							attrXssSw.write(' ');
 							att.serialize(attrXssSw);
@@ -408,7 +406,7 @@ public final class XssFilter {
 					}
 				}
 			}
-			
+
 			if (hasAttrXss) {
 				String attrXssString = attrXssSw.toString();
 				if (this.isNeloLogEnabled) {
@@ -416,18 +414,18 @@ public final class XssFilter {
 					neloLogWriter.write(e.getName());
 					neloLogWriter.write(attrXssString + "\n");
 				}
-				
+
 				if (!this.withoutComment) {
 					writer.write(attrXssString);
 					writer.write(BAD_ATT_INFO_END);
 				}
 			}
-			
+
 			if (!e.isDisabled()) {
 				writer.write('<');
 				writer.write(e.getName());
 			}
-			
+
 			writer.write(attrSw.toString());
 
 			if (e.isStartClosed()) {

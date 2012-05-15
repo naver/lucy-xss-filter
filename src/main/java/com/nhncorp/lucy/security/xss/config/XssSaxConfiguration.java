@@ -1,5 +1,5 @@
 /*
- * @(#) XssConfiguration.java 2010. 8. 11
+ * @(#) XssSaxConfiguration.java 2010. 8. 11
  *
  * Copyright 2010 NHN Corp. All rights Reserved.
  * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
@@ -29,7 +29,6 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  *
  */
 public final class XssSaxConfiguration {
-
 	private static String DEFAULT_CONFIG = "/lucy-xss-default-sax.xml";
 
 	private Map<String, ElementRule> tags;
@@ -243,12 +242,12 @@ public final class XssSaxConfiguration {
 		if (disable != null && ("true".equalsIgnoreCase(disable) || "false".equalsIgnoreCase(disable))) {
 			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
-		
-		if (exceptionTagList!= null && exceptionTagList.length() > 0) {
+
+		if (exceptionTagList != null && exceptionTagList.length() > 0) {
 			String[] tokens = exceptionTagList.split(",");
-			if (tokens!=null) {
-				for (int i =0;i<tokens.length;i++) {
-					if (tokens[i] != null ) {
+			if (tokens != null) {
+				for (int i = 0; i < tokens.length; i++) {
+					if (tokens[i] != null) {
 						String exceptionTag = tokens[i].trim();
 						rule.addExceptionTag(exceptionTag);
 					}

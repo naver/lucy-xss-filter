@@ -51,11 +51,11 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  * 
  */
 public final class MarkupParser {
-	
 	private static ParsingGrammar grammar = ParsingGrammar.getInstance();
-	
-	private MarkupParser() {}
-	
+
+	private MarkupParser() {
+	}
+
 	/**
 	 * 이 메소드는 Markup이 포함된 {@code String} 데이터를 {@code Collection<Content>} 형태로 파싱을 수행한다.
 	 * 
@@ -63,83 +63,83 @@ public final class MarkupParser {
 	 * @return	{@code Collection<Content>}.
 	 */
 	public static Collection<Content> parse(String input) {
-		
+
 		if (input == null || input.length() == 0) {
 			return null;
 		}
-		
+
 		LinkedList<Content> result = new LinkedList<Content>();
-		
-		LinkedList<Element> stack = null; 
-//		Token root = grammar.tokenize(input);
-//		List<Token> children = root.getChildren();
-//		for (Token t : children) {
+
+		LinkedList<Element> stack = null;
+		//		Token root = grammar.tokenize(input);
+		//		List<Token> children = root.getChildren();
+		//		for (Token t : children) {
 		CharArraySegment charArraySegment = new CharArraySegment(input);
 		Token t;
-		while((t = grammar.nextToken(charArraySegment)) != null) {
+		while ((t = grammar.nextToken(charArraySegment)) != null) {
 			String tokenName = t.getName();
 			if ("description".equals(tokenName)) {
-			
+
 				String description = t.getText();
 				result.add(new Description(description));
-			
+
 			} else if ("comment".equals(tokenName)) {
 				String comment = t.getText();
 				if (comment != null && comment.length() != 0) {
 					comment = comment.substring(4, comment.length() - 3);
 				}
 				result.add(new Comment(comment));
-			
+
 			} else if ("iEHExStartTag".endsWith(tokenName)) {
-				
+
 				Element element = new IEHackExtensionElement(t.getText());
-				
+
 				if (stack == null) {
 					stack = new LinkedList<Element>();
 				}
-				
+
 				stack.addFirst(element);
 				result.add(element);
-				
+
 			} else if ("startTag".equals(tokenName)) {
 				Token tagNameToken = t.getChild("tagName");
 				if (tagNameToken == null) {
 					continue;
 				}
-				
+
 				Element element = new Element(tagNameToken.getText());
 				List<Token> attTokens = t.getChildren("attribute");
 				if (attTokens != null) {
 					for (Token attToken : attTokens) {
 						Token attName = attToken.getChild("attName");
 						Token attValue = attToken.getChild("attValue");
-						if (attName!=null && attValue == null) {
+						if (attName != null && attValue == null) {
 							element.putAttribute(new Attribute(attName.getText()));
-						} else if(attName!=null && attValue != null){
+						} else if (attName != null && attValue != null) {
 							element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
 						}
 					}
 				}
-				
+
 				Token closeStartEnd = t.getChild("closeStartEnd");
-				
-				if(closeStartEnd == null) {
-					
+
+				if (closeStartEnd == null) {
+
 					if (stack == null) {
 						stack = new LinkedList<Element>();
-					}				
-					
+					}
+
 					stack.addFirst(element);
 
 				} else {
 					element.setStartClose(true);
-				
+
 				}
-				
+
 				result.add(element);
-			
+
 			} else if ("iEHExEndTag".endsWith(tokenName)) {
-				
+
 				boolean flag = false;
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
@@ -148,7 +148,7 @@ public final class MarkupParser {
 						if (e instanceof IEHackExtensionElement) {
 							Content c;
 							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c instanceof Element && c == e) {									
+								if (c instanceof Element && c == e) {
 									e.setClose(true);
 									tmp.clear();
 									break;
@@ -156,7 +156,7 @@ public final class MarkupParser {
 									if (stack.contains(c)) {
 										stack.remove(c);
 									}
-									
+
 									e.addContent(0, result.removeLast());
 								}
 							}
@@ -166,33 +166,33 @@ public final class MarkupParser {
 							tmp.add(e);
 						}
 					}
-					
+
 					if (tmp != null && !tmp.isEmpty()) {
 						stack = tmp;
 					}
 				}
-				
+
 				if (!flag) {
-					result.add(new Text(t.getText()));					
+					result.add(new Text(t.getText()));
 				}
-				
+
 			} else if ("endTag".equals(tokenName)) {
 				Token tagNameToken = t.getChild("tagName");
 				boolean flag = false;
 				if (tagNameToken == null) {
 					continue;
 				}
-				
+
 				String tagName = tagNameToken.getText();
 
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
-					Element e; 
+					Element e;
 					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
 						if (tagName.equalsIgnoreCase(e.getName())) {
 							Content c;
 							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c instanceof Element && c == e) {									
+								if (c instanceof Element && c == e) {
 									e.setClose(true);
 									tmp.clear();
 									break;
@@ -200,7 +200,7 @@ public final class MarkupParser {
 									if (stack.contains(c)) {
 										stack.remove(c);
 									}
-									
+
 									e.addContent(0, result.removeLast());
 								}
 							}
@@ -210,23 +210,23 @@ public final class MarkupParser {
 							tmp.add(e);
 						}
 					}
-					
+
 					if (tmp != null && !tmp.isEmpty()) {
 						stack = tmp;
 					}
 				}
-				
+
 				if (!flag) {
-					result.add(new Text(t.getText()));					
+					result.add(new Text(t.getText()));
 				}
 			} else {
 				result.add(new Text(t.getText()));
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * 이 메소드는 Markup이 포함된 {@code InputStream} 데이터를 {@code Collection<Content>} 형태로 파싱을 수행한다.
 	 * 
@@ -235,10 +235,10 @@ public final class MarkupParser {
 	 * @return	{@code Collection<Content>}.
 	 * @throws IOException	{@code InputStream}에 대한 I/O error 발생 시.
 	 */
-	public static Collection<Content> parse(InputStream stream, Charset cs) throws IOException {		
+	public static Collection<Content> parse(InputStream stream, Charset cs) throws IOException {
 		return parse(read(new InputStreamReader(stream, cs)));
 	}
-	
+
 	private static String read(Reader reader) throws IOException {
 		StringBuffer buffer = new StringBuffer();
 		try {
@@ -250,10 +250,10 @@ public final class MarkupParser {
 		} finally {
 			reader.close();
 		}
-		
+
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * 이 메소드는 {@code Collection<Content>}의 내용을 String으로 보여준다.
 	 * 
@@ -264,14 +264,15 @@ public final class MarkupParser {
 		if (contents == null) {
 			return "";
 		}
-		
+
 		StringWriter writer = new StringWriter();
 		for (Content c : contents) {
 			try {
 				c.serialize(writer);
-			} catch (IOException e) {}			
+			} catch (IOException e) {
+			}
 		}
-		
+
 		return writer.toString();
 	}
 }

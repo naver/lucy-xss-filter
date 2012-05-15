@@ -23,7 +23,6 @@ import java.util.Map;
  *
  */
 public class Element extends Content {
-
 	/**
 	 * 이 멤버 변수는 Tag 이름을 저장한다.
 	 */

@@ -22,31 +22,31 @@ public class EmbedSecurityListener implements ElementListener {
 		if (e.isDisabled()) {
 			return;
 		}
-		
+
 		String srcUrl = e.getAttributeValue("src");
 		boolean isWhiteUrl = this.isWhiteUrl(srcUrl);
 		boolean isVulnerable = SecurityUtils.checkVulnerableWithHttp(e, srcUrl, isWhiteUrl, contentTypeCacheRepo);
-		
+
 		if (isVulnerable) {
 			e.setEnabled(false);
 			return;
 		}
-		
+
 		e.putAttribute("invokeURLs", "\"false\"");
 		e.putAttribute("autostart", "\"false\"");
 		e.putAttribute("allowScriptAccess", "\"never\"");
-		
+
 		if (isWhiteUrl) {
 			e.putAttribute("allowNetworking", "\"all\"");
 		} else {
 			e.putAttribute("allowNetworking", "\"internal\"");
 		}
-		
+
 	}
-	
+
 	private boolean isWhiteUrl(String url) {
 		WhiteUrlList list = WhiteUrlList.getInstance();
-		if (list!=null && list.contains(url)) {
+		if (list != null && list.contains(url)) {
 			return true;
 		}
 		return false;
