@@ -42,7 +42,7 @@ public final class CharArraySegment {
 	}
 
 	public boolean equalsArray(CharArraySegment other) {
-		return other != null && this.array.equals(other.array);
+		return other != null && this.array == other.array;
 	}
 
 	public int index(int pos) {
