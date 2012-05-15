@@ -42,7 +42,7 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 	
 	private static final String[] configFile = {"lucy-xss-superset-sax.xml", "lucy-xss-sax-simple.xml", "lucy-xss-superset-sax.xml", "lucy-xss-sax-blog-removetag.xml"};
 	private static final String[] targetStringOnOtherConfig = {"<img src='script:/lereve/lelogo.gif' width='700'>", "<!--[if !supportMisalignedColumns]--><h1>Hello</h1><!--[endif]-->", "<!--[if !supportMisalignedColumns]--><h1>Hello</h1><!--[endif]-->", "<html><head></head><body><p>Hello</p></body>"};
-	private static final String[] expectedStringOnOtherConfig = {"<!-- Not Allowed Attribute Filtered ( src='script:/lereve/lelogo.gif') --><img width='700'>", "<!--[if !supportMisalignedColumns]><h1>Hello</h1><![endif]-->", "<!-- Removed Tag Filtered (&lt;!--[if !supportMisalignedColumns]--&gt;) --><h1>Hello</h1>", "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>"};
+	private static final String[] expectedStringOnOtherConfig = {"<!-- Not Allowed Attribute Filtered ( src='script:/lereve/lelogo.gif') --><img width='700'>", "<!--[if !supportMisalignedColumns]><h1>Hello</h1><![endif]-->", "<!--[if !supportMisalignedColumns]><h1>Hello</h1><![endif]-->", "<!-- Removed Tag Filtered (html) --><!-- Removed Tag Filtered (head) --><!-- Removed Tag Filtered (body) --><p>Hello</p>"};
 
 	/**
 	 * 표준 HTML 페이지를 통과 시키는지 검사한다.(필터링 전후가 동일하면 정상)
@@ -393,13 +393,13 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-default-sax.xml");
 		String dirty = "<!--[if !mso]><h1>Hello</h1><![endif]-->";
 		//String dirty = "<!--[if gte mso 9]><style>v\\:* {behavior:url(#default#VML);} o\\:* {behavior:url(#default#VML);} w\\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style><![endif]-->";
-		String expected = "<!-- Removed Tag Filtered (&lt;!--[if !mso]&gt;) --><h1>Hello</h1>";
+		String expected = "<!--[if !mso]><h1>Hello</h1><![endif]-->";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<!--[if !IE]><-->";
 		clean = filter.doFilter(dirty);
-		expected = "<!-- Removed Tag Filtered (&lt;!--[if !IE]&gt;) -->&lt;--&gt;";
+		expected = "<!--[if !IE]>&lt;--&gt;";
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<!--> <![endif]-->";
@@ -1422,6 +1422,19 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = "<embed src=\"http://serviceapi.nmv.naver.com/\">";
 		String expected = "<!-- Not Allowed Tag Filtered -->&lt;embed src=\"http://serviceapi.nmv.naver.com/\"&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * Iehack 태그는 어느 태그 밑에도 올 수 있어야 한다.
+	 */
+	@Test
+	public void iehackInBodyCase() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-body.xml");
+		
+		String dirty = "<html><head></head><body><!--[if gte vml 1]><v:shapetype id=\"_x0000_t201\"><![if excel]><x:ClientData ObjectType=\"Drop\"> <x:DropLines>123123 8</x:DropLines> </x:ClientData> <![endif]> </v:shape><![endif]--></body></html>";
+		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><xx:ClientData ObjectType=\"Drop\"> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]--> &lt;/v:shape&gt;<![endif]--></body></html>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}

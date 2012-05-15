@@ -39,7 +39,7 @@
 			</elements>
 		</element>
 
-		<element name="IEHackExtension"  endTag="true">
+		<element name="IEHackExtension">
 		</element>
 
 	</elementRule>
