@@ -278,7 +278,6 @@ public final class XssSaxFilter {
 					}
 					
 					String tagName = tagNameToken.getText();
-					//doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, t, tagName);
 					Element element = new Element(tagName);
 					List<Token> attTokens = t.getChildren("attribute");
 					if (attTokens != null) {
@@ -311,10 +310,8 @@ public final class XssSaxFilter {
 					IEHackExtensionElement ie = new IEHackExtensionElement(t.getText());
 					checkIEHackRule(ie);
 
-					if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
-					} else {
+					if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
 						writer.write("<![endif]-->"); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
-						//writer.write(t.getText());
 					}
 				} else if ("endTag".equals(tokenName)) {
 					Token tagNameToken = t.getChild("tagName");
@@ -336,8 +333,7 @@ public final class XssSaxFilter {
 					
 					checkRuleRemove(e);
 
-					if (e.isRemoved()) {
-					} else {
+					if (!e.isRemoved()) {
 						if (isObjectDisabled) {
 							e.setEnabled(false);
 						}
@@ -422,71 +418,6 @@ public final class XssSaxFilter {
 						stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
 					} else {
 						stackForAllowNetworkingValue.push("\"internal\""); // whiteUrl 이 아닐 경우 allowNetworking 설정은 internal 로 변경
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param stackForObjectTag
-	 * @param stackForAllowNetworkingValue
-	 * @param t
-	 * @param tagName
-	 */
-	private void doObjectParamStartTagProcess(
-			LinkedList<String> stackForObjectTag,
-			LinkedList<String> stackForAllowNetworkingValue, Token t,
-			String tagName) {
-		if ("object".equalsIgnoreCase(tagName)) {
-			stackForObjectTag.push("<object>");
-			List<Token> attTokens = t.getChildren("attribute");
-			boolean isDataWhiteUrl = false;
-			
-			if (attTokens != null) {
-				
-				for (Token attToken : attTokens) {
-					Token attName = attToken.getChild("attName");
-					Token attValue = attToken.getChild("attValue");
-					if (attName!=null && "data".equalsIgnoreCase(attName.getText())) {
-						if (attValue != null) {
-							if (isWhiteUrl(attValue.getText())) {
-								isDataWhiteUrl = true;
-							} else {
-								isDataWhiteUrl = false;
-							}
-						}
-					}
-				}
-			}
-			
-			if (isDataWhiteUrl) {
-				stackForAllowNetworkingValue.push("\"all\""); // data속성의 url 값이 white url이면 allowNetworking 디폴트는 설정은 all
-			} else {
-				stackForAllowNetworkingValue.push("\"internal\""); // allowNetworking 디폴트는 설정은 internal
-			}
-		} else if (stackForObjectTag.size() > 0 && "param".equalsIgnoreCase(tagName)) {
-			List<Token> attTokens = t.getChildren("attribute");
-			if (attTokens != null) {
-				boolean containsURLName = false;
-				for (Token attToken : attTokens) {
-					Token attName = attToken.getChild("attName");
-					Token attValue = attToken.getChild("attValue");
-					if (attName!=null && "name".equalsIgnoreCase(attName.getText())) {
-						if (attValue != null) {
-							stackForObjectTag.push(attValue.getText());
-							
-							if (containsURLName(attValue.getText())) {
-								containsURLName = true;
-							}
-						}
-					} else if(attName!=null && containsURLName && "value".equalsIgnoreCase(attName.getText())) {
-						stackForAllowNetworkingValue.pop();
-						if (isWhiteUrl(attValue.getText())) {
-							stackForAllowNetworkingValue.push("\"all\""); // whiteUrl 일 경우 allowNetworking 설정은 all 로 변경
-						} else {
-							stackForAllowNetworkingValue.push("\"internal\""); // whiteUrl 이 아닐 경우 allowNetworking 설정은 internal 로 변경
-						}
 					}
 				}
 			}

@@ -43,20 +43,18 @@ abstract class ParsingRule {
 	}
 
 	public boolean isOptional() {
-		switch (unary) {
-		case OPTION :
-		case REPEAT0 :
+		if (unary == UNARY.OPTION || unary == UNARY.REPEAT0) {
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	public boolean isRepeat() {
-		switch (this.getUnary()) {
-			case REPEAT0 :
-			case REPEAT1 :
-				return true;
+		if (this.getUnary() == UNARY.REPEAT0 || this.getUnary() == UNARY.REPEAT1) {
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 }

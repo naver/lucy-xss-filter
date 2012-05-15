@@ -125,22 +125,20 @@ public class Attribute {
 			String value = this.getValue();
 			int pos = 0;
 			int length = value.length();
+			
 			for (int i = 0; i < length; i++) {
-				switch (value.charAt(i)) {
-					case '<':
-						if (i > pos) {
-							writer.write(value, pos, i - pos);							
-						}						
-						writer.write("&lt;");
-						pos = i + 1;
-						break;
-					case '>':
-						if (i > pos) {
-							writer.write(value, pos, i - pos);							
-						}	
-						writer.write("&gt;");
-						pos = i + 1;
-						break;
+				if (value.charAt(i) == '<') {
+					if (i > pos) {
+						writer.write(value, pos, i - pos);							
+					}						
+					writer.write("&lt;");
+					pos = i + 1;
+				} else if (value.charAt(i) == '>') {
+					if (i > pos) {
+						writer.write(value, pos, i - pos);							
+					}	
+					writer.write("&gt;");
+					pos = i + 1;
 				}
 			}
 			

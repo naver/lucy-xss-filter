@@ -40,22 +40,20 @@ public class Text extends Content {
 		
 		int pos = 0;
 		int length = this.text.length();
+		
 		for (int i = 0; i < length; i++) {
-			switch (this.text.charAt(i)) {
-				case '<':
-					if (i > pos) {
-						writer.write(this.text, pos, i - pos);						
-					}						
-					writer.write("&lt;");
-					pos = i + 1;
-					break;
-				case '>':
-					if (i > pos) {
-						writer.write(this.text, pos, i - pos);						
-					}	
-					writer.write("&gt;");
-					pos = i + 1;
-					break;
+			if (this.text.charAt(i) == '<') {
+				if (i > pos) {
+					writer.write(this.text, pos, i - pos);						
+				}						
+				writer.write("&lt;");
+				pos = i + 1;
+			} else if (this.text.charAt(i) == '>') {
+				if (i > pos) {
+					writer.write(this.text, pos, i - pos);						
+				}	
+				writer.write("&gt;");
+				pos = i + 1;
 			}
 		}
 		
