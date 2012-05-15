@@ -1708,6 +1708,10 @@
 			</elements>
 		</element>
 	<!-- HTML5 added at 2012.04.10 End-->
+		
+		<!-- IE핵 처리를 위해 추가-->
+		<element name="IEHackExtension">
+		</element>
 	</elementRule>
 
 	<attributeRule>
