@@ -18,7 +18,6 @@ import com.nhncorp.lucy.security.xss.markup.Attribute;
  *
  */
 public interface AttributeListener extends EventListener {
-
 	/**
 	 * 이 메소드는 특정 {@link com.nhncorp.lucy.security.xss.markup.Attribute Attribute} 에 대해
 	 * 설정 정보 외에 별도의 필터링을 수행한다.

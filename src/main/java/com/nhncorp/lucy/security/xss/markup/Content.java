@@ -29,12 +29,11 @@ import java.io.Writer;
  * 
  */
 public abstract class Content {
-	
 	/**
 	 * 이 멤버 변수는 Content 의 부모 Element 를 나타낸다. 
 	 */
 	protected Element parent;
-	
+
 	/**
 	 * 이 메소드는 부모 Element 를 리턴한다.
 	 * 
@@ -43,7 +42,7 @@ public abstract class Content {
 	public Element getParent() {
 		return this.parent;
 	}
-	
+
 	/**
 	 * 이 메소드는 부모 Element 를 세팅한다.
 	 * 
@@ -52,7 +51,7 @@ public abstract class Content {
 	public void setParent(Element parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * 이 메소드는 직렬화를 수행한다. {@link #toString() toString()} 과는 달리 직렬화를 위해 사용한다.
 	 * <br/><br/>
@@ -63,7 +62,7 @@ public abstract class Content {
 	 * @throws IOException	I/O 에러 발생 시.
 	 */
 	public abstract void serialize(Writer writer) throws IOException;
-	
+
 	/**
 	 * 이 메소드는 Content 를 String 으로 표현한다.
 	 */
@@ -71,8 +70,9 @@ public abstract class Content {
 		StringWriter writer = new StringWriter();
 		try {
 			this.serialize(writer);
-		} catch (IOException ioe) {}
-		
+		} catch (IOException ioe) {
+		}
+
 		return writer.toString();
 	}
 }

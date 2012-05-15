@@ -28,7 +28,6 @@ import com.nhncorp.lucy.security.xss.config.XssConfiguration;
  * 
  */
 public final class WhiteUrlList {
-
 	private static String CONFIG = "/white-url.xml";
 
 	public volatile static WhiteUrlList instance;
@@ -36,7 +35,7 @@ public final class WhiteUrlList {
 
 	private WhiteUrlList() {
 		this.patterns = new ArrayList<Pattern>();
-		
+
 		java.net.URL url = XssConfiguration.class.getResource(CONFIG);
 		InputStream is = null;
 
@@ -57,7 +56,7 @@ public final class WhiteUrlList {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		} finally {
-			if (is !=null ) {
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
@@ -89,8 +88,8 @@ public final class WhiteUrlList {
 		if (url == null || "".equals(url)) {
 			return false;
 		}
-		
-		if (this.patterns!=null) {
+
+		if (this.patterns != null) {
 			for (Pattern p : this.patterns) {
 				if (p.matcher(url).matches()) {
 					return true;
@@ -109,32 +108,32 @@ public final class WhiteUrlList {
 		for (int i = 0; i < raw.length(); i++) {
 			char c = raw.charAt(i);
 			switch (c) {
-			case '\\':
-			case '+':
-			case '{':
-			case '}':
-			case '[':
-			case ']':
-			case '^':
-			case '$':
-			case '&':
-			case '.':
-			case '?':
-			case '(':
-			case ')':
-			case '*':
-				if (i > pos) {
-					writer.write(raw, pos, i - pos);
-				}
+				case '\\':
+				case '+':
+				case '{':
+				case '}':
+				case '[':
+				case ']':
+				case '^':
+				case '$':
+				case '&':
+				case '.':
+				case '?':
+				case '(':
+				case ')':
+				case '*':
+					if (i > pos) {
+						writer.write(raw, pos, i - pos);
+					}
 
-				if (c == '*') {
-					writer.write(".*");
-				} else {
-					writer.write("\\");
-					writer.write(c);
-				}
-				pos = i + 1;
-				break;
+					if (c == '*') {
+						writer.write(".*");
+					} else {
+						writer.write("\\");
+						writer.write(c);
+					}
+					pos = i + 1;
+					break;
 			}
 		}
 

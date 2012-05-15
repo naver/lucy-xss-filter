@@ -17,52 +17,51 @@ import java.io.Writer;
  * 
  */
 public class Comment extends Content {
-
 	/**
 	 * 이 멤버변수는 Comment 의 String 값을 나타낸다.
 	 */
 	protected String text;
-	
+
 	/**
 	 * 코멘트에 해당하는 String 으로 초기화하는 생성자.
 	 * 참고로, {@code '<!--', '-->'} 은 포함하지 않는다.
 	 * 
 	 * @param text	초기화 String.
 	 */
-	public Comment(String text) {		
-		this.text = (text == null)? "" : text;
+	public Comment(String text) {
+		this.text = (text == null) ? "" : text;
 	}
-		
+
 	public void serialize(Writer writer) throws IOException {
 		if (writer == null) {
-			return ;
-		} 
-		
+			return;
+		}
+
 		writer.write("<!--");
-		
+
 		int pos = 0;
 		int length = this.text.length();
-		
+
 		for (int i = 0; i < length; i++) {
 			if (this.text.charAt(i) == '<') {
 				if (i > pos) {
 					writer.write(this.text, pos, i - pos);
-				}						
+				}
 				writer.write("&lt;");
 				pos = i + 1;
 			} else if (this.text.charAt(i) == '>') {
 				if (i > pos) {
 					writer.write(this.text, pos, i - pos);
-				}	
+				}
 				writer.write("&gt;");
 				pos = i + 1;
 			}
 		}
-		
+
 		if (length > pos) {
 			writer.write(this.text, pos, length - pos);
 		}
-		
+
 		writer.write("-->");
 	}
 }

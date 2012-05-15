@@ -18,25 +18,19 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 
  */
 public class ParamListener implements ElementListener {
-	private static final Pattern INVOKEURLS = Pattern
-			.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
+	private static final Pattern INVOKEURLS = Pattern.compile("['\"]?\\s*(?i:invokeURLs)\\s*['\"]?");
 	private static final Pattern AUTOSTART = Pattern.compile("['\"]?\\s*(?i:autostart)\\s*['\"]?");
-	private static final Pattern ALLOWSCRIPTACCESS = Pattern
-			.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?");
+	private static final Pattern ALLOWSCRIPTACCESS = Pattern.compile("['\"]?\\s*(?i:allowScriptAccess)\\s*['\"]?");
 	private static final Pattern AUTOPLAY = Pattern.compile("['\"]?\\s*(?i:autoplay)\\s*['\"]?");
-	private static final Pattern ENABLEHREF = Pattern
-			.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?");
-	private static final Pattern ENABLEJAVASCRIPT = Pattern
-			.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?");
+	private static final Pattern ENABLEHREF = Pattern.compile("['\"]?\\s*(?i:enablehref)\\s*['\"]?");
+	private static final Pattern ENABLEJAVASCRIPT = Pattern.compile("['\"]?\\s*(?i:enablejavascript)\\s*['\"]?");
 	private static final Pattern NOJAVA = Pattern.compile("['\"]?\\s*(?i:nojava)\\s*['\"]?");
-	private static final Pattern ALLOWHTMLPOPUPWINDOW = Pattern
-			.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?");
-	private static final Pattern ENABLEHTMLACCESS = Pattern
-			.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?");
+	private static final Pattern ALLOWHTMLPOPUPWINDOW = Pattern.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?");
+	private static final Pattern ENABLEHTMLACCESS = Pattern.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?");
 
 	public void handleElement(Element e) {
 		String name = e.getAttributeValue("name");
-		
+
 		if (INVOKEURLS.matcher(name).matches()) {
 			e.putAttribute("value", "\"false\"");
 		} else if (AUTOSTART.matcher(name).matches()) {

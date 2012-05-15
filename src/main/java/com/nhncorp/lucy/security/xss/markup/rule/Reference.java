@@ -15,13 +15,12 @@ import java.util.List;
  * 
  */
 class Reference extends NonTerminal {
-	
 	private String ref;
 
 	public Reference(String ref) {
 		this.ref = ref;
 	}
-	
+
 	@Override
 	public String getRuleName() {
 		return this.ref;
@@ -29,7 +28,7 @@ class Reference extends NonTerminal {
 
 	public boolean sliceTokens(Token parent, CharArraySegment input, ParsingGrammar grammar) {
 		boolean isTokenized = false;
-		
+
 		Group group = grammar.getRule(this.ref);
 		int start = input.pos();
 		do {
@@ -38,37 +37,37 @@ class Reference extends NonTerminal {
 				parent.addChild(token);
 				isTokenized = true;
 				start = input.pos();
-				
-				if("contents".equals(parent.getName())) {
+
+				if ("contents".equals(parent.getName())) {
 					break;
 				}
 			} else {
 				input.pos(start);
 				break;
 			}
-		} while(this.isRepeat());
-		
+		} while (this.isRepeat());
+
 		return isTokenized;
 	}
-	
+
 	public int matchPos(CharArraySegment input, ParsingGrammar grammar) {
 		Group group = grammar.getRule(this.ref);
-		
-		if (group == null) {	
+
+		if (group == null) {
 			return -1;
 		}
-		
+
 		return group.matchPos(input, grammar);
 	}
-	
+
 	public List<Terminal> getFirstNonOptTerminals(ParsingGrammar grammar) {
 		if (this.isOptional()) {
 			return null;
 		}
-		
+
 		return grammar.getRule(this.ref).getFirstNonOptTerminals(grammar);
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("Reference(%s)", this.ref);

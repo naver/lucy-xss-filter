@@ -13,7 +13,6 @@ package com.nhncorp.lucy.security.xss.markup.rule;
  * 
  */
 public final class CharArraySegment {
-
 	private char[] array;
 	private int offset;
 	private int count;
@@ -23,10 +22,10 @@ public final class CharArraySegment {
 		if (offset >= array.length || count < 0) {
 			throw new IndexOutOfBoundsException();
 		}
-		
+
 		this.array = array;
 		this.offset = offset;
-		this.count = (count > array.length - offset)? array.length - offset : count;
+		this.count = (count > array.length - offset) ? array.length - offset : count;
 	}
 
 	public CharArraySegment(char[] array) {
@@ -48,7 +47,7 @@ public final class CharArraySegment {
 	public int index(int pos) {
 		return this.offset + pos;
 	}
-	
+
 	public int index() {
 		return this.offset + this.pos;
 	}
@@ -65,22 +64,22 @@ public final class CharArraySegment {
 		this.pos = newPos;
 		return this;
 	}
-	
+
 	public CharArraySegment move() {
 		this.pos++;
 		return this;
-	} 
+	}
 
 	public CharArraySegment move(int size) {
 		this.pos += size;
 		return this;
 	}
 
-	public int posOf(char...cs) {
+	public int posOf(char... cs) {
 		if (cs == null) {
 			return -1;
 		}
-		
+
 		int pos = -1;
 		for (int i = this.pos; i < this.count; i++) {
 			if (this.startAt(i, cs)) {
@@ -88,7 +87,7 @@ public final class CharArraySegment {
 				break;
 			}
 		}
-		
+
 		return pos;
 	}
 
@@ -96,11 +95,11 @@ public final class CharArraySegment {
 		return this.posOf(str.toCharArray());
 	}
 
-	public int lastPosOf(char...cs) {
+	public int lastPosOf(char... cs) {
 		if (cs == null) {
 			return -1;
 		}
-		
+
 		int pos = -1;
 		for (int i = this.count - 1; i >= this.pos; i--) {
 			if (this.startAt(i, cs)) {
@@ -108,7 +107,7 @@ public final class CharArraySegment {
 				break;
 			}
 		}
-		
+
 		return pos;
 	}
 
@@ -130,8 +129,8 @@ public final class CharArraySegment {
 
 	public CharArraySegment subSegment(int start, int end) throws IndexOutOfBoundsException {
 		int offset = this.index(start);
-		int count = end - start;		
-		
+		int count = end - start;
+
 		return new CharArraySegment(this.array, offset, count);
 	}
 
@@ -152,7 +151,7 @@ public final class CharArraySegment {
 	public CharArraySegment trim() {
 		int from = 0;
 		int to = this.length();
-		
+
 		for (int i = 0; i < to; i++) {
 			char ch = this.charAt(i);
 			if (ch != 0x0020 && ch != 0x0009 && ch != 0x000D && ch != 0x000A) {
@@ -160,26 +159,26 @@ public final class CharArraySegment {
 				break;
 			}
 		}
-		
+
 		for (int i = to - 1; i > from; i--) {
 			char ch = this.charAt(i);
 			if (ch != 0x0020 && ch != 0x0009 && ch != 0x000D && ch != 0x000A) {
 				to = i + 1;
 				break;
 			}
-		}		
+		}
 		this.offset = from;
 		this.count = to - from;
 		this.pos = 0;
-		
+
 		return this;
 	}
 
-	public boolean startAt(int pos, char...prefix) {
+	public boolean startAt(int pos, char... prefix) {
 		if (prefix == null || prefix.length > this.count - pos) {
 			return false;
 		}
-		
+
 		boolean flag = false;
 		if (this.charAt(pos) == prefix[0]) {
 			flag = true;
@@ -197,7 +196,7 @@ public final class CharArraySegment {
 		return this.startAt(pos, prefix.toCharArray());
 	}
 
-	public boolean startWith(char...prefix) {
+	public boolean startWith(char... prefix) {
 		return this.startAt(this.pos, prefix);
 	}
 
@@ -209,25 +208,22 @@ public final class CharArraySegment {
 		if (!this.equalsArray(other)) {
 			return this;
 		}
-		
-		int start = (this.offset <= other.offset)? this.offset : other.offset;
+
+		int start = (this.offset <= other.offset) ? this.offset : other.offset;
 		int end = this.offset + this.count;
-		end = (end >= other.offset + other.count)? end : other.offset + other.count;
-		
+		end = (end >= other.offset + other.count) ? end : other.offset + other.count;
+
 		this.offset = start;
 		this.count = end - start;
 		this.pos = 0;
-		
+
 		return this;
 	}
-	
+
 	public static boolean isHexChar(char ch) {
-		if ( (ch >= '0' && ch <= '9')
-				|| (ch >= 'a' && ch <= 'f')
-				|| (ch >= 'A' && ch <= 'F')
-		){
-			return true;					
-		} 
+		if ((ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')) {
+			return true;
+		}
 		return false;
 	}
 

@@ -13,7 +13,7 @@ package com.nhncorp.lucy.security.xss;
 class FilterRepositoryKey {
 	String fileName;
 	boolean withoutComment;
-	
+
 	/**
 	 * @param fileName
 	 * @param withoutComment
@@ -30,8 +30,7 @@ class FilterRepositoryKey {
 	 */
 	@Override
 	public String toString() {
-		return "FilterRepositoryKey [fileName=" + fileName
-				+ ", withoutComment=" + withoutComment + "]";
+		return "FilterRepositoryKey [fileName=" + fileName + ", withoutComment=" + withoutComment + "]";
 	}
 
 	/**
@@ -42,8 +41,7 @@ class FilterRepositoryKey {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((fileName == null) ? 0 : fileName.hashCode());
+		result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
 		result = prime * result + (withoutComment ? 1231 : 1237);
 		return result;
 	}
@@ -61,7 +59,7 @@ class FilterRepositoryKey {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FilterRepositoryKey other = (FilterRepositoryKey) obj;
+		FilterRepositoryKey other = (FilterRepositoryKey)obj;
 		if (fileName == null) {
 			if (other.fileName != null)
 				return false;
@@ -71,6 +69,5 @@ class FilterRepositoryKey {
 			return false;
 		return true;
 	}
-	
-	
+
 }
