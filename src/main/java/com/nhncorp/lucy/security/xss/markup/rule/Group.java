@@ -23,13 +23,13 @@ class Group extends NonTerminal {
 		OR,	MINUS;
 
 		public static OPERATOR getValue(char ch) {
-			switch (ch) {
-			case '|':
+			if (ch == '|') {
 				return OR;
-			case '-':
+			} else if (ch == '-') {
 				return MINUS;
+			} else {
+				return null;
 			}
-			return null;
 		}
 	}
 	

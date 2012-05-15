@@ -176,13 +176,14 @@ public final class Token {
 	}
 	
 	private String toString(int level) {
-		String indent = "";
+		StringBuffer indentSb = new StringBuffer();
+		
 		for (int i = 0; i < level; i++) {
-			indent += "\t";
+			indentSb.append("\t");
 		}
 		
 		StringBuffer buffer = new StringBuffer(String.format("%s%s : [%s]" 
-				, indent, this.getName(), this.getText()));
+				, indentSb.toString(), this.getName(), this.getText()));
 		if (this.getChildCount() > 0) {
 			for (Token child : this.getChildren()) {
 				buffer.append("\n");

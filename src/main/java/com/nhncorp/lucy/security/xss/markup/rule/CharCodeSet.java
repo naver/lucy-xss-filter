@@ -63,7 +63,7 @@ class CharCodeSet extends Terminal {
 		this.bits.flip(1, 0xFFFF);
 	}
 	
-	public void setPattern(CharArraySegment pattern) {
+	private void setPattern(CharArraySegment pattern) {
 		boolean reverse = false;
 		boolean range = false;
 		int tmp = -1;
