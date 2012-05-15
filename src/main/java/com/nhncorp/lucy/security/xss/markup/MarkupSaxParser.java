@@ -6,16 +6,6 @@
  */
 package com.nhncorp.lucy.security.xss.markup;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.nhncorp.lucy.security.xss.markup.rule.CharArraySegment;
 import com.nhncorp.lucy.security.xss.markup.rule.ParsingGrammar;
 import com.nhncorp.lucy.security.xss.markup.rule.Token;

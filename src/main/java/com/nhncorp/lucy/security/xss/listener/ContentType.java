@@ -13,13 +13,13 @@ import java.util.Date;
  * @author nbp
  */
 public class ContentType {
-	String contentType;
-	Date regdate;
+	private String contentType;
+	private Date regdate;
 	
 	public ContentType(String contentType, Date regdate) {
 		super();
 		this.contentType = contentType;
-		this.regdate = regdate;
+		this.regdate = (Date) regdate.clone();
 	}
 	
 	public String getContentType() {

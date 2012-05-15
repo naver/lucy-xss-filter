@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ContentTypeCacheRepo {
 	private static final int HARD_CACHE_CAPACITY = 1000;
-	int cnt = 0;
 
     // Hard cache, with a fixed maximum capacity and a life duration
     @SuppressWarnings("serial")

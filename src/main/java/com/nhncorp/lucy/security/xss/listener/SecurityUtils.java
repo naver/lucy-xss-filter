@@ -45,8 +45,8 @@ public class SecurityUtils {
 				}
 			} else {
 				//확장자 체크
-				srcUrl = StringUtils.strip(srcUrl, "'\"");
-				String extension = FilenameUtils.getExtension(srcUrl);
+				String url = StringUtils.strip(srcUrl, "'\"");
+				String extension = FilenameUtils.getExtension(url);
 				
 				if (StringUtils.isEmpty(extension)) {
 					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 그냥 통과시킴. 보안상 hole 이지만 고객 불편을 줄이기 위함.
@@ -91,13 +91,13 @@ public class SecurityUtils {
 				}
 			} else {
 				//확장자 체크
-				srcUrl = StringUtils.strip(srcUrl, "'\"");
-				String extension = FilenameUtils.getExtension(srcUrl);
+				String url = StringUtils.strip(srcUrl, "'\"");
+				String extension = FilenameUtils.getExtension(url);
 				extension = "";
 				
 				if (StringUtils.isEmpty(extension)) {
 					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 해당 url 을 head HTTP Method 를 이용해 content-type 식별
-					type = getContentTypeFromUrlConnection(srcUrl, contentTypeCacheRepo);
+					type = getContentTypeFromUrlConnection(url, contentTypeCacheRepo);
 					
 					//허용된 type 인가?
 					if (!isAllowedType(type)) {

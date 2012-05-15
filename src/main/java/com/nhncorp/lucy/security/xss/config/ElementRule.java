@@ -16,6 +16,7 @@ import java.util.Set;
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 import com.nhncorp.lucy.security.xss.markup.Attribute;
 import com.nhncorp.lucy.security.xss.markup.Element;
+import com.nhncorp.lucy.security.xss.markup.IEHackExtensionElement;
 
 /**
  * 이 클래스는 패키지 외부에서 참조 되지 않는다.
@@ -95,7 +96,9 @@ public final class ElementRule {
 		if (tags != null && !tags.isEmpty()) {
 			for (Element tag : tags) {
 				if (!this.tags.contains(tag.getName().toLowerCase())) {
-					tag.setEnabled(false);
+					if (!(tag instanceof IEHackExtensionElement)) {
+						tag.setEnabled(false);
+					}
 				}
 			}
 		}
