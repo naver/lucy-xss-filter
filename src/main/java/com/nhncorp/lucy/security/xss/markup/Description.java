@@ -3,6 +3,9 @@ package com.nhncorp.lucy.security.xss.markup;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * @author nbp
+ */
 public class Description extends Content {
 	/**
 	 * 이 멤버 변수는 일반 텍스트 값을 저장한다.

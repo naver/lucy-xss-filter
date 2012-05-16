@@ -18,7 +18,6 @@ import java.util.List;
  */
 class Group extends NonTerminal {
 	public enum OPERATOR {
-
 		OR, MINUS;
 
 		public static OPERATOR getValue(char ch) {
