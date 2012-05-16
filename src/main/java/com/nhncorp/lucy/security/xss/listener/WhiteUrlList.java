@@ -28,7 +28,7 @@ import com.nhncorp.lucy.security.xss.config.XssConfiguration;
  * 
  */
 public final class WhiteUrlList {
-	private static String CONFIG = "/white-url.xml";
+	private static final String CONFIG = "/white-url.xml";
 
 	public volatile static WhiteUrlList instance;
 	private List<Pattern> patterns;
@@ -53,8 +53,8 @@ public final class WhiteUrlList {
 					}
 				}
 			}
-		} catch (Exception e) {
-			System.out.println(e.toString());
+		} catch (Exception ex) {
+			System.out.println(ex.toString());
 		} finally {
 			if (is != null) {
 				try {
@@ -90,8 +90,8 @@ public final class WhiteUrlList {
 		}
 
 		if (this.patterns != null) {
-			for (Pattern p : this.patterns) {
-				if (p.matcher(url).matches()) {
+			for (Pattern pattern : this.patterns) {
+				if (pattern.matcher(url).matches()) {
 					return true;
 				}
 			}

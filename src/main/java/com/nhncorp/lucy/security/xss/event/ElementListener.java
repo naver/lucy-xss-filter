@@ -22,7 +22,7 @@ public interface ElementListener extends EventListener {
 	 * 이 메소드는 특정 {@link com.nhncorp.lucy.security.xss.markup.Element Element} 에 대해
 	 * 설정 정보 외에 별도의 필터링을 수행한다.
 	 * 
-	 * @param e	{@link com.nhncorp.lucy.security.xss.markup.Element Element} 객체.
+	 * @param element	{@link com.nhncorp.lucy.security.xss.markup.Element Element} 객체.
 	 */
-	public void handleElement(Element e);
+	public void handleElement(Element element);
 }

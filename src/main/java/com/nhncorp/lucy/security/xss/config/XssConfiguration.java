@@ -34,7 +34,7 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  *
  */
 public final class XssConfiguration {
-	private static String DEFAULT_CONFIG = "/lucy-xss-default.xml";
+	private static final String DEFAULT_CONFIG = "/lucy-xss-default.xml";
 
 	private Map<String, ElementRule> tags;
 	private Map<String, AttributeRule> atts;
@@ -166,9 +166,9 @@ public final class XssConfiguration {
 		return config;
 	}
 
-	private void enableBlockingPrefix(Element e) {
-		String enable = e.getAttribute("enable");
-		String prefix = e.getAttribute("prefix");
+	private void enableBlockingPrefix(Element element) {
+		String enable = element.getAttribute("enable");
+		String prefix = element.getAttribute("prefix");
 
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
 			this.setBlockingPrefixEnabled("true".equalsIgnoreCase(enable) ? true : false);
@@ -198,9 +198,9 @@ public final class XssConfiguration {
 		return rule;
 	}
 
-	private void enableNeloAsyncLog(Element e) {
-		String enable = e.getAttribute("enable");
-		String serviceName = e.getAttribute("service");
+	private void enableNeloAsyncLog(Element element) {
+		String enable = element.getAttribute("enable");
+		String serviceName = element.getAttribute("service");
 
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
 			this.setNeloAsyncLog("true".equalsIgnoreCase(enable) ? true : false);
@@ -211,12 +211,12 @@ public final class XssConfiguration {
 		}
 	}
 
-	private void addElementRule(Element e) {
-		String name = e.getAttribute("name");
-		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
-		String endTag = e.getAttribute("endTag");
-		String disable = e.getAttribute("disable");
-		String removeTag = e.getAttribute("removeTag");
+	private void addElementRule(Element element) {
+		String name = element.getAttribute("name");
+		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
+		String endTag = element.getAttribute("endTag");
+		String disable = element.getAttribute("disable");
+		String removeTag = element.getAttribute("removeTag");
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -244,7 +244,7 @@ public final class XssConfiguration {
 			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
 
-		NodeList list = e.getElementsByTagName("attributes");
+		NodeList list = element.getElementsByTagName("attributes");
 		if (list != null && list.getLength() > 0) {
 			Element attributes = Element.class.cast(list.item(0));
 
@@ -253,7 +253,7 @@ public final class XssConfiguration {
 			rule.addAllowedAttributes(this.getReferences(list, this.attGroups, null));
 		}
 
-		list = e.getElementsByTagName("elements");
+		list = element.getElementsByTagName("elements");
 		if (list != null && list.getLength() > 0) {
 			Element elements = Element.class.cast(list.item(0));
 
@@ -262,7 +262,7 @@ public final class XssConfiguration {
 			rule.addAllowedElements(this.getReferences(list, this.tagGroups, null));
 		}
 
-		list = e.getElementsByTagName("listener");
+		list = element.getElementsByTagName("listener");
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			String className = list.item(i).getTextContent();
 			if (className != null) {
@@ -345,10 +345,10 @@ public final class XssConfiguration {
 		}
 	}
 
-	private void addElementGroup(Element e) {
+	private void addElementGroup(Element element) {
 
-		String name = e.getAttribute("name");
-		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
+		String name = element.getAttribute("name");
+		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -364,7 +364,7 @@ public final class XssConfiguration {
 			tagGroup = new HashSet<String>();
 		}
 
-		NodeList list = e.getElementsByTagName("ref");
+		NodeList list = element.getElementsByTagName("ref");
 		Set<String> nestedGroups = new HashSet<String>();
 		Collection<String> refs = this.getReferences(list, this.tagGroups, nestedGroups);
 		if (refs != null && !refs.isEmpty()) {
@@ -417,9 +417,9 @@ public final class XssConfiguration {
 		}
 	}
 
-	private void addAttributeGroup(Element e) {
-		String name = e.getAttribute("name");
-		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
+	private void addAttributeGroup(Element element) {
+		String name = element.getAttribute("name");
+		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -435,7 +435,7 @@ public final class XssConfiguration {
 			attGroup = new HashSet<String>();
 		}
 
-		NodeList list = e.getElementsByTagName("ref");
+		NodeList list = element.getElementsByTagName("ref");
 		Set<String> nestedGroups = new HashSet<String>();
 		Collection<String> refs = this.getReferences(list, this.attGroups, nestedGroups);
 		if (refs != null && !refs.isEmpty()) {

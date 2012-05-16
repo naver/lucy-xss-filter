@@ -105,9 +105,9 @@ class Group extends NonTerminal {
 		}
 
 		List<Token> children = token.getChildren();
-		Token t = children.get(0);
+		Token child = children.get(0);
 
-		return t;
+		return child;
 	}
 
 	public boolean sliceTokens(Token parent, CharArraySegment input, ParsingGrammar grammar) {
