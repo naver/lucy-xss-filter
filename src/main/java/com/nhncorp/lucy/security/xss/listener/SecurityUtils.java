@@ -22,19 +22,19 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  */
 public class SecurityUtils {
 	/**
-	 * @param e
+	 * @param element
 	 * @param srcUrl
 	 * @param isWhiteUrl
 	 * @return
 	 */
-	public static boolean checkVulnerable(Element e, String srcUrl, boolean isWhiteUrl) {
+	public static boolean checkVulnerable(Element element, String srcUrl, boolean isWhiteUrl) {
 		boolean isVulnerable = false;
 
 		// embed/object 관련 취약성 대응 (XSSFILTERSUS-109)
 		if (isWhiteUrl) {
 
 		} else {
-			String type = e.getAttributeValue("type").trim();
+			String type = element.getAttributeValue("type").trim();
 			type = StringUtils.strip(type, "'\"");
 
 			if (type != null && type.length() != 0) {
@@ -57,7 +57,7 @@ public class SecurityUtils {
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
 					} else {
-						e.putAttribute("type", "\"" + type + "\"");
+						element.putAttribute("type", "\"" + type + "\"");
 					}
 				}
 
@@ -67,19 +67,19 @@ public class SecurityUtils {
 	}
 
 	/**
-	 * @param e
+	 * @param element
 	 * @param srcUrl
 	 * @param isWhiteUrl
 	 * @return
 	 */
-	public static boolean checkVulnerableWithHttp(Element e, String srcUrl, boolean isWhiteUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
+	public static boolean checkVulnerableWithHttp(Element element, String srcUrl, boolean isWhiteUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
 		boolean isVulnerable = false;
 
 		// embed/object 관련 취약성 대응 (XSSFILTERSUS-109)
 		if (isWhiteUrl) {
 
 		} else {
-			String type = e.getAttributeValue("type").trim();
+			String type = element.getAttributeValue("type").trim();
 			type = StringUtils.strip(type, "'\"");
 
 			if (type != null && !"".equals(type)) {
@@ -102,7 +102,7 @@ public class SecurityUtils {
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
 					} else {
-						e.putAttribute("type", "\"" + type + "\"");
+						element.putAttribute("type", "\"" + type + "\"");
 					}
 
 				} else {
@@ -112,7 +112,7 @@ public class SecurityUtils {
 					if (!isAllowedType(type)) {
 						isVulnerable = true;
 					} else {
-						e.putAttribute("type", "\"" + type + "\"");
+						element.putAttribute("type", "\"" + type + "\"");
 					}
 				}
 

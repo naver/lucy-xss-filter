@@ -99,15 +99,15 @@ public final class AttributeRule {
 			boolean isNPatternsExist = this.npatterns != null && !this.npatterns.isEmpty();
 
 			if (isPatternsExist && isNPatternsExist) {
-				for (Pattern p : this.npatterns) {
-					if (p.matcher(value).find()) {
+				for (Pattern pattern : this.npatterns) {
+					if (pattern.matcher(value).find()) {
 						att.setEnabled(false);
 						break;
 					}
 				}
 
-				for (Pattern p : this.patterns) {
-					if (p.matcher(value).matches()) {
+				for (Pattern pattern : this.patterns) {
+					if (pattern.matcher(value).matches()) {
 						att.setEnabled(true);
 						break;
 					}
@@ -115,16 +115,16 @@ public final class AttributeRule {
 
 			} else {
 				if (isPatternsExist) {
-					for (Pattern p : this.patterns) {
-						if (p.matcher(value).matches()) {
+					for (Pattern pattern : this.patterns) {
+						if (pattern.matcher(value).matches()) {
 							return;
 						}
 					}
 					att.setEnabled(false);
 					return;
 				} else if (isNPatternsExist) {
-					for (Pattern p : this.npatterns) {
-						if (p.matcher(value).find()) {
+					for (Pattern pattern : this.npatterns) {
+						if (pattern.matcher(value).find()) {
 							att.setEnabled(false);
 							break;
 						}
@@ -191,19 +191,19 @@ public final class AttributeRule {
 
 	public void executeListener(Attribute att) {
 		if (this.listeners != null && !this.listeners.isEmpty()) {
-			for (AttributeListener l : this.listeners) {
-				l.handleAttribute(att);
+			for (AttributeListener listener : this.listeners) {
+				listener.handleAttribute(att);
 			}
 		}
 	}
 
-	void addListener(AttributeListener l) {
-		if (l != null) {
+	void addListener(AttributeListener listener) {
+		if (listener != null) {
 			if (this.listeners == null) {
 				this.listeners = new ArrayList<AttributeListener>();
 			}
 
-			this.listeners.add(l);
+			this.listeners.add(listener);
 		}
 	}
 

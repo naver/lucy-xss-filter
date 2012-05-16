@@ -34,15 +34,15 @@ public class ObjectListener implements ElementListener {
 	private static final Pattern[] URLNAMES = {Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?")};
 
 	private static boolean containsURLName(String name) {
-		for (Pattern p : URLNAMES) {
-			if (p.matcher(name).matches()) {
+		for (Pattern pattern : URLNAMES) {
+			if (pattern.matcher(name).matches()) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public void handleElement(Element e) {
+	public void handleElement(Element element) {
 		boolean invokeURLsExisted = false;
 		boolean autostartExisted = false;
 		boolean allowScriptAccessExisted = false;
@@ -58,11 +58,11 @@ public class ObjectListener implements ElementListener {
 		boolean isWhiteUrl = false;
 		boolean isSrcWhiteUrl = true;
 
-		if (e.isDisabled()) {
+		if (element.isDisabled()) {
 			return;
 		}
 
-		Attribute dataUrl = e.getAttribute("data");
+		Attribute dataUrl = element.getAttribute("data");
 
 		if (dataUrl != null) { // data 속성이 존재하면 체크
 			String dataUrlStr = dataUrl.getValue();
@@ -70,10 +70,10 @@ public class ObjectListener implements ElementListener {
 			boolean isDataUrlWhite = this.isWhiteUrl(dataUrlStr);
 
 			// URL MIME 체크
-			boolean isVulnerable = SecurityUtils.checkVulnerable(e, dataUrlStr, isDataUrlWhite);
+			boolean isVulnerable = SecurityUtils.checkVulnerable(element, dataUrlStr, isDataUrlWhite);
 
 			if (isVulnerable) {
-				e.setEnabled(false);
+				element.setEnabled(false);
 				return;
 			}
 
@@ -82,7 +82,7 @@ public class ObjectListener implements ElementListener {
 			}
 		}
 
-		List<Element> elements = e.getElements();
+		List<Element> elements = element.getElements();
 
 		if (elements != null) {
 			for (Element param : elements) {
@@ -98,10 +98,10 @@ public class ObjectListener implements ElementListener {
 					}
 
 					// URL MIME 체크
-					boolean isVulnerable = SecurityUtils.checkVulnerable(e, srcUrl, isWhiteUrl);
+					boolean isVulnerable = SecurityUtils.checkVulnerable(element, srcUrl, isWhiteUrl);
 
 					if (isVulnerable) {
-						e.setEnabled(false);
+						element.setEnabled(false);
 						return;
 					}
 				}
@@ -156,7 +156,7 @@ public class ObjectListener implements ElementListener {
 			Element invokeURLs = new Element("param");
 			invokeURLs.putAttribute("name", "\"invokeURLs\"");
 			invokeURLs.putAttribute("value", "\"false\"");
-			e.addContent(invokeURLs);
+			element.addContent(invokeURLs);
 		}
 
 		// <param name="autostart" value="false" />
@@ -164,7 +164,7 @@ public class ObjectListener implements ElementListener {
 			Element autostart = new Element("param");
 			autostart.putAttribute("name", "\"autostart\"");
 			autostart.putAttribute("value", "\"false\"");
-			e.addContent(autostart);
+			element.addContent(autostart);
 		}
 
 		// <param name="allowScriptAccess" value="never" />
@@ -172,7 +172,7 @@ public class ObjectListener implements ElementListener {
 			Element allowScriptAccess = new Element("param");
 			allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
 			allowScriptAccess.putAttribute("value", "\"never\"");
-			e.addContent(allowScriptAccess);
+			element.addContent(allowScriptAccess);
 		}
 
 		// <param name="allowNetworking" value="all|internal" />
@@ -181,7 +181,7 @@ public class ObjectListener implements ElementListener {
 			Element allowNetworking = new Element("param");
 			allowNetworking.putAttribute("name", "\"allowNetworking\"");
 			allowNetworking.putAttribute("value", allowNetworkingValue);
-			e.addContent(allowNetworking);
+			element.addContent(allowNetworking);
 		}
 
 		// <param name="autoplay" value="false" />
@@ -189,7 +189,7 @@ public class ObjectListener implements ElementListener {
 			Element autoplay = new Element("param");
 			autoplay.putAttribute("name", "\"autoplay\"");
 			autoplay.putAttribute("value", "\"false\"");
-			e.addContent(autoplay);
+			element.addContent(autoplay);
 		}
 
 		// <param name="enablehref" value="flase" />
@@ -197,7 +197,7 @@ public class ObjectListener implements ElementListener {
 			Element enablehref = new Element("param");
 			enablehref.putAttribute("name", "\"enablehref\"");
 			enablehref.putAttribute("value", "\"false\"");
-			e.addContent(enablehref);
+			element.addContent(enablehref);
 		}
 
 		// <param name="enablejavascript" value="flase" />
@@ -205,7 +205,7 @@ public class ObjectListener implements ElementListener {
 			Element enablejavascript = new Element("param");
 			enablejavascript.putAttribute("name", "\"enablejavascript\"");
 			enablejavascript.putAttribute("value", "\"false\"");
-			e.addContent(enablejavascript);
+			element.addContent(enablejavascript);
 		}
 
 		// <param name="nojava" value="true" />
@@ -213,7 +213,7 @@ public class ObjectListener implements ElementListener {
 			Element nojava = new Element("param");
 			nojava.putAttribute("name", "\"nojava\"");
 			nojava.putAttribute("value", "\"true\"");
-			e.addContent(nojava);
+			element.addContent(nojava);
 		}
 
 		// <param name="AllowHtmlPopupwindow" value="false" />
@@ -221,7 +221,7 @@ public class ObjectListener implements ElementListener {
 			Element allowHtmlPopupwindow = new Element("param");
 			allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
 			allowHtmlPopupwindow.putAttribute("value", "\"false\"");
-			e.addContent(allowHtmlPopupwindow);
+			element.addContent(allowHtmlPopupwindow);
 		}
 
 		// <param name="enableHtmlAccess" value="false" />
@@ -229,7 +229,7 @@ public class ObjectListener implements ElementListener {
 			Element enableHtmlAccess = new Element("param");
 			enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");
 			enableHtmlAccess.putAttribute("value", "\"false\"");
-			e.addContent(enableHtmlAccess);
+			element.addContent(enableHtmlAccess);
 		}
 	}
 

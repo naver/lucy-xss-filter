@@ -49,16 +49,16 @@ import com.nhncorp.lucy.security.xss.markup.Text;
 public final class XssFilter {
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
 
-	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
-	private static String BAD_ATT_INFO_START = "<!-- Not Allowed Attribute Filtered (";
-	private static String BAD_ATT_INFO_END = ") -->";
-	private static String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
-	private static String REMOVE_TAG_INFO_END = ") -->";
-	private static String ELELMENT_NELO_MSG = " (Disabled Element)";
-	private static String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
-	private static String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
-	private static String CONFIG = "lucy-xss-superset.xml";
-	private static String IE_HACK_EXTENSION = "IEHackExtension";
+	private static final String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
+	private static final String BAD_ATT_INFO_START = "<!-- Not Allowed Attribute Filtered (";
+	private static final String BAD_ATT_INFO_END = ") -->";
+	private static final String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
+	private static final String REMOVE_TAG_INFO_END = ") -->";
+	private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
+	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
+	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
+	private static final String CONFIG = "lucy-xss-superset.xml";
+	private static final String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
 	private boolean isNeloLogEnabled;
 	private String service;
@@ -256,9 +256,9 @@ public final class XssFilter {
 
 		Collection<Content> contents = MarkupParser.parse(dirty.toString());
 		if (contents != null && !contents.isEmpty()) {
-			for (Content c : contents) {
-				if (c instanceof Element) {
-					Element tag = Element.class.cast(c);
+			for (Content content : contents) {
+				if (content instanceof Element) {
+					Element tag = Element.class.cast(content);
 					this.checkRule(tag);
 
 					Attribute att = tag.getAttribute(attName);
@@ -278,13 +278,13 @@ public final class XssFilter {
 
 	private void serialize(Writer writer, Collection<Content> contents, StringWriter neloLogWriter) throws IOException {
 		if (contents != null && !contents.isEmpty()) {
-			for (Content c : contents) {
-				if (c instanceof Comment || c instanceof Text || c instanceof Description) {
-					c.serialize(writer);
-				} else if (c instanceof IEHackExtensionElement) {
-					this.serialize(writer, IEHackExtensionElement.class.cast(c), neloLogWriter);
-				} else if (c instanceof Element) {
-					this.serialize(writer, Element.class.cast(c), neloLogWriter);
+			for (Content content : contents) {
+				if (content instanceof Comment || content instanceof Text || content instanceof Description) {
+					content.serialize(writer);
+				} else if (content instanceof IEHackExtensionElement) {
+					this.serialize(writer, IEHackExtensionElement.class.cast(content), neloLogWriter);
+				} else if (content instanceof Element) {
+					this.serialize(writer, Element.class.cast(content), neloLogWriter);
 				}
 			}
 		}
@@ -334,41 +334,41 @@ public final class XssFilter {
 		}
 	}
 
-	private void serialize(Writer writer, Element e, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, Element element, StringWriter neloLogWriter) throws IOException {
 		boolean hasAttrXss = false;
-		checkRuleRemove(e);
+		checkRuleRemove(element);
 
-		if (e.isRemoved()) {
+		if (element.isRemoved()) {
 			if (this.isNeloLogEnabled) {
 				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(e.getName() + "\n");
+				neloLogWriter.write(element.getName() + "\n");
 			}
 
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
-				writer.write(e.getName());
+				writer.write(element.getName());
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 
-			if (!e.isEmpty()) {
-				this.serialize(writer, e.getContents(), neloLogWriter);
+			if (!element.isEmpty()) {
+				this.serialize(writer, element.getContents(), neloLogWriter);
 			}
 		} else {
-			if (!e.isDisabled()) {
-				checkRule(e);
+			if (!element.isDisabled()) {
+				checkRule(element);
 			}
 
-			if (e.isDisabled()) {
+			if (element.isDisabled()) {
 				if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloElementMSG);
-					neloLogWriter.write(e.getName() + "\n");
+					neloLogWriter.write(element.getName() + "\n");
 				}
 
 				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
-					e.setName(this.blockingPrefix + e.getName());
+					element.setName(this.blockingPrefix + element.getName());
 					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
 					writer.write('<');
-					writer.write(e.getName());
+					writer.write(element.getName());
 				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
 					if (!this.withoutComment) {
 
@@ -376,24 +376,24 @@ public final class XssFilter {
 					}
 
 					writer.write("&lt;");
-					writer.write(e.getName());
+					writer.write(element.getName());
 
 				}
 			} else {
-				if (!this.withoutComment && e.existDisabledAttribute()) {
+				if (!this.withoutComment && element.existDisabledAttribute()) {
 					writer.write(BAD_ATT_INFO_START);
 				}
 
 			}
 
-			Collection<Attribute> atts = e.getAttributes();
+			Collection<Attribute> atts = element.getAttributes();
 
 			StringWriter attrSw = new StringWriter();
 			StringWriter attrXssSw = new StringWriter();
 
 			if (atts != null && !atts.isEmpty()) {
 				for (Attribute att : atts) {
-					if (!e.isDisabled() && att.isDisabled()) {
+					if (!element.isDisabled() && att.isDisabled()) {
 						hasAttrXss = true;
 
 						if (this.isNeloLogEnabled || !this.withoutComment) {
@@ -411,7 +411,7 @@ public final class XssFilter {
 				String attrXssString = attrXssSw.toString();
 				if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloAttrMSG);
-					neloLogWriter.write(e.getName());
+					neloLogWriter.write(element.getName());
 					neloLogWriter.write(attrXssString + "\n");
 				}
 
@@ -421,67 +421,67 @@ public final class XssFilter {
 				}
 			}
 
-			if (!e.isDisabled()) {
+			if (!element.isDisabled()) {
 				writer.write('<');
-				writer.write(e.getName());
+				writer.write(element.getName());
 			}
 
 			writer.write(attrSw.toString());
 
-			if (e.isStartClosed()) {
+			if (element.isStartClosed()) {
 
-				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
+				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
 
 			} else {
 
-				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
+				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
 			}
 
-			if (!e.isEmpty()) {
-				this.serialize(writer, e.getContents(), neloLogWriter);
+			if (!element.isEmpty()) {
+				this.serialize(writer, element.getContents(), neloLogWriter);
 			}
 
-			if (e.isClosed()) {
-				if (e.isDisabled() && !this.isBlockingPrefixEnabled) {
+			if (element.isClosed()) {
+				if (element.isDisabled() && !this.isBlockingPrefixEnabled) {
 					writer.write("&lt;/");
-					writer.write(e.getName());
+					writer.write(element.getName());
 					writer.write("&gt;");
 				} else {
 					writer.write("</");
-					writer.write(e.getName());
+					writer.write(element.getName());
 					writer.write('>');
 				}
 			}
 		}
 	}
 
-	private void checkRuleRemove(Element e) {
-		ElementRule tagRule = this.config.getElementRule(e.getName());
+	private void checkRuleRemove(Element element) {
+		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 			return;
 		}
 
-		tagRule.checkRemoveTag(e);
-		if (e.isRemoved()) {
-			tagRule.excuteListener(e);
+		tagRule.checkRemoveTag(element);
+		if (element.isRemoved()) {
+			tagRule.excuteListener(element);
 		}
 	}
 
-	private void checkRule(Element e) {
+	private void checkRule(Element element) {
 
-		ElementRule tagRule = this.config.getElementRule(e.getName());
+		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 			return;
 		}
 
-		tagRule.checkEndTag(e);
-		tagRule.checkDisabled(e);
-		tagRule.disableNotAllowedAttributes(e);
-		tagRule.disableNotAllowedChildElements(e);
+		tagRule.checkEndTag(element);
+		tagRule.checkDisabled(element);
+		tagRule.disableNotAllowedAttributes(element);
+		tagRule.disableNotAllowedChildElements(element);
 
-		Collection<Attribute> atts = e.getAttributes();
+		Collection<Attribute> atts = element.getAttributes();
 		if (atts != null && !atts.isEmpty()) {
 			for (Attribute att : atts) {
 				if (att.isDisabled() || att.isMinimized()) {
@@ -491,7 +491,7 @@ public final class XssFilter {
 				if (attRule == null) {
 					att.setEnabled(false);
 				} else {
-					if (!attRule.getExceptionTagList().contains(e.getName())) {
+					if (!attRule.getExceptionTagList().contains(element.getName())) {
 						attRule.checkDisabled(att);
 					}
 					attRule.checkAttributeValue(att);
@@ -500,6 +500,6 @@ public final class XssFilter {
 			}
 		}
 
-		tagRule.excuteListener(e);
+		tagRule.excuteListener(element);
 	}
 }

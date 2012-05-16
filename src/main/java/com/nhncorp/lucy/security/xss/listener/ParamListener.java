@@ -28,27 +28,27 @@ public class ParamListener implements ElementListener {
 	private static final Pattern ALLOWHTMLPOPUPWINDOW = Pattern.compile("['\"]?\\s*(?i:AllowHtmlPopupwindow)\\s*['\"]?");
 	private static final Pattern ENABLEHTMLACCESS = Pattern.compile("['\"]?\\s*(?i:enableHtmlAccess)\\s*['\"]?");
 
-	public void handleElement(Element e) {
-		String name = e.getAttributeValue("name");
+	public void handleElement(Element element) {
+		String name = element.getAttributeValue("name");
 
 		if (INVOKEURLS.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (AUTOSTART.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (ALLOWSCRIPTACCESS.matcher(name).matches()) {
-			e.putAttribute("value", "\"never\"");
+			element.putAttribute("value", "\"never\"");
 		} else if (AUTOPLAY.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (ENABLEHREF.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (ENABLEJAVASCRIPT.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (NOJAVA.matcher(name).matches()) {
-			e.putAttribute("value", "\"true\"");
+			element.putAttribute("value", "\"true\"");
 		} else if (ALLOWHTMLPOPUPWINDOW.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		} else if (ENABLEHTMLACCESS.matcher(name).matches()) {
-			e.putAttribute("value", "\"false\"");
+			element.putAttribute("value", "\"false\"");
 		}
 	}
 }

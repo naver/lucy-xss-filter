@@ -225,11 +225,11 @@ public class Element extends Content {
 		if (this.isEmpty()) {
 			return null;
 		}
-
+		
 		List<Element> elements = new ArrayList<Element>();
-		for (Content c : this.contents) {
-			if (c instanceof Element) {
-				elements.add(Element.class.cast(c));
+		for (Content content : this.contents) {
+			if (content instanceof Element) {
+				elements.add(Element.class.cast(content));
 			}
 		}
 
@@ -318,8 +318,8 @@ public class Element extends Content {
 			return;
 		}
 
-		for (Content c : contents) {
-			this.addContent(c);
+		for (Content content : contents) {
+			this.addContent(content);
 		}
 	}
 
@@ -359,13 +359,13 @@ public class Element extends Content {
 		}
 
 		Element result = null;
-		for (Content c : this.contents) {
-			if (c instanceof Element) {
-				Element e = Element.class.cast(c);
-				if (id.equals(e.getAttributeValue("id"))) {
-					result = e;
+		for (Content content : this.contents) {
+			if (content instanceof Element) {
+				Element element = Element.class.cast(content);
+				if (id.equals(element.getAttributeValue("id"))) {
+					result = element;
 				} else {
-					result = e.getElementById(id);
+					result = element.getElementById(id);
 				}
 
 				if (result != null) {
@@ -389,15 +389,15 @@ public class Element extends Content {
 		}
 
 		List<Element> result = new ArrayList<Element>();
-		for (Content c : this.contents) {
-			if (c instanceof Element) {
-				Element e = Element.class.cast(c);
-				if (e.getName().equalsIgnoreCase(tagName)) {
-					result.add(e);
+		for (Content content : this.contents) {
+			if (content instanceof Element) {
+				Element element = Element.class.cast(content);
+				if (element.getName().equalsIgnoreCase(tagName)) {
+					result.add(element);
 				}
 
-				if (!e.isEmpty()) {
-					result.addAll(e.getElementsByTagName(tagName));
+				if (!element.isEmpty()) {
+					result.addAll(element.getElementsByTagName(tagName));
 				}
 			}
 		}
@@ -422,8 +422,8 @@ public class Element extends Content {
 		writer.write('>');
 
 		if (!this.isEmpty()) {
-			for (Content c : this.contents) {
-				c.serialize(writer);
+			for (Content content : this.contents) {
+				content.serialize(writer);
 			}
 		}
 

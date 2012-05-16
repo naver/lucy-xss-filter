@@ -57,16 +57,16 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
 public final class XssSaxFilter {
 	private static final Log LOG = LogFactory.getLog(XssSaxFilter.class);
 
-	private static String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
-	private static String BAD_ATT_INFO_START = "<!-- Not Allowed Attribute Filtered (";
-	private static String BAD_ATT_INFO_END = ") -->";
-	private static String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
-	private static String REMOVE_TAG_INFO_END = ") -->";
-	private static String ELELMENT_NELO_MSG = " (Disabled Element)";
-	private static String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
-	private static String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
-	private static String CONFIG = "lucy-xss-superset-sax.xml";
-	private static String IE_HACK_EXTENSION = "IEHackExtension";
+	private static final String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
+	private static final String BAD_ATT_INFO_START = "<!-- Not Allowed Attribute Filtered (";
+	private static final String BAD_ATT_INFO_END = ") -->";
+	private static final String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
+	private static final String REMOVE_TAG_INFO_END = ") -->";
+	private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
+	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
+	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
+	private static final String CONFIG = "lucy-xss-superset-sax.xml";
+	private static final String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
 	private boolean isNeloLogEnabled;
 	private String service;
@@ -86,8 +86,8 @@ public final class XssSaxFilter {
 	private static final Pattern[] URLNAMES = {Pattern.compile("['\"]?\\s*(?i:url)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:href)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:src)\\s*['\"]?"), Pattern.compile("['\"]?\\s*(?i:movie)\\s*['\"]?")};
 
 	private static boolean containsURLName(String name) {
-		for (Pattern p : URLNAMES) {
-			if (p.matcher(name).matches()) {
+		for (Pattern pattern : URLNAMES) {
+			if (pattern.matcher(name).matches()) {
 				return true;
 			}
 		}
@@ -235,18 +235,18 @@ public final class XssSaxFilter {
 			LinkedList<String> stackForAllowNetworkingValue = new LinkedList<String>();
 
 			CharArraySegment charArraySegment = new CharArraySegment(dirty);
-			Token t;
-			while ((t = MarkupSaxParser.parse(charArraySegment)) != null) {
-				String tokenName = t.getName();
+			Token token;
+			while ((token = MarkupSaxParser.parse(charArraySegment)) != null) {
+				String tokenName = token.getName();
 
 				if ("description".equals(tokenName)) {
 
-					String description = t.getText();
+					String description = token.getText();
 					Description content = new Description(description);
 					content.serialize(writer);
 
 				} else if ("comment".equals(tokenName)) {
-					String comment = t.getText();
+					String comment = token.getText();
 					if (comment != null && comment.length() != 0) {
 						comment = comment.substring(4, comment.length() - 3);
 					}
@@ -254,18 +254,18 @@ public final class XssSaxFilter {
 					content.serialize(writer);
 
 				} else if ("iEHExStartTag".endsWith(tokenName)) {
-					IEHackExtensionElement element = new IEHackExtensionElement(t.getText());
+					IEHackExtensionElement element = new IEHackExtensionElement(token.getText());
 					this.serialize(writer, element, neloLogWriter);
 
 				} else if ("startTag".equals(tokenName)) {
-					Token tagNameToken = t.getChild("tagName");
+					Token tagNameToken = token.getChild("tagName");
 					if (tagNameToken == null) {
 						continue;
 					}
 
 					String tagName = tagNameToken.getText();
 					Element element = new Element(tagName);
-					List<Token> attTokens = t.getChildren("attribute");
+					List<Token> attTokens = token.getChildren("attribute");
 					if (attTokens != null) {
 						for (Token attToken : attTokens) {
 							if (attToken != null) {
@@ -280,7 +280,7 @@ public final class XssSaxFilter {
 						}
 					}
 
-					Token closeStartEnd = t.getChild("closeStartEnd");
+					Token closeStartEnd = token.getChild("closeStartEnd");
 
 					if (closeStartEnd != null) {
 						element.setStartClose(true);
@@ -292,14 +292,14 @@ public final class XssSaxFilter {
 					this.serialize(writer, element, neloLogWriter);
 
 				} else if ("iEHExEndTag".endsWith(tokenName)) {
-					IEHackExtensionElement ie = new IEHackExtensionElement(t.getText());
+					IEHackExtensionElement ie = new IEHackExtensionElement(token.getText());
 					checkIEHackRule(ie);
 
 					if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
 						writer.write("<![endif]-->"); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
 					}
 				} else if ("endTag".equals(tokenName)) {
-					Token tagNameToken = t.getChild("tagName");
+					Token tagNameToken = token.getChild("tagName");
 
 					if (tagNameToken == null) {
 						continue;
@@ -313,38 +313,38 @@ public final class XssSaxFilter {
 
 					}
 
-					Element e = new Element(tagName);
+					Element element = new Element(tagName);
 
-					checkRuleRemove(e);
+					checkRuleRemove(element);
 
-					if (!e.isRemoved()) {
+					if (!element.isRemoved()) {
 						if (isObjectDisabled) {
-							e.setEnabled(false);
+							element.setEnabled(false);
 						}
 
-						if (!e.isDisabled()) {
-							checkRule(e);
+						if (!element.isDisabled()) {
+							checkRule(element);
 						}
 
-						if (e.isDisabled()) {
+						if (element.isDisabled()) {
 							if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
-								e.setName(this.blockingPrefix + e.getName());
+								element.setName(this.blockingPrefix + element.getName());
 								writer.write("</");
-								writer.write(e.getName());
+								writer.write(element.getName());
 								writer.write('>');
 							} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
 								writer.write("&lt;/");
-								writer.write(e.getName());
+								writer.write(element.getName());
 								writer.write("&gt;");
 							}
 						} else {
 							writer.write("</");
-							writer.write(e.getName());
+							writer.write(element.getName());
 							writer.write('>');
 						}
 					}
 				} else {
-					Text content = new Text(t.getText());
+					Text content = new Text(token.getText());
 					content.serialize(writer);
 				}
 			}
@@ -577,37 +577,37 @@ public final class XssSaxFilter {
 		}
 	}
 
-	private void serialize(Writer writer, Element e, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, Element element, StringWriter neloLogWriter) throws IOException {
 		boolean hasAttrXss = false;
-		checkRuleRemove(e);
+		checkRuleRemove(element);
 
-		if (e.isRemoved()) {
+		if (element.isRemoved()) {
 			if (this.isNeloLogEnabled) {
 				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(e.getName() + "\n");
+				neloLogWriter.write(element.getName() + "\n");
 			}
 
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
-				writer.write(e.getName());
+				writer.write(element.getName());
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 		} else {
-			if (!e.isDisabled()) {
-				checkRule(e);
+			if (!element.isDisabled()) {
+				checkRule(element);
 			}
 
-			if (e.isDisabled()) {
+			if (element.isDisabled()) {
 				if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloElementMSG);
-					neloLogWriter.write(e.getName() + "\n");
+					neloLogWriter.write(element.getName() + "\n");
 				}
 
 				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
-					e.setName(this.blockingPrefix + e.getName());
+					element.setName(this.blockingPrefix + element.getName());
 					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
 					writer.write('<');
-					writer.write(e.getName());
+					writer.write(element.getName());
 				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
 					if (!this.withoutComment) {
 
@@ -615,16 +615,16 @@ public final class XssSaxFilter {
 					}
 
 					writer.write("&lt;");
-					writer.write(e.getName());
+					writer.write(element.getName());
 
 				}
 			} else {
-				if (!this.withoutComment && e.existDisabledAttribute()) {
+				if (!this.withoutComment && element.existDisabledAttribute()) {
 					writer.write(BAD_ATT_INFO_START);
 				}
 			}
 
-			Collection<Attribute> atts = e.getAttributes();
+			Collection<Attribute> atts = element.getAttributes();
 
 			StringWriter attrSw = new StringWriter();
 			StringWriter attrXssSw = new StringWriter();
@@ -632,7 +632,7 @@ public final class XssSaxFilter {
 			if (atts != null && !atts.isEmpty()) {
 				for (Attribute att : atts) {
 
-					if (!e.isDisabled() && att.isDisabled()) {
+					if (!element.isDisabled() && att.isDisabled()) {
 
 						hasAttrXss = true;
 						if (this.isNeloLogEnabled || !this.withoutComment) {
@@ -650,7 +650,7 @@ public final class XssSaxFilter {
 				String attrXssString = attrXssSw.toString();
 				if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloAttrMSG);
-					neloLogWriter.write(e.getName());
+					neloLogWriter.write(element.getName());
 					neloLogWriter.write(attrXssString + "\n");
 				}
 
@@ -660,18 +660,18 @@ public final class XssSaxFilter {
 				}
 			}
 
-			if (!e.isDisabled()) {
+			if (!element.isDisabled()) {
 				writer.write('<');
-				writer.write(e.getName());
+				writer.write(element.getName());
 			}
 
 			writer.write(attrSw.toString());
 
-			if (e.isStartClosed()) {
-				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
+			if (element.isStartClosed()) {
+				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
 
 			} else {
-				writer.write((e.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
+				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
 			}
 
 			//			if (e.isClosed()) {
@@ -688,33 +688,33 @@ public final class XssSaxFilter {
 		}
 	}
 
-	private void checkRuleRemove(Element e) {
-		ElementRule tagRule = this.config.getElementRule(e.getName());
+	private void checkRuleRemove(Element element) {
+		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 			return;
 		}
 
-		tagRule.checkRemoveTag(e);
-		if (e.isRemoved()) {
-			tagRule.excuteListener(e);
+		tagRule.checkRemoveTag(element);
+		if (element.isRemoved()) {
+			tagRule.excuteListener(element);
 		}
 	}
 
-	private void checkRule(Element e) {
+	private void checkRule(Element element) {
 
-		ElementRule tagRule = this.config.getElementRule(e.getName());
+		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 			return;
 		}
 
 		//tagRule.checkEndTag(e);
-		tagRule.checkDisabled(e);
+		tagRule.checkDisabled(element);
 		//tagRule.disableNotAllowedAttributes(e);
 		//tagRule.disableNotAllowedChildElements(e);
 
-		Collection<Attribute> atts = e.getAttributes();
+		Collection<Attribute> atts = element.getAttributes();
 		if (atts != null && !atts.isEmpty()) {
 			for (Attribute att : atts) {
 				if (att.isDisabled()) {
@@ -724,7 +724,7 @@ public final class XssSaxFilter {
 				if (attRule == null) {
 					att.setEnabled(false);
 				} else {
-					if (!attRule.getExceptionTagList().contains(e.getName())) {
+					if (!attRule.getExceptionTagList().contains(element.getName())) {
 						attRule.checkDisabled(att);
 					}
 					attRule.checkAttributeValue(att);
@@ -733,6 +733,6 @@ public final class XssSaxFilter {
 			}
 		}
 
-		tagRule.excuteListener(e);
+		tagRule.excuteListener(element);
 	}
 }

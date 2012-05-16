@@ -26,9 +26,9 @@ import com.nhncorp.lucy.security.xss.markup.rule.ParsingRule.UNARY;
  * 
  */
 public final class ParsingGrammar {
-	private static String RULE_FILE = "markup.rule";
-	private static String START_SYMBOL = "contents";
-	private static String DEFINE = "::=";
+	private static final String RULE_FILE = "markup.rule";
+	private static final String START_SYMBOL = "contents";
+	private static final String DEFINE = "::=";
 
 	private static ParsingGrammar instance = new ParsingGrammar();
 	private Map<String, Group> rules;
