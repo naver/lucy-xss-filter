@@ -3,6 +3,9 @@ package com.nhncorp.lucy.security.xss.markup;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * @author nbp
+ */
 public class IEHackExtensionElement extends Element {
 	public IEHackExtensionElement(String name) {
 		super(name);

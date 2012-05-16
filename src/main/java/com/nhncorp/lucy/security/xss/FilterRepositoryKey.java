@@ -53,21 +53,31 @@ class FilterRepositoryKey {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
+		
 		FilterRepositoryKey other = (FilterRepositoryKey)obj;
+		
 		if (fileName == null) {
 			if (other.fileName != null)
 				return false;
-		} else if (!fileName.equals(other.fileName))
+		} else if (!fileName.equals(other.fileName)) {
 			return false;
-		if (withoutComment != other.withoutComment)
+		}
+		
+		if (withoutComment != other.withoutComment) {
 			return false;
+		}
+		
 		return true;
 	}
-
 }

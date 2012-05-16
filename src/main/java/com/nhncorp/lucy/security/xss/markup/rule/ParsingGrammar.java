@@ -265,7 +265,6 @@ public final class ParsingGrammar {
 	}
 
 	private enum RuleType {
-
 		LITERAL {
 			boolean startAt(CharArraySegment input) {
 				char ch = input.getChar();
