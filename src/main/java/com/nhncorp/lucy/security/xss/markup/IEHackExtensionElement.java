@@ -24,8 +24,8 @@ public class IEHackExtensionElement extends Element {
 		writer.write(valid);
 
 		if (!this.isEmpty()) {
-			for (Content c : this.contents) {
-				c.serialize(writer);
+			for (Content content : this.contents) {
+				content.serialize(writer);
 			}
 		}
 

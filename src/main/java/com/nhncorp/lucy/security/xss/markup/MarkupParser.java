@@ -75,16 +75,16 @@ public final class MarkupParser {
 		//		List<Token> children = root.getChildren();
 		//		for (Token t : children) {
 		CharArraySegment charArraySegment = new CharArraySegment(input);
-		Token t;
-		while ((t = grammar.nextToken(charArraySegment)) != null) {
-			String tokenName = t.getName();
+		Token token;
+		while ((token = grammar.nextToken(charArraySegment)) != null) {
+			String tokenName = token.getName();
 			if ("description".equals(tokenName)) {
 
-				String description = t.getText();
+				String description = token.getText();
 				result.add(new Description(description));
 
 			} else if ("comment".equals(tokenName)) {
-				String comment = t.getText();
+				String comment = token.getText();
 				if (comment != null && comment.length() != 0) {
 					comment = comment.substring(4, comment.length() - 3);
 				}
@@ -92,7 +92,7 @@ public final class MarkupParser {
 
 			} else if ("iEHExStartTag".endsWith(tokenName)) {
 
-				Element element = new IEHackExtensionElement(t.getText());
+				Element element = new IEHackExtensionElement(token.getText());
 
 				if (stack == null) {
 					stack = new LinkedList<Element>();
@@ -102,13 +102,13 @@ public final class MarkupParser {
 				result.add(element);
 
 			} else if ("startTag".equals(tokenName)) {
-				Token tagNameToken = t.getChild("tagName");
+				Token tagNameToken = token.getChild("tagName");
 				if (tagNameToken == null) {
 					continue;
 				}
 
 				Element element = new Element(tagNameToken.getText());
-				List<Token> attTokens = t.getChildren("attribute");
+				List<Token> attTokens = token.getChildren("attribute");
 				if (attTokens != null) {
 					for (Token attToken : attTokens) {
 						Token attName = attToken.getChild("attName");
@@ -121,7 +121,7 @@ public final class MarkupParser {
 					}
 				}
 
-				Token closeStartEnd = t.getChild("closeStartEnd");
+				Token closeStartEnd = token.getChild("closeStartEnd");
 
 				if (closeStartEnd == null) {
 
@@ -143,27 +143,27 @@ public final class MarkupParser {
 				boolean flag = false;
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
-					Element e;
-					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
-						if (e instanceof IEHackExtensionElement) {
-							Content c;
-							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c instanceof Element && c == e) {
-									e.setClose(true);
+					Element element;
+					while (!stack.isEmpty() && (element = stack.removeFirst()) != null) {
+						if (element instanceof IEHackExtensionElement) {
+							Content content;
+							while (!result.isEmpty() && (content = result.getLast()) != null) {
+								if (content instanceof Element && content == element) {
+									element.setClose(true);
 									tmp.clear();
 									break;
 								} else {
-									if (stack.contains(c)) {
-										stack.remove(c);
+									if (stack.contains(content)) {
+										stack.remove(content);
 									}
 
-									e.addContent(0, result.removeLast());
+									element.addContent(0, result.removeLast());
 								}
 							}
 							flag = true;
 							break;
 						} else {
-							tmp.add(e);
+							tmp.add(element);
 						}
 					}
 
@@ -173,11 +173,11 @@ public final class MarkupParser {
 				}
 
 				if (!flag) {
-					result.add(new Text(t.getText()));
+					result.add(new Text(token.getText()));
 				}
 
 			} else if ("endTag".equals(tokenName)) {
-				Token tagNameToken = t.getChild("tagName");
+				Token tagNameToken = token.getChild("tagName");
 				boolean flag = false;
 				if (tagNameToken == null) {
 					continue;
@@ -187,27 +187,27 @@ public final class MarkupParser {
 
 				if (stack != null) {
 					LinkedList<Element> tmp = new LinkedList<Element>();
-					Element e;
-					while (!stack.isEmpty() && (e = stack.removeFirst()) != null) {
-						if (tagName.equalsIgnoreCase(e.getName())) {
-							Content c;
-							while (!result.isEmpty() && (c = result.getLast()) != null) {
-								if (c instanceof Element && c == e) {
-									e.setClose(true);
+					Element element;
+					while (!stack.isEmpty() && (element = stack.removeFirst()) != null) {
+						if (tagName.equalsIgnoreCase(element.getName())) {
+							Content content;
+							while (!result.isEmpty() && (content = result.getLast()) != null) {
+								if (content instanceof Element && content == element) {
+									element.setClose(true);
 									tmp.clear();
 									break;
 								} else {
-									if (stack.contains(c)) {
-										stack.remove(c);
+									if (stack.contains(content)) {
+										stack.remove(content);
 									}
 
-									e.addContent(0, result.removeLast());
+									element.addContent(0, result.removeLast());
 								}
 							}
 							flag = true;
 							break;
 						} else {
-							tmp.add(e);
+							tmp.add(element);
 						}
 					}
 
@@ -217,10 +217,10 @@ public final class MarkupParser {
 				}
 
 				if (!flag) {
-					result.add(new Text(t.getText()));
+					result.add(new Text(token.getText()));
 				}
 			} else {
-				result.add(new Text(t.getText()));
+				result.add(new Text(token.getText()));
 			}
 		}
 
@@ -266,9 +266,9 @@ public final class MarkupParser {
 		}
 
 		StringWriter writer = new StringWriter();
-		for (Content c : contents) {
+		for (Content content : contents) {
 			try {
-				c.serialize(writer);
+				content.serialize(writer);
 			} catch (IOException e) {
 			}
 		}

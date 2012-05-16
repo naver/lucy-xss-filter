@@ -63,24 +63,24 @@ public final class ElementRule {
 		return Collections.unmodifiableList(this.listeners);
 	}
 
-	public void checkEndTag(Element e) {
-		if (e == null) {
+	public void checkEndTag(Element element) {
+		if (element == null) {
 			return;
 		}
 
-		if (this.endTag && !e.isClosed()) {
-			e.setEnabled(false);
+		if (this.endTag && !element.isClosed()) {
+			element.setEnabled(false);
 		}
 	}
 
-	public void checkDisabled(Element e) {
+	public void checkDisabled(Element element) {
 		if (this.disabled) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 		}
 	}
 
-	public void disableNotAllowedAttributes(Element e) {
-		Collection<Attribute> atts = e.getAttributes();
+	public void disableNotAllowedAttributes(Element element) {
+		Collection<Attribute> atts = element.getAttributes();
 		if (atts != null && !atts.isEmpty()) {
 			for (Attribute att : atts) {
 				if (!this.atts.contains(att.getName().toLowerCase())) {
@@ -90,8 +90,8 @@ public final class ElementRule {
 		}
 	}
 
-	public void disableNotAllowedChildElements(Element e) {
-		List<Element> tags = e.getElements();
+	public void disableNotAllowedChildElements(Element element) {
+		List<Element> tags = element.getElements();
 		if (tags != null && !tags.isEmpty()) {
 			for (Element tag : tags) {
 				if (!this.tags.contains(tag.getName().toLowerCase())) {
@@ -103,10 +103,10 @@ public final class ElementRule {
 		}
 	}
 
-	public void excuteListener(Element e) {
+	public void excuteListener(Element element) {
 		if (this.listeners != null && !this.listeners.isEmpty()) {
-			for (ElementListener l : this.listeners) {
-				l.handleElement(e);
+			for (ElementListener listener : this.listeners) {
+				listener.handleElement(element);
 			}
 		}
 	}
@@ -155,13 +155,13 @@ public final class ElementRule {
 		}
 	}
 
-	void addListener(ElementListener l) {
-		if (l != null) {
+	void addListener(ElementListener listener) {
+		if (listener != null) {
 			if (this.listeners == null) {
 				this.listeners = new ArrayList<ElementListener>();
 			}
 
-			this.listeners.add(l);
+			this.listeners.add(listener);
 		}
 	}
 
@@ -173,11 +173,11 @@ public final class ElementRule {
 		this.removeTag = removeTag;
 	}
 
-	public void checkRemoveTag(Element e) {
-		if (e == null) {
+	public void checkRemoveTag(Element element) {
+		if (element == null) {
 			return;
 		}
 
-		e.setRemoved(this.removeTag);
+		element.setRemoved(this.removeTag);
 	}
 }

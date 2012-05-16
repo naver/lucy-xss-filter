@@ -29,7 +29,7 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  *
  */
 public final class XssSaxConfiguration {
-	private static String DEFAULT_CONFIG = "/lucy-xss-default-sax.xml";
+	private static final String DEFAULT_CONFIG = "/lucy-xss-default-sax.xml";
 
 	private Map<String, ElementRule> tags;
 	private Map<String, AttributeRule> atts;
@@ -128,9 +128,9 @@ public final class XssSaxConfiguration {
 		return config;
 	}
 
-	private void enableBlockingPrefix(Element e) {
-		String enable = e.getAttribute("enable");
-		String prefix = e.getAttribute("prefix");
+	private void enableBlockingPrefix(Element element) {
+		String enable = element.getAttribute("enable");
+		String prefix = element.getAttribute("prefix");
 
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
 			this.setBlockingPrefixEnabled("true".equalsIgnoreCase(enable) ? true : false);
@@ -160,9 +160,9 @@ public final class XssSaxConfiguration {
 		return rule;
 	}
 
-	private void enableNeloAsyncLog(Element e) {
-		String enable = e.getAttribute("enable");
-		String serviceName = e.getAttribute("service");
+	private void enableNeloAsyncLog(Element element) {
+		String enable = element.getAttribute("enable");
+		String serviceName = element.getAttribute("service");
 
 		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
 			this.setNeloAsyncLog("true".equalsIgnoreCase(enable) ? true : false);
@@ -173,11 +173,11 @@ public final class XssSaxConfiguration {
 		}
 	}
 
-	private void addElementRule(Element e) {
-		String name = e.getAttribute("name");
-		boolean override = !"false".equalsIgnoreCase(e.getAttribute("override"));
-		String disable = e.getAttribute("disable");
-		String removeTag = e.getAttribute("removeTag");
+	private void addElementRule(Element element) {
+		String name = element.getAttribute("name");
+		boolean override = !"false".equalsIgnoreCase(element.getAttribute("override"));
+		String disable = element.getAttribute("disable");
+		String removeTag = element.getAttribute("removeTag");
 
 		if (name == null || "".equals(name)) {
 			return;
@@ -201,9 +201,9 @@ public final class XssSaxConfiguration {
 			rule.setDisabled("true".equalsIgnoreCase(disable) ? true : false);
 		}
 
-		NodeList list = e.getElementsByTagName("attributes");
+		NodeList list = element.getElementsByTagName("attributes");
 
-		list = e.getElementsByTagName("listener");
+		list = element.getElementsByTagName("listener");
 		for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 			String className = list.item(i).getTextContent();
 			if (className != null) {

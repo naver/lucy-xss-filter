@@ -47,7 +47,7 @@ public final class MarkupSaxParser {
 	}
 
 	public static Token parse(CharArraySegment charArraySegment) {
-		Token t = grammar.nextToken(charArraySegment);
-		return t;
+		Token token = grammar.nextToken(charArraySegment);
+		return token;
 	}
 }

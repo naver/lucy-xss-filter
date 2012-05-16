@@ -116,9 +116,9 @@ public final class Token {
 		}
 
 		Token child = null;
-		for (Token c : this.children) {
-			if (c.getName().equals(name)) {
-				child = c;
+		for (Token token : this.children) {
+			if (token.getName().equals(name)) {
+				child = token;
 				break;
 			}
 		}
@@ -147,10 +147,10 @@ public final class Token {
 		}
 
 		ArrayList<Token> list = null;
-		for (Token c : this.children) {
-			if (c.getName().equals(name)) {
+		for (Token token : this.children) {
+			if (token.getName().equals(name)) {
 				list = (list == null) ? new ArrayList<Token>() : list;
-				list.add(c);
+				list.add(token);
 			}
 		}
 

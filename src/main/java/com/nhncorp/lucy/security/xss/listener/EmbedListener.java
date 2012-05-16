@@ -16,30 +16,30 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * 
  */
 public class EmbedListener implements ElementListener {
-	public void handleElement(Element e) {
-		if (e.isDisabled()) {
+	public void handleElement(Element element) {
+		if (element.isDisabled()) {
 			return;
 		}
 		
-		String srcUrl = e.getAttributeValue("src");
+		String srcUrl = element.getAttributeValue("src");
 		boolean isWhiteUrl = this.isWhiteUrl(srcUrl);
 
 		// URL MIME 체크
-		boolean isVulnerable = SecurityUtils.checkVulnerable(e, srcUrl, isWhiteUrl);
+		boolean isVulnerable = SecurityUtils.checkVulnerable(element, srcUrl, isWhiteUrl);
 
 		if (isVulnerable) {
-			e.setEnabled(false);
+			element.setEnabled(false);
 			return;
 		}
 
-		e.putAttribute("invokeURLs", "\"false\"");
-		e.putAttribute("autostart", "\"false\"");
-		e.putAttribute("allowScriptAccess", "\"never\"");
+		element.putAttribute("invokeURLs", "\"false\"");
+		element.putAttribute("autostart", "\"false\"");
+		element.putAttribute("allowScriptAccess", "\"never\"");
 
 		if (isWhiteUrl) {
-			e.putAttribute("allowNetworking", "\"all\"");
+			element.putAttribute("allowNetworking", "\"all\"");
 		} else {
-			e.putAttribute("allowNetworking", "\"internal\"");
+			element.putAttribute("allowNetworking", "\"internal\"");
 		}
 
 	}
