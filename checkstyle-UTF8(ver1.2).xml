@@ -118,9 +118,11 @@
         <module name="GenericWhitespace">
             <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="[S] 3.3.E 산괄호는 공백을 삽입하지 않는다."/>
         </module>
+        <!-- 
         <module name="FileComment">
             <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="[C] 4.2.B 파일 주석 내용을 준수한다."/>
         </module>
+         -->
         <module name="ClassLineFeed"/>
         <module name="ThrowsLineFeed">
             <metadata name="com.atlassw.tools.eclipse.checkstyle.customMessage" value="[C] 3.6.D throws 키워드를 사용한 경우 throws 이후에서 줄 바꿈을 한다."/>
