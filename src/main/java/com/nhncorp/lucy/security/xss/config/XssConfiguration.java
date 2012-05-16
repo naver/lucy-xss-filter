@@ -386,8 +386,9 @@ public final class XssConfiguration {
 				this.parentElementGroupRef.put(nestedGroup, parentElementGroup);
 			}
 
-			if (!childGroup.isEmpty())
+			if (!childGroup.isEmpty()) {
 				nestedGroups.addAll(childGroup);
+			}
 
 			this.childElementGroupRef.put(name, nestedGroups);
 		}
@@ -457,8 +458,9 @@ public final class XssConfiguration {
 				this.parentAttrGroupRef.put(nestedGroup, parentElementGroup);
 			}
 
-			if (!childGroup.isEmpty())
+			if (!childGroup.isEmpty()) {
 				nestedGroups.addAll(childGroup);
+			}
 
 			this.childAttrGroupRef.put(name, nestedGroups);
 		}

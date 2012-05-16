@@ -28,8 +28,9 @@ public class ContentTypeCacheRepo {
 				// Entries push-out of hard reference cache are transferred to soft reference cache
 				sSoftBitmapCache.put(eldest.getKey(), new WeakReference<ContentType>(eldest.getValue()));
 				return true;
-			} else
+			} else {
 				return false;
+			}
 		}
 	};
 
