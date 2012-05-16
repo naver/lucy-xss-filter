@@ -6,6 +6,9 @@
  */
 package com.nhncorp.lucy.security.xss;
 
+/**
+ * @author nbp
+ */
 public class XssFilterException extends RuntimeException {
 	private static final long serialVersionUID = 2560642935469511816L;
 
