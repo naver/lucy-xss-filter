@@ -296,7 +296,12 @@ public final class XssSaxFilter {
 					checkIEHackRule(ie);
 
 					if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
-						writer.write("<![endif]-->"); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
+						// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
+						String stdName = ie.getName();
+						if (stdName != null) {
+							stdName = stdName.replaceFirst("<!--", "<!");
+						}
+						writer.write(stdName); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
 					}
 				} else if ("endTag".equals(tokenName)) {
 					Token tagNameToken = token.getChild("tagName");
