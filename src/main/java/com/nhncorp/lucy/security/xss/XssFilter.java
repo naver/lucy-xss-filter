@@ -329,7 +329,13 @@ public final class XssFilter {
 			}
 
 			if (ie.isClosed()) {
-				writer.write("<![endif]-->");
+				// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
+				// IE Hack 시작 태그의 종류 판별 및 태그맞춤 cf) 시작 스트링이 <!-- 인지 <! 인지에 따라 IE Hack 닫는 태그 달라짐.
+				if(stdName.indexOf("<!--") != -1) {
+					writer.write("<![endif]-->");
+				} else {
+					writer.write("<![endif]>");
+				}
 			}
 		}
 	}
