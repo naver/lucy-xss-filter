@@ -1714,8 +1714,32 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-body.xml");
 		
 		String dirty = "<html><head></head><body><!--[if gte vml 1]><v:shapetype id=\"_x0000_t201\"><![if excel]><x:ClientData ObjectType=\"Drop\"> <x:DropLines>123123 8</x:DropLines> </x:ClientData> <![endif]> </v:shape><![endif]--></body></html>";
-		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><xx:ClientData ObjectType=\"Drop\"> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]--> &lt;/v:shape&gt;<![endif]--></body></html>";
+		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><xx:ClientData ObjectType=\"Drop\"> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]> &lt;/v:shape&gt;<![endif]--></body></html>";
 		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void nestedIehack() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<!--[if gte vml 1]><![if excel]><![endif]><![endif]-->";
+		String expected = "<!--[if gte vml 1]><![if excel]><![endif]><![endif]-->";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<!--[if gte vml 1]--><![if excel]><![endif]><!--[endif]-->";
+		expected = "<!--[if gte vml 1]><![if excel]><![endif]><![endif]-->";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<!--[if gte vml 1]--><!--[endif]-->";
+		expected = "<!--[if gte vml 1]><![endif]-->";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<![if excel]>asdf<![endif]>";
+		expected = "<![if excel]>asdf<![endif]>";
+		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
 }
