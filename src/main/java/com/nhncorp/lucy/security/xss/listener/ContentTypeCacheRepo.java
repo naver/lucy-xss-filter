@@ -25,8 +25,21 @@ public class ContentTypeCacheRepo {
 		@Override
 		protected boolean removeEldestEntry(final Map.Entry<String, ContentType> eldest) {
 			if (size() > HARD_CACHE_CAPACITY) {
+				
 				// Entries push-out of hard reference cache are transferred to soft reference cache
+				//System.out.println("sHardBitmapCache size() : " + size());
 				sSoftBitmapCache.put(eldest.getKey(), new WeakReference<ContentType>(eldest.getValue()));
+				
+			/*	int cnt = 0;
+				for (WeakReference<ContentType> contentTypeCacheReference : sSoftBitmapCache.values()) {
+					if (contentTypeCacheReference!=null) {
+						ContentType contentType = contentTypeCacheReference.get();
+						if (contentType !=null) {
+							 cnt++;
+						}
+					}
+				}
+				System.out.println("sSoftBitmapCache size() : " + cnt);*/
 				return true;
 			} else {
 				return false;
@@ -72,10 +85,12 @@ public class ContentTypeCacheRepo {
 		Date today = new Date();
 		String contentType = "";
 
-		if ((today.getTime() - regdate.getTime()) < 1000 * 3600) { // cache time out 1시간 설정     	
+		if ((today.getTime() - regdate.getTime()) < 1000 * 3600 * 24) { // cache time out 24시간 설정     	
 			contentType = contentTypeCache.getContentType();
 		} else {
-
+			synchronized (sHardBitmapCache) {
+				sHardBitmapCache.remove(url); // 하드캐시 제거 try
+			}
 		}
 		return contentType;
 	}
