@@ -1462,4 +1462,18 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
+	
+	/**
+	 * Lucy-XSS Sax버전에 char[]를 input으로 받는 doFilter 추가 요청 테스트
+	 */
+	@Test
+	public void charArrayInput() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+
+		String dirty = "<p src='test'>Hello</p>";
+		String expected = "<!-- Not Allowed Attribute Filtered --><p>Hello</p>";
+		Writer writer = new StringWriter();
+		filter.doFilter(dirty.toCharArray(), 0, dirty.length(), writer);
+		Assert.assertNotSame(expected, writer.toString());
+	}
 }

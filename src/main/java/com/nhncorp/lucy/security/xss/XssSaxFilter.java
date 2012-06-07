@@ -181,8 +181,9 @@ public final class XssSaxFilter {
 
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
-	 *
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
+	 * 
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
 	 * @return 신뢰할 수 있는 코드.
@@ -195,12 +196,12 @@ public final class XssSaxFilter {
 
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
 	 *
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @param writer            
-	 * @return 신뢰할 수 있는 코드.
+	 * @param writer 필터링 결과를 write 할 writer 객체. 이 메소드가 종료되면 writer 객체에 신뢰할 수 있는 코드가 담겨진다.        
 	 */
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter neloLogWriter = new StringWriter();
@@ -212,6 +213,38 @@ public final class XssSaxFilter {
 
 		try {
 			this.parseAndFilter(dirty, writer, neloLogWriter);
+		} catch (IOException ioe) {
+			LOG.error(ioe.getMessage(), ioe);
+		}
+
+		if (this.isNeloLogEnabled) {
+			String neloStr = neloLogWriter.toString();
+			if (neloStr != null && neloStr.length() > 0) {
+				LOG.error("@[" + this.service + "]" + neloStr);
+			}
+		}
+	}
+	
+	/**
+	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset-sax.xml 설정을 사용한다.
+	 * 
+	 * @param dirty XSS({@code Cross Site Scripting})이 포함된 위험한 코드 char[].
+	 * @param offset char[] dirty 의 필터링 대상 시작위치
+	 * @param count char[]의 dirty 의 필터링 대상 문자개수
+	 * @param writer 필터링 결과를 write 할 writer 객체. 이 메소드가 종료되면 writer 객체에 신뢰할 수 있는 코드가 담겨진다.      
+	 */
+	public void doFilter(char[] dirty, int offset, int count, Writer writer) {
+		StringWriter neloLogWriter = new StringWriter();
+
+		if (dirty == null || dirty.length == 0 || count == 0) {
+			LOG.debug("target string is empty. doFilter() method end.");
+			return;
+		}
+
+		try {
+			this.parseAndFilter(dirty, offset, count, writer, neloLogWriter);
 		} catch (IOException ioe) {
 			LOG.error(ioe.getMessage(), ioe);
 		}
@@ -235,126 +268,154 @@ public final class XssSaxFilter {
 			LinkedList<String> stackForAllowNetworkingValue = new LinkedList<String>();
 
 			CharArraySegment charArraySegment = new CharArraySegment(dirty);
-			Token token;
-			while ((token = MarkupSaxParser.parse(charArraySegment)) != null) {
-				String tokenName = token.getName();
+			doParseAndFilter(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue, charArraySegment);
+		}
+	}
+	
+	/**
+	 * @param dirty
+	 * @param offset
+	 * @param writer
+	 * @param count
+	 * @param neloLogWriter
+	 */
+	private void parseAndFilter(char[] dirty, int offset, int count, Writer writer, StringWriter neloLogWriter) throws IOException{
+		if (dirty != null && dirty.length > 0 && count >0) {
+			LinkedList<Element> stackForObjectTag = new LinkedList<Element>();
+			LinkedList<String> stackForAllowNetworkingValue = new LinkedList<String>();
 
-				if ("description".equals(tokenName)) {
+			CharArraySegment charArraySegment = new CharArraySegment(dirty, offset, count);
+			doParseAndFilter(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue, charArraySegment);
+		}
+	}
 
-					String description = token.getText();
-					Description content = new Description(description);
-					content.serialize(writer);
+	/**
+	 * @param writer
+	 * @param neloLogWriter
+	 * @param stackForObjectTag
+	 * @param stackForAllowNetworkingValue
+	 * @param charArraySegment
+	 * @throws IOException
+	 */
+	private void doParseAndFilter(Writer writer, StringWriter neloLogWriter, LinkedList<Element> stackForObjectTag, LinkedList<String> stackForAllowNetworkingValue, CharArraySegment charArraySegment) throws IOException {
+		Token token;
+		while ((token = MarkupSaxParser.parse(charArraySegment)) != null) {
+			String tokenName = token.getName();
 
-				} else if ("comment".equals(tokenName)) {
-					String comment = token.getText();
-					if (comment != null && comment.length() != 0) {
-						comment = comment.substring(4, comment.length() - 3);
-					}
-					Comment content = new Comment(comment);
-					content.serialize(writer);
+			if ("description".equals(tokenName)) {
 
-				} else if ("iEHExStartTag".endsWith(tokenName)) {
-					IEHackExtensionElement element = new IEHackExtensionElement(token.getText());
-					this.serialize(writer, element, neloLogWriter);
+				String description = token.getText();
+				Description content = new Description(description);
+				content.serialize(writer);
 
-				} else if ("startTag".equals(tokenName)) {
-					Token tagNameToken = token.getChild("tagName");
-					if (tagNameToken == null) {
-						continue;
-					}
+			} else if ("comment".equals(tokenName)) {
+				String comment = token.getText();
+				if (comment != null && comment.length() != 0) {
+					comment = comment.substring(4, comment.length() - 3);
+				}
+				Comment content = new Comment(comment);
+				content.serialize(writer);
 
-					String tagName = tagNameToken.getText();
-					Element element = new Element(tagName);
-					List<Token> attTokens = token.getChildren("attribute");
-					if (attTokens != null) {
-						for (Token attToken : attTokens) {
-							if (attToken != null) {
-								Token attName = attToken.getChild("attName");
-								Token attValue = attToken.getChild("attValue");
-								if (attName != null && attValue == null) {
-									element.putAttribute(new Attribute(attName.getText()));
-								} else if (attName != null && attValue != null) {
-									element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
-								}
+			} else if ("iEHExStartTag".endsWith(tokenName)) {
+				IEHackExtensionElement element = new IEHackExtensionElement(token.getText());
+				this.serialize(writer, element, neloLogWriter);
+
+			} else if ("startTag".equals(tokenName)) {
+				Token tagNameToken = token.getChild("tagName");
+				if (tagNameToken == null) {
+					continue;
+				}
+
+				String tagName = tagNameToken.getText();
+				Element element = new Element(tagName);
+				List<Token> attTokens = token.getChildren("attribute");
+				if (attTokens != null) {
+					for (Token attToken : attTokens) {
+						if (attToken != null) {
+							Token attName = attToken.getChild("attName");
+							Token attValue = attToken.getChild("attValue");
+							if (attName != null && attValue == null) {
+								element.putAttribute(new Attribute(attName.getText()));
+							} else if (attName != null && attValue != null) {
+								element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
 							}
 						}
 					}
+				}
 
-					Token closeStartEnd = token.getChild("closeStartEnd");
+				Token closeStartEnd = token.getChild("closeStartEnd");
 
-					if (closeStartEnd != null) {
-						element.setStartClose(true);
+				if (closeStartEnd != null) {
+					element.setStartClose(true);
 
+				}
+
+				doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, element);
+
+				this.serialize(writer, element, neloLogWriter);
+
+			} else if ("iEHExEndTag".endsWith(tokenName)) {
+				IEHackExtensionElement ie = new IEHackExtensionElement(token.getText());
+				checkIEHackRule(ie);
+
+				if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
+					// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
+					String stdName = ie.getName();
+					if (stdName != null) {
+						stdName = stdName.replaceFirst("<!--", "<!");
+					}
+					writer.write(stdName); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
+				}
+			} else if ("endTag".equals(tokenName)) {
+				Token tagNameToken = token.getChild("tagName");
+
+				if (tagNameToken == null) {
+					continue;
+				}
+
+				String tagName = tagNameToken.getText();
+
+				boolean isObjectDisabled = false;
+				if ("object".equalsIgnoreCase(tagName) && stackForObjectTag.size() > 0) {
+					isObjectDisabled = doObjectEndTagProcess(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue);
+
+				}
+
+				Element element = new Element(tagName);
+
+				checkRuleRemove(element);
+
+				if (!element.isRemoved()) {
+					if (isObjectDisabled) {
+						element.setEnabled(false);
 					}
 
-					doObjectParamStartTagProcess(stackForObjectTag, stackForAllowNetworkingValue, element);
-
-					this.serialize(writer, element, neloLogWriter);
-
-				} else if ("iEHExEndTag".endsWith(tokenName)) {
-					IEHackExtensionElement ie = new IEHackExtensionElement(token.getText());
-					checkIEHackRule(ie);
-
-					if (!ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, end 태그 삭제.
-						// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
-						String stdName = ie.getName();
-						if (stdName != null) {
-							stdName = stdName.replaceFirst("<!--", "<!");
-						}
-						writer.write(stdName); // <!--[endif]--> 일 경우 IE에서 핵이 그데로 노출되는 문제 방지하기 위해 변환.
-					}
-				} else if ("endTag".equals(tokenName)) {
-					Token tagNameToken = token.getChild("tagName");
-
-					if (tagNameToken == null) {
-						continue;
+					if (!element.isDisabled()) {
+						checkRule(element);
 					}
 
-					String tagName = tagNameToken.getText();
-
-					boolean isObjectDisabled = false;
-					if ("object".equalsIgnoreCase(tagName) && stackForObjectTag.size() > 0) {
-						isObjectDisabled = doObjectEndTagProcess(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue);
-
-					}
-
-					Element element = new Element(tagName);
-
-					checkRuleRemove(element);
-
-					if (!element.isRemoved()) {
-						if (isObjectDisabled) {
-							element.setEnabled(false);
-						}
-
-						if (!element.isDisabled()) {
-							checkRule(element);
-						}
-
-						if (element.isDisabled()) {
-							if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
-								element.setName(this.blockingPrefix + element.getName());
-								writer.write("</");
-								writer.write(element.getName());
-								writer.write('>');
-							} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
-								writer.write("&lt;/");
-								writer.write(element.getName());
-								writer.write("&gt;");
-							}
-						} else {
+					if (element.isDisabled()) {
+						if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+							element.setName(this.blockingPrefix + element.getName());
 							writer.write("</");
 							writer.write(element.getName());
 							writer.write('>');
+						} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
+							writer.write("&lt;/");
+							writer.write(element.getName());
+							writer.write("&gt;");
 						}
+					} else {
+						writer.write("</");
+						writer.write(element.getName());
+						writer.write('>');
 					}
-				} else {
-					Text content = new Text(token.getText());
-					content.serialize(writer);
 				}
+			} else {
+				Text content = new Text(token.getText());
+				content.serialize(writer);
 			}
 		}
-
 	}
 
 	/**
