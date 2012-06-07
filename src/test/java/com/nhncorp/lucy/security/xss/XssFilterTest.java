@@ -1647,7 +1647,6 @@ public class XssFilterTest extends XssFilterTestCase {
 		}
 	}
 	
-
 	@Test
 	public void objectSecurityListenerCacheDiffConfig() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
@@ -1674,6 +1673,36 @@ public class XssFilterTest extends XssFilterTestCase {
 					
 					// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
 					String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=409628&no=23\"></object>";
+					filter.doFilter(dirty);
+					} finally {
+						latch.countDown();
+					}
+				}
+			});
+		}
+		
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+		}
+	}
+	
+	@Ignore
+	@Test
+	public void objectSecurityListenerCacheEachThreadManyTimes() {
+		
+		ExecutorService service = Executors.newFixedThreadPool(5);
+		int count = 100000;
+		final CountDownLatch latch = new CountDownLatch(count);
+		for(int i=0; i< count; i++) {
+			final int loopCnt = i;
+			service.execute(new Runnable() {
+				public void run() {
+					try {
+					XssFilter filter = XssFilter.getInstance("lucy-xss-embed-security.xml");
+					
+					// url 확장자 체크 테스트(url에 확장자가 없어서 타입 확인 불가시, 타입은 Response Header 가지고 체크) - text/* 이면 통과시키지 말자.
+					String dirty = "<object data=\"http://comic.naver.com/webtoon/detail.nhn?titleId=" + loopCnt +"&no=23\"></object>";
 					filter.doFilter(dirty);
 					} finally {
 						latch.countDown();

@@ -149,7 +149,8 @@ public final class XssFilter {
 
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
 	 *
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
@@ -163,8 +164,9 @@ public final class XssFilter {
 
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
-	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
-	 *
+	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
+	 * 
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
 	 * @param writer            
@@ -234,8 +236,9 @@ public final class XssFilter {
 	/**
 	 * 이 메소드는 특정 Tag 내 특정 Attribute의 값에 삽입되는 XSS({@code Cross Site Scripting})이
 	 * 포함된 위험한 코드를 신뢰할 수 있는 코드로 변환하거나, 삭제하는 기능을 제공한다. <br/>
-	 * {@code "lucy-xss.xml"} 설정에 따라 필터링을 수행한다.
-	 *
+	 * {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
+	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
+	 * 
 	 * @param tagName
 	 *            특정 Tag 이름.
 	 * @param attName
