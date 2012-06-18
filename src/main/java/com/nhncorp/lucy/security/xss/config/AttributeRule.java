@@ -90,48 +90,68 @@ public final class AttributeRule {
 	public void checkAttributeValue(Attribute att) {
 		if (att != null && !att.isMinimized()) {
 			String value = att.getValue();
+			boolean result = checkAttributeValueCore(att, value);
 
-			if (this.isBase64Decoding()) {
+			if (result && this.isBase64Decoding()) {
 				value = this.decodeWithBase64(value);
+				checkAttributeValueCore(att, value);
 			}
 
-			boolean isPatternsExist = this.patterns != null && !this.patterns.isEmpty();
-			boolean isNPatternsExist = this.npatterns != null && !this.npatterns.isEmpty();
+		}
+	}
 
-			if (isPatternsExist && isNPatternsExist) {
+	/**
+	 * @param att
+	 * @param value
+	 */
+	private boolean checkAttributeValueCore(Attribute att, String value) {
+		boolean result = true;
+		boolean isPatternsExist = this.patterns != null && !this.patterns.isEmpty();
+		boolean isNPatternsExist = this.npatterns != null && !this.npatterns.isEmpty();
+
+		if (isPatternsExist && isNPatternsExist) {
+			for (Pattern pattern : this.npatterns) {
+				if (pattern.matcher(value).find()) {
+					att.setEnabled(false);
+					result = false;
+					break;
+				}
+			}
+
+			for (Pattern pattern : this.patterns) {
+				if (pattern.matcher(value).matches()) {
+					att.setEnabled(true);
+					result = true;
+					break;
+				}
+			}
+
+		} else {
+			if (isPatternsExist) {
+				boolean matched = false;
+				for (Pattern pattern : this.patterns) {
+					if (pattern.matcher(value).matches()) {
+						matched = true;
+						break;
+					}
+				}
+				
+				if(!matched) {
+					att.setEnabled(false);
+					result = false;
+				}
+			} else if (isNPatternsExist) {
 				for (Pattern pattern : this.npatterns) {
 					if (pattern.matcher(value).find()) {
 						att.setEnabled(false);
+						result = false;
 						break;
-					}
-				}
-
-				for (Pattern pattern : this.patterns) {
-					if (pattern.matcher(value).matches()) {
-						att.setEnabled(true);
-						break;
-					}
-				}
-
-			} else {
-				if (isPatternsExist) {
-					for (Pattern pattern : this.patterns) {
-						if (pattern.matcher(value).matches()) {
-							return;
-						}
-					}
-					att.setEnabled(false);
-					return;
-				} else if (isNPatternsExist) {
-					for (Pattern pattern : this.npatterns) {
-						if (pattern.matcher(value).find()) {
-							att.setEnabled(false);
-							break;
-						}
 					}
 				}
 			}
 		}
+		
+		return result;
 	}
 
 	void setDisabled(boolean disabled) {

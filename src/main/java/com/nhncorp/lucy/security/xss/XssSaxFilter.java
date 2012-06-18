@@ -433,7 +433,6 @@ public final class XssSaxFilter {
 
 			if (dataUrl != null) { // data 속성이 존재하면 체크
 				String dataUrlStr = dataUrl.getValue();
-				System.out.println("dataUrlStr : " + dataUrlStr);
 				isDataWhiteUrl = this.isWhiteUrl(dataUrlStr);
 
 				// URL MIME 체크
