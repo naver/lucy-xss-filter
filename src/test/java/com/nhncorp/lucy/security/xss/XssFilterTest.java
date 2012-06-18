@@ -1771,4 +1771,31 @@ public class XssFilterTest extends XssFilterTestCase {
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
+	
+	@Test
+	public void testBase64EmbedSrc() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<EMBED SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\" type=\"image/svg+xml\" AllowScriptAccess=\"always\"></EMBED>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( SRC=\"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg==\") --><EMBED type=\"image/svg+xml\" allowScriptAccess=\"never\" invokeURLs=\"false\" autostart=\"false\" allowNetworking=\"internal\"></EMBED>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void testObjectTagDataUrlWithParameter() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<object data=\"http://www.1.com/2.swf?1234\"></object>";
+		String expected = "<object data=\"http://www.1.com/2.swf?1234\" type=\"application/x-shockwave-flash\"><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"allowScriptAccess\" value=\"never\"><param name=\"allowNetworking\" value=\"internal\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void testObjectTagDataUrlWithParameterNegative() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<object data=\"http://www.1.com/2.html?1234\"></object>";
+		String expected = "<blocking_object data=\"http://www.1.com/2.html?1234\"></blocking_object>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
 }
