@@ -66,7 +66,6 @@ public class ObjectListener implements ElementListener {
 
 		if (dataUrl != null) { // data 속성이 존재하면 체크
 			String dataUrlStr = dataUrl.getValue();
-			System.out.println("dataUrlStr : " + dataUrlStr);
 			boolean isDataUrlWhite = this.isWhiteUrl(dataUrlStr);
 
 			// URL MIME 체크
