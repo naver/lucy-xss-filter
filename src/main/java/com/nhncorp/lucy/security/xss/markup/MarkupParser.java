@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.nhncorp.lucy.security.xss.CommonUtils;
 import com.nhncorp.lucy.security.xss.markup.rule.CharArraySegment;
 import com.nhncorp.lucy.security.xss.markup.rule.ParsingGrammar;
 import com.nhncorp.lucy.security.xss.markup.rule.Token;
@@ -116,7 +117,9 @@ public final class MarkupParser {
 						if (attName != null && attValue == null) {
 							element.putAttribute(new Attribute(attName.getText()));
 						} else if (attName != null && attValue != null) {
-							element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
+							String text = attValue.getText();
+							text = CommonUtils.getQuotePair(text);
+							element.putAttribute(new Attribute(attName.getText(), text));
 						}
 					}
 				}

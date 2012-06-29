@@ -337,7 +337,9 @@ public final class XssSaxFilter {
 							if (attName != null && attValue == null) {
 								element.putAttribute(new Attribute(attName.getText()));
 							} else if (attName != null && attValue != null) {
-								element.putAttribute(new Attribute(attName.getText(), attValue.getText()));
+								String text = attValue.getText();
+								text = CommonUtils.getQuotePair(text);
+								element.putAttribute(new Attribute(attName.getText(), text));
 							}
 						}
 					}
