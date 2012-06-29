@@ -15,11 +15,13 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.MDC;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -693,7 +695,7 @@ public class XssFilterTest extends XssFilterTestCase {
 
 		Assert.assertEquals("", clean1);
 		Assert.assertEquals("", clean2);
-		Assert.assertEquals("\"", clean3);
+		Assert.assertEquals("\"\"", clean3);
 
 		String orgKeyword = dirty2;//dirty3; //keyword 파라미터에 사용자가 입력하는 경우를 예로 든다.
 
@@ -998,7 +1000,7 @@ public class XssFilterTest extends XssFilterTestCase {
 	public void illegalAttributeEnd() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "<colgroup width=\"";
-		String expected = "<colgroup width=\">";
+		String expected = "<colgroup width=\"\">";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -1796,6 +1798,55 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<object data=\"http://www.1.com/2.html?1234\"></object>";
 		String expected = "<blocking_object data=\"http://www.1.com/2.html?1234\"></blocking_object>";
 		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	
+	@Test
+	public void pairQuoteCheck() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<img src=\"http:/><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		String expected = "<img src=\"http:/\"><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='http:/><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src='http:/'><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=http:/'><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src='http:/'><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=http:/\"><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=\"http:/\"><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=\"><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=\"\"><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=''><!-- Not Allowed Tag Filtered -->&lt;a target=\" _blank=\"&gt;_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void pairQuoteCheckOtherCase() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<img src=\"<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+		String expected = "<img src=\"\"><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+		expected = "<img src=''><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
 }
