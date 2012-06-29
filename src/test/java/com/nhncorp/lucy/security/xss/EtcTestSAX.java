@@ -132,7 +132,7 @@ public class EtcTestSAX {
 	public void hexCodeAttackPaatern2() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset.xml");
 		String dirty = "page=1\"><img src=http://a.com\fonerror=\"alert(document.cookie)"; // \f => %0b (form feed)
-		String expected = "page=1\"&gt;<!-- Not Allowed Attribute Filtered ( onerror=\"alert(document.cookie)) --><img src=http://a.com>";
+		String expected = "page=1\"&gt;<!-- Not Allowed Attribute Filtered ( onerror=\"alert(document.cookie)\") --><img src=http://a.com>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}

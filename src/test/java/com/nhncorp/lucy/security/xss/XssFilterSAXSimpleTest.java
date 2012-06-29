@@ -929,7 +929,7 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 	public void illegalAttributeEnd() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = "<table width=\"";
-		String expected = "<table width=\">";
+		String expected = "<table width=\"\">";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
@@ -1501,6 +1501,54 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		String dirty = "<object data=\"http://www.1.com/2.html?1234\"></object>";
 		String expected = "<!-- Not Allowed Tag Filtered -->&lt;object data=\"http://www.1.com/2.html?1234\"&gt;&lt;/object&gt;";
 		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void pairQuoteCheck() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<img src=\"http:/><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		String expected = "<img src=\"http:/\"><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='http:/><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src='http:/'><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=http:/'><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src='http:/'><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=http:/\"><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=\"http:/\"><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src=\"><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=\"\"><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='><a target=\" _blank=\"_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/>";
+		expected = "<img src=''><a target=\" _blank=\">_blank\" gt=\"gt\" userimg=\"userImg\" onerror=\"alert('XSS')\"/&gt;";
+		clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	@Test
+	public void pairQuoteCheckOtherCase() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<img src=\"<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+		String expected = "<img src=\"\"><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+		
+		dirty = "<img src='<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+		expected = "<img src=''><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
 }
