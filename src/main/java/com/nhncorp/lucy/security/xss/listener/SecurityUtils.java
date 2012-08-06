@@ -10,6 +10,7 @@ package com.nhncorp.lucy.security.xss.listener;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -36,6 +37,17 @@ public class SecurityUtils {
      * The Windows separator character.
      */
     private static final char WINDOWS_SEPARATOR = '\\';
+    
+    private static Properties props;
+    
+    static {
+    	try {
+			props = new Properties();
+			props.load(SecurityUtils.class.getClassLoader().getResourceAsStream("extension.properties"));
+		} catch (Exception e) {
+			System.out.println("extension.properties 파일을 찾지 못했습니다.");
+		}
+    }
 
 	
 	/**
@@ -57,7 +69,7 @@ public class SecurityUtils {
 			if (type != null && type.length() != 0) {
 
 				//허용된 type 인가?
-				if (!isAllowedType(type)) {
+				if (!(isAllowedType(type) || props.values().contains(type))) {
 					isVulnerable = true;
 				}
 			} else {
@@ -76,9 +88,17 @@ public class SecurityUtils {
 					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 그냥 통과시킴. 보안상 hole 이지만 고객 불편을 줄이기 위함.
 				} else {
 					type = getTypeFromExtension(extension);
-
+					
+					if (StringUtils.isEmpty(type)) {
+						type = props.getProperty(extension);
+						
+						if(type!=null) {
+							type = type.trim();
+						}
+					}
+					
 					//허용된 type 인가?
-					if (!isAllowedType(type)) {
+					if (StringUtils.isEmpty(type)) {
 						isVulnerable = true;
 					} else {
 						element.putAttribute("type", "\"" + type + "\"");
@@ -109,7 +129,7 @@ public class SecurityUtils {
 			if (type != null && !"".equals(type)) {
 
 				//허용된 type 인가?
-				if (!isAllowedType(type)) {
+				if (!(isAllowedType(type) || props.values().contains(type))) {
 					isVulnerable = true;
 				}
 			} else {
@@ -137,9 +157,17 @@ public class SecurityUtils {
 
 				} else {
 					type = getTypeFromExtension(extension);
-
+					
+					if (StringUtils.isEmpty(type)) {
+						type = props.getProperty(extension);
+						
+						if(type!=null) {
+							type = type.trim();
+						}
+					}
+					
 					//허용된 type 인가?
-					if (!isAllowedType(type)) {
+					if (StringUtils.isEmpty(type)) {
 						isVulnerable = true;
 					} else {
 						element.putAttribute("type", "\"" + type + "\"");

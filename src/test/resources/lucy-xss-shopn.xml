@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+
+	<elementRule>
+		<element name="style" disable="false" />
+		<element name="embed" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.EmbedListenerOld
+			</listener>
+		</element>
+		<element name="object" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListenerOld
+			</listener>
+		</element>
+		<element name="img" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			</listener>
+		</element>
+		<element name="style" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.StyleListener</listener>
+		</element>
+
+		<element name="table" override="true" endTag="false">
+			<attributes>
+				<ref name="height" />
+				<ref name="class"/>
+			</attributes>
+		</element>
+
+		<element name="p">
+			<elements>
+				<ref name="table" />
+			</elements>
+		</element>
+
+		<element name="ul">
+			<elements>
+				<ref name="a"/>
+			</elements>
+		</element>
+
+		<element name="IEHackExtension">
+		</element>
+
+	</elementRule>
+
+	<blockingPrefix enable="true" prefix="blocking_"/>
+</config>
