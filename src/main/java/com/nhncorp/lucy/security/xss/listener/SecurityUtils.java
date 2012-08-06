@@ -21,6 +21,10 @@ import com.nhncorp.lucy.security.xss.markup.Element;
  * @author nbp
  */
 public class SecurityUtils {
+	/**
+	 * 
+	 */
+	private static final String EXTENSION_PROPERTIES = "extension.properties";
 	private final static char[] specialCharArray = "?&=".toCharArray();
 	 /**
      * The extension separator character.
@@ -43,7 +47,7 @@ public class SecurityUtils {
     static {
     	try {
 			props = new Properties();
-			props.load(SecurityUtils.class.getClassLoader().getResourceAsStream("extension.properties"));
+			props.load(SecurityUtils.class.getClassLoader().getResourceAsStream(EXTENSION_PROPERTIES));
 		} catch (Exception e) {
 			System.out.println("extension.properties 파일을 찾지 못했습니다.");
 		}
