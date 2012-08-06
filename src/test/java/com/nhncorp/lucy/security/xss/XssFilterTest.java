@@ -1849,4 +1849,86 @@ public class XssFilterTest extends XssFilterTestCase {
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
+	
+	/**
+	 * 샵N에서 url 체크 기능이 없는 기존 버전을 사용한다고해서 기존 objectListner 를 사용했을 경우의 테스트
+	 */
+	@Test
+	public void shopNObjectListenerOld() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-shopn.xml");
+		String dirty = "<OBJECT id=dv1341982729683 codeBase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0\" classid=clsid:d27cdb6e-ae6d-11cf-96b8-444553540000 width=600 height=700>"
+			+ "<PARAM NAME=\"_cx\" VALUE=\"15875\">"
+			+ "<PARAM NAME=\"_cy\" VALUE=\"18520\">"
+			+ "<PARAM NAME=\"FlashVars\" VALUE=\"\">"
+			+ "<PARAM NAME=\"Movie\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\">"
+			+ "<PARAM NAME=\"Src\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\">"
+			+ "<PARAM NAME=\"WMode\" VALUE=\"Transparent\">"
+			+ "<PARAM NAME=\"Play\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Loop\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Quality\" VALUE=\"High\">"
+			+ "<PARAM NAME=\"SAlign\" VALUE=\"\">"
+			+ "<PARAM NAME=\"Menu\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Base\" VALUE=\"\">"
+			+ "<PARAM NAME=\"AllowScriptAccess\" VALUE=\"always\">"
+			+ "<PARAM NAME=\"Scale\" VALUE=\"ShowAll\">"
+			+ "<PARAM NAME=\"DeviceFont\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"EmbedMovie\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"BGColor\" VALUE=\"\">"
+			+ "<PARAM NAME=\"SWRemote\" VALUE=\"\">"
+			+ "<PARAM NAME=\"MovieData\" VALUE=\"\">"
+			+ "<PARAM NAME=\"SeamlessTabbing\" VALUE=\"1\">"
+			+ "<PARAM NAME=\"Profile\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"ProfileAddress\" VALUE=\"\">"
+			+ "<PARAM NAME=\"ProfilePort\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"AllowNetworking\" VALUE=\"all\">"
+			+ "<PARAM NAME=\"AllowFullScreen\" VALUE=\"true\">"
+			+ "<PARAM NAME=\"AllowFullScreenInteractive\" VALUE=\"\">" 
+			+ "<embed src=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&tic=1341982706\" type=\"application/x-shockwave-flash\" name=\"dv1341982729683\" wmode=\"transparent\" allowscriptaccess=\"always\" width=\"600\" height=\"700\" allowfullscreen=\"true\" quality=\"high\">"
+			+ "</embed>"
+			+ "</OBJECT>";
+		String expected = "<OBJECT id=dv1341982729683 codeBase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0\" classid=clsid:d27cdb6e-ae6d-11cf-96b8-444553540000 width=600 height=700><PARAM NAME=\"_cx\" VALUE=\"15875\"><PARAM NAME=\"_cy\" VALUE=\"18520\"><PARAM NAME=\"FlashVars\" VALUE=\"\"><PARAM NAME=\"Movie\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\"><PARAM NAME=\"Src\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\"><PARAM NAME=\"WMode\" VALUE=\"Transparent\"><PARAM NAME=\"Play\" VALUE=\"-1\"><PARAM NAME=\"Loop\" VALUE=\"-1\"><PARAM NAME=\"Quality\" VALUE=\"High\"><PARAM NAME=\"SAlign\" VALUE=\"\"><PARAM NAME=\"Menu\" VALUE=\"-1\"><PARAM NAME=\"Base\" VALUE=\"\"><PARAM NAME=\"AllowScriptAccess\" value=\"never\"><PARAM NAME=\"Scale\" VALUE=\"ShowAll\"><PARAM NAME=\"DeviceFont\" VALUE=\"0\"><PARAM NAME=\"EmbedMovie\" VALUE=\"0\"><PARAM NAME=\"BGColor\" VALUE=\"\"><PARAM NAME=\"SWRemote\" VALUE=\"\"><PARAM NAME=\"MovieData\" VALUE=\"\"><PARAM NAME=\"SeamlessTabbing\" VALUE=\"1\"><PARAM NAME=\"Profile\" VALUE=\"0\"><PARAM NAME=\"ProfileAddress\" VALUE=\"\"><PARAM NAME=\"ProfilePort\" VALUE=\"0\"><PARAM NAME=\"AllowNetworking\" value=\"internal\"><PARAM NAME=\"AllowFullScreen\" VALUE=\"true\"><PARAM NAME=\"AllowFullScreenInteractive\" VALUE=\"\"><!-- Not Allowed Attribute Filtered ( wmode=\"transparent\" allowfullscreen=\"true\" quality=\"high\") --><embed src=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&tic=1341982706\" type=\"application/x-shockwave-flash\" name=\"dv1341982729683\" allowScriptAccess=\"never\" width=\"600\" height=\"700\" invokeURLs=\"false\" autostart=\"false\" allowNetworking=\"internal\"></embed><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></OBJECT>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+	
+	/**
+	 * 샵N에서 object listener 사용 시 추가적으로 허용 할 확장자를 프로퍼티 파일을 통해 설정할 경우 테스트
+	 */
+	@Test
+	public void shopNObjectListenerAdditionalExtensionSetup() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-mail.xml");
+		String dirty = "<OBJECT id=dv1341982729683 codeBase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0\" classid=clsid:d27cdb6e-ae6d-11cf-96b8-444553540000 width=600 height=700>"
+			+ "<PARAM NAME=\"_cx\" VALUE=\"15875\">"
+			+ "<PARAM NAME=\"_cy\" VALUE=\"18520\">"
+			+ "<PARAM NAME=\"FlashVars\" VALUE=\"\">"
+			+ "<PARAM NAME=\"Movie\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\">"
+			+ "<PARAM NAME=\"Src\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\">"
+			+ "<PARAM NAME=\"WMode\" VALUE=\"Transparent\">"
+			+ "<PARAM NAME=\"Play\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Loop\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Quality\" VALUE=\"High\">"
+			+ "<PARAM NAME=\"SAlign\" VALUE=\"\">"
+			+ "<PARAM NAME=\"Menu\" VALUE=\"-1\">"
+			+ "<PARAM NAME=\"Base\" VALUE=\"\">"
+			+ "<PARAM NAME=\"AllowScriptAccess\" VALUE=\"always\">"
+			+ "<PARAM NAME=\"Scale\" VALUE=\"ShowAll\">"
+			+ "<PARAM NAME=\"DeviceFont\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"EmbedMovie\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"BGColor\" VALUE=\"\">"
+			+ "<PARAM NAME=\"SWRemote\" VALUE=\"\">"
+			+ "<PARAM NAME=\"MovieData\" VALUE=\"\">"
+			+ "<PARAM NAME=\"SeamlessTabbing\" VALUE=\"1\">"
+			+ "<PARAM NAME=\"Profile\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"ProfileAddress\" VALUE=\"\">"
+			+ "<PARAM NAME=\"ProfilePort\" VALUE=\"0\">"
+			+ "<PARAM NAME=\"AllowNetworking\" VALUE=\"all\">"
+			+ "<PARAM NAME=\"AllowFullScreen\" VALUE=\"true\">"
+			+ "<PARAM NAME=\"AllowFullScreenInteractive\" VALUE=\"\">" 
+			+ "<embed src=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&tic=1341982706\" type=\"application/x-shockwave-flash\" name=\"dv1341982729683\" wmode=\"transparent\" allowscriptaccess=\"always\" width=\"600\" height=\"700\" allowfullscreen=\"true\" quality=\"high\">"
+			+ "</embed>"
+			+ "</OBJECT>";
+		String expected = "<OBJECT id=dv1341982729683 codeBase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0\" classid=clsid:d27cdb6e-ae6d-11cf-96b8-444553540000 width=600 height=700 type=\"dvs\"><PARAM NAME=\"_cx\" VALUE=\"15875\"><PARAM NAME=\"_cy\" VALUE=\"18520\"><PARAM NAME=\"FlashVars\" VALUE=\"\"><PARAM NAME=\"Movie\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\"><PARAM NAME=\"Src\" VALUE=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&amp;tic=1341982706\"><PARAM NAME=\"WMode\" VALUE=\"Transparent\"><PARAM NAME=\"Play\" VALUE=\"-1\"><PARAM NAME=\"Loop\" VALUE=\"-1\"><PARAM NAME=\"Quality\" VALUE=\"High\"><PARAM NAME=\"SAlign\" VALUE=\"\"><PARAM NAME=\"Menu\" VALUE=\"-1\"><PARAM NAME=\"Base\" VALUE=\"\"><PARAM NAME=\"AllowScriptAccess\" value=\"never\"><PARAM NAME=\"Scale\" VALUE=\"ShowAll\"><PARAM NAME=\"DeviceFont\" VALUE=\"0\"><PARAM NAME=\"EmbedMovie\" VALUE=\"0\"><PARAM NAME=\"BGColor\" VALUE=\"\"><PARAM NAME=\"SWRemote\" VALUE=\"\"><PARAM NAME=\"MovieData\" VALUE=\"\"><PARAM NAME=\"SeamlessTabbing\" VALUE=\"1\"><PARAM NAME=\"Profile\" VALUE=\"0\"><PARAM NAME=\"ProfileAddress\" VALUE=\"\"><PARAM NAME=\"ProfilePort\" VALUE=\"0\"><PARAM NAME=\"AllowNetworking\" value=\"internal\"><PARAM NAME=\"AllowFullScreen\" VALUE=\"true\"><PARAM NAME=\"AllowFullScreenInteractive\" VALUE=\"\"><!-- Not Allowed Attribute Filtered ( wmode=\"transparent\" allowfullscreen=\"true\" quality=\"high\") --><embed src=\"http://storage.detailview.co.kr/skin/detailview3.dvs?id=183774&tic=1341982706\" type=\"application/x-shockwave-flash\" name=\"dv1341982729683\" allowScriptAccess=\"never\" width=\"600\" height=\"700\" invokeURLs=\"false\" autostart=\"false\" allowNetworking=\"internal\"></embed><param name=\"invokeURLs\" value=\"false\"><param name=\"autostart\" value=\"false\"><param name=\"autoplay\" value=\"false\"><param name=\"enablehref\" value=\"false\"><param name=\"enablejavascript\" value=\"false\"><param name=\"nojava\" value=\"true\"><param name=\"AllowHtmlPopupwindow\" value=\"false\"><param name=\"enableHtmlAccess\" value=\"false\"></OBJECT>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
 }
