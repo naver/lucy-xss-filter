@@ -24,7 +24,7 @@ public class SecurityUtils {
 	/**
 	 * 
 	 */
-	private static final String EXTENSION_PROPERTIES = "extension.properties";
+	private static final String EXTENSION_PROPERTIES = "xssfilter-extension.properties";
 	private final static char[] specialCharArray = "?&=".toCharArray();
 	 /**
      * The extension separator character.
@@ -49,7 +49,7 @@ public class SecurityUtils {
 			props = new Properties();
 			props.load(SecurityUtils.class.getClassLoader().getResourceAsStream(EXTENSION_PROPERTIES));
 		} catch (Exception e) {
-			System.out.println("extension.properties 파일을 찾지 못했습니다.");
+			System.out.println(EXTENSION_PROPERTIES + " 파일을 찾지 못했습니다.");
 		}
     }
 
@@ -183,6 +183,8 @@ public class SecurityUtils {
 		return isVulnerable;
 	}
 
+	
+	
 	public static String getContentTypeFromUrlConnection(String strUrl, ContentTypeCacheRepo contentTypeCacheRepo) {
 		// cache 에 먼저 있는지확인.
 		String result = contentTypeCacheRepo.getContentTypeFromCache(strUrl);
