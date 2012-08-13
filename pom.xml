@@ -6,7 +6,7 @@
 		<url>http://www.nhncorp.com/</url>
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
-	<version>1.3.1</version>
+	<version>1.3.2</version>
 	<artifactId>lucy-xss</artifactId>
 	<name>NHNCorp Lucy XSS Filter</name>
 	<packaging>jar</packaging>
@@ -63,13 +63,13 @@
 		<repository>
 			<id>nhn.release.repository</id>
 			<name>nhncorp.com.release</name>
-			<url>http://repo.nhncorp.com/maven2</url>
+			<url>dav:http://repo.nhncorp.com/maven2</url>
 			<layout>default</layout>
 		</repository>
 		<snapshotRepository>
 			<id>nhn.snapshot.repository</id>
 			<name>nhncorp.com.snapshot</name>
-			<url>dav:http://repo.nhncorp.com/m2-snapshot-repository</url>
+			<url>http://repo.nhncorp.com/m2-snapshot-repository</url>
 			<layout>default</layout>
 		</snapshotRepository>
 	</distributionManagement>
