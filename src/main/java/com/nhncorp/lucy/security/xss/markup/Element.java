@@ -486,7 +486,10 @@ public class Element extends Content {
 	}
 
 	public Attribute removeAttribute(String attriName) {
-
+		if(this.atts == null) {
+			return null;
+		}
+		
 		return this.atts.remove(attriName);
 	}
 
