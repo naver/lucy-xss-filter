@@ -245,6 +245,7 @@ public class SecurityUtils {
 			return false;
 		} else if (StringUtils.startsWith(type, "text/")) {
 			return false;
+		// TODO: MIME TYPES 화이트리스 방식의 검사는 서비스의 대응속도를 떨어트린다. 보안이슈를 확인 후 문제가 없다면 향후 제거하자.	
 		} else if (StringUtils.isNotEmpty(type) && !Constants.mimeTypes.values().contains(type)) {
 			return false;
 		} else {
