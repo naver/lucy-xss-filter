@@ -791,7 +791,7 @@ public final class XssSaxFilter {
 				if (attRule == null) {
 					att.setEnabled(false);
 				} else {
-					if (!attRule.getExceptionTagList().contains(element.getName())) {
+					if (!attRule.getExceptionTagList().contains(element.getName().toLowerCase())) {
 						attRule.checkDisabled(att);
 					}
 					attRule.checkAttributeValue(att);

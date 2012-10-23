@@ -2,7 +2,7 @@
 
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset-sax.xml">
 	<attributeRule>
-		<attribute name="class" disable="true" exceptionTagList="table,span">
+		<attribute name="class" disable="true" exceptionTagList="TABLE,span">
 			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
 		</attribute>
 	</attributeRule>
