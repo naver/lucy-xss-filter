@@ -232,7 +232,7 @@ public final class AttributeRule {
 	}
 
 	public void addExceptionTag(String exceptionTag) {
-		exceptionTagList.add(exceptionTag);
+		exceptionTagList.add(exceptionTag.toLowerCase());
 	}
 
 	public List<String> getExceptionTagList() {
