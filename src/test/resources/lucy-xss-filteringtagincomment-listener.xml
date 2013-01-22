@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
+	<filteringTagInComment enable="true" type="config"/>
+	<element name="img" disable="false">
+			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			</listener>
+	</element>
+</config>
