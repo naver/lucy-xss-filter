@@ -9,6 +9,8 @@ package com.nhncorp.lucy.security.xss.markup;
 import java.io.IOException;
 import java.io.Writer;
 
+import com.nhncorp.lucy.security.xss.LucyXssFilter;
+
 /**
  * 이 클래스는 코멘트를 나타낸다.
  * 즉, {@code '<!--'}으로 시작하여 {@code '-->'} 으로 끝나는 모든 Content 를 나타낸다. 
@@ -64,4 +66,45 @@ public class Comment extends Content {
 
 		writer.write("-->");
 	}
+
+	public void serializeNoop(Writer writer) throws IOException {
+		if (writer == null) {
+			return;
+		}
+
+		writer.write("<!--");
+
+		writer.write(this.text);
+
+		writer.write("-->");
+	}
+
+	public void serializeFilteringTagInComment(Writer writer, LucyXssFilter filter) throws IOException {
+
+		if (writer == null) {
+			return;
+		}
+
+		if (filter == null) {
+			// filter가 NULL이면, 디폴트 Stirct 필터링을 한다.
+			serialize(writer);
+			return;
+		}
+
+		writer.write("<!--");
+
+		filter.doFilter(text, writer);
+
+		writer.write("-->");
+	}
+
+	public void serializeFilteringTagInComment(Writer writer, boolean isFilteringTagInCommentEnabled, LucyXssFilter commentFilter) throws IOException {
+
+		if (isFilteringTagInCommentEnabled) {
+			this.serializeFilteringTagInComment(writer, commentFilter);
+		} else {
+			this.serializeNoop(writer);
+		}
+	}
+
 }
