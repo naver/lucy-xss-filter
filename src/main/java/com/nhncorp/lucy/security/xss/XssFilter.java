@@ -46,7 +46,7 @@ import com.nhncorp.lucy.security.xss.markup.Text;
  * @author Web Platform Development Team
  *
  */
-public final class XssFilter {
+public final class XssFilter implements LucyXssFilter {
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
 
 	private static final String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
@@ -66,8 +66,10 @@ public final class XssFilter {
 	private String neloAttrMSG;
 	private String neloElementRemoveMSG;
 	private String blockingPrefix;
-	private boolean isBlockingPrefixEnabled;
+	private boolean blockingPrefixEnabled;
+	private boolean filteringTagInCommentEnabled;
 
+	private XssFilter commentFilter;
 	private XssConfiguration config;
 
 	private static final Map<FilterRepositoryKey, XssFilter> instanceMap = new HashMap<FilterRepositoryKey, XssFilter>();
@@ -111,7 +113,7 @@ public final class XssFilter {
 			filter.withoutComment = withoutComment;
 			return filter;
 		}
-		**/
+		 **/
 		try {
 			synchronized (XssFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
@@ -124,18 +126,54 @@ public final class XssFilter {
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
 				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
+				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
+				filter.blockingPrefix = filter.config.getBlockingPrefix();
+
 				filter.withoutComment = withoutComment;
 				filter.neloElementMSG = ELELMENT_NELO_MSG;
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
 				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
-				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
-				filter.blockingPrefix = filter.config.getBlockingPrefix();
+
+				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
+				
+				if (filter.filteringTagInCommentEnabled && ! filter.config.isNoTagAllowedInComment()) {
+					
+					filter.commentFilter = XssFilter.getCommentFilterInstance(filter.config);
+					
+				}
+
 				instanceMap.put(key, filter);
+
 				return filter;
 			}
 		} catch (Exception e) {
 			throw new XssFilterException(e.getMessage());
 		}
+	}
+
+	/**
+	 * 이 메소드는 주석 내 태그 필터링을 위한 XssFilter 객체를 리턴한다.
+	 *
+	 * @param config
+	 *            XSS Filter Configuration
+	 * @return XssFilter 객체
+	 */
+	public static XssFilter getCommentFilterInstance(XssConfiguration config) {
+
+		XssFilter filter = new XssFilter(config);
+		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+		filter.service = filter.config.getService();
+		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
+		filter.blockingPrefix = filter.config.getBlockingPrefix();
+
+		filter.withoutComment = true;
+		filter.neloElementMSG = ELELMENT_NELO_MSG;
+		filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
+		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
+
+		filter.filteringTagInCommentEnabled = true;
+		
+		return filter;
 	}
 
 	/**
@@ -282,8 +320,10 @@ public final class XssFilter {
 	private void serialize(Writer writer, Collection<Content> contents, StringWriter neloLogWriter) throws IOException {
 		if (contents != null && !contents.isEmpty()) {
 			for (Content content : contents) {
-				if (content instanceof Comment || content instanceof Text || content instanceof Description) {
+				if (content instanceof Text || content instanceof Description) {
 					content.serialize(writer);
+				} else if (content instanceof Comment) {
+					this.serialize(writer, Comment.class.cast(content));
 				} else if (content instanceof IEHackExtensionElement) {
 					this.serialize(writer, IEHackExtensionElement.class.cast(content), neloLogWriter);
 				} else if (content instanceof Element) {
@@ -291,6 +331,11 @@ public final class XssFilter {
 				}
 			}
 		}
+	}
+
+	private void serialize(Writer writer, Comment comment) throws IOException {
+
+		comment.serializeFilteringTagInComment(writer, this.filteringTagInCommentEnabled, this.commentFilter);
 	}
 
 	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
@@ -373,7 +418,7 @@ public final class XssFilter {
 					neloLogWriter.write(element.getName() + "\n");
 				}
 
-				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					element.setName(this.blockingPrefix + element.getName());
 					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
 					writer.write('<');
@@ -439,11 +484,11 @@ public final class XssFilter {
 
 			if (element.isStartClosed()) {
 
-				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
+				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? " /&gt;" : " />");
 
 			} else {
 
-				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
+				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? "&gt;" : ">");
 			}
 
 			if (!element.isEmpty()) {
@@ -451,7 +496,7 @@ public final class XssFilter {
 			}
 
 			if (element.isClosed()) {
-				if (element.isDisabled() && !this.isBlockingPrefixEnabled) {
+				if (element.isDisabled() && !this.blockingPrefixEnabled) {
 					writer.write("&lt;/");
 					writer.write(element.getName());
 					writer.write("&gt;");

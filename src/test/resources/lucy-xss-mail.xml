@@ -2,6 +2,8 @@
 
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
 
+	<filteringTagInComment enable="true" type="config"/>
+	
 	<elementRule>
 		<element name="style" disable="false" />
 		<element name="embed" disable="false">

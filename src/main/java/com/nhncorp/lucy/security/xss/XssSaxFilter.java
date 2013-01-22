@@ -54,7 +54,7 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  * @author Web Platform Development Team
  *
  */
-public final class XssSaxFilter {
+public final class XssSaxFilter implements LucyXssFilter {
 	private static final Log LOG = LogFactory.getLog(XssSaxFilter.class);
 
 	private static final String BAD_TAG_INFO = "<!-- Not Allowed Tag Filtered -->";
@@ -74,8 +74,10 @@ public final class XssSaxFilter {
 	private String neloAttrMSG;
 	private String neloElementRemoveMSG;
 	private String blockingPrefix;
-	private boolean isBlockingPrefixEnabled;
+	private boolean blockingPrefixEnabled;
+	private boolean filteringTagInCommentEnabled;
 
+	private XssSaxFilter commentFilter;
 	private XssSaxConfiguration config;
 
 	private static final Map<FilterRepositoryKey, XssSaxFilter> instanceMap = new HashMap<FilterRepositoryKey, XssSaxFilter>();
@@ -142,7 +144,7 @@ public final class XssSaxFilter {
 			filter.withoutComment = withoutComment;
 			return filter;
 		}
-		**/
+		 **/
 		try {
 			synchronized (XssSaxFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
@@ -156,18 +158,53 @@ public final class XssSaxFilter {
 				filter.withoutComment = withoutComment;
 				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
+				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
+				filter.blockingPrefix = filter.config.getBlockingPrefix();
+
 				filter.withoutComment = withoutComment;
 				filter.neloElementMSG = ELELMENT_NELO_MSG;
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
 				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
-				filter.isBlockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
-				filter.blockingPrefix = filter.config.getBlockingPrefix();
+
+				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
+
+				if (filter.filteringTagInCommentEnabled && ! filter.config.isNoTagAllowedInComment()) {
+
+					filter.commentFilter = XssSaxFilter.getCommentFilterInstance(filter.config);
+
+				}
+
 				instanceMap.put(key, filter);
 				return filter;
 			}
 		} catch (Exception e) {
 			throw new XssFilterException(e.getMessage());
 		}
+	}
+
+	/**
+	 * 이 메소드는 주석 내 태그 필터링을 위한 XssSaxFilter 객체를 리턴한다.
+	 *
+	 * @param config
+	 *            XssSax Filter Configuration
+	 * @return XssSaxFilter 객체
+	 */
+	public static XssSaxFilter getCommentFilterInstance(XssSaxConfiguration config) {
+
+		XssSaxFilter filter = new XssSaxFilter(config);
+		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+		filter.service = filter.config.getService();
+		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
+		filter.blockingPrefix = filter.config.getBlockingPrefix();
+
+		filter.withoutComment = true;
+		filter.neloElementMSG = ELELMENT_NELO_MSG;
+		filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
+		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
+
+		filter.filteringTagInCommentEnabled = true;
+		
+		return filter;
 	}
 
 	/**
@@ -224,7 +261,7 @@ public final class XssSaxFilter {
 			}
 		}
 	}
-	
+
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
 	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss-sax.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
@@ -271,7 +308,7 @@ public final class XssSaxFilter {
 			doParseAndFilter(writer, neloLogWriter, stackForObjectTag, stackForAllowNetworkingValue, charArraySegment);
 		}
 	}
-	
+
 	/**
 	 * @param dirty
 	 * @param offset
@@ -313,8 +350,11 @@ public final class XssSaxFilter {
 				if (comment != null && comment.length() != 0) {
 					comment = comment.substring(4, comment.length() - 3);
 				}
+
 				Comment content = new Comment(comment);
-				content.serialize(writer);
+				content.serializeFilteringTagInComment(writer, this.filteringTagInCommentEnabled, this.commentFilter);
+
+				//content.serialize(writer);
 
 			} else if ("iEHExStartTag".endsWith(tokenName)) {
 				IEHackExtensionElement element = new IEHackExtensionElement(token.getText());
@@ -397,7 +437,7 @@ public final class XssSaxFilter {
 					}
 
 					if (element.isDisabled()) {
-						if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+						if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 							element.setName(this.blockingPrefix + element.getName());
 							writer.write("</");
 							writer.write(element.getName());
@@ -517,7 +557,7 @@ public final class XssSaxFilter {
 			if (!exist) {
 				// 해당 패턴의 param 추가
 				switch (index) {
-				// <param name="invokeURLs" value="false" />
+					// <param name="invokeURLs" value="false" />
 					case 0:
 						Element invokeURLs = new Element("param");
 						invokeURLs.putAttribute("name", "\"invokeURLs\"");
@@ -525,7 +565,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, invokeURLs, neloLogWriter);
 						break;
 
-					// <param name="autostart" value="false" />
+						// <param name="autostart" value="false" />
 					case 1:
 						Element autostart = new Element("param");
 						autostart.putAttribute("name", "\"autostart\"");
@@ -533,7 +573,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, autostart, neloLogWriter);
 						break;
 
-					// <param name="allowScriptAccess" value="never" />
+						// <param name="allowScriptAccess" value="never" />
 					case 2:
 						Element allowScriptAccess = new Element("param");
 						allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
@@ -541,7 +581,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, allowScriptAccess, neloLogWriter);
 						break;
 
-					// <param name="allowNetworking" value="all|internal" />
+						// <param name="allowNetworking" value="all|internal" />
 
 					case 3:
 						Element allowNetworking = new Element("param");
@@ -550,7 +590,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, allowNetworking, neloLogWriter);
 						break;
 
-					// <param name="autoplay" value="false" />
+						// <param name="autoplay" value="false" />
 					case 4:
 						Element autoplay = new Element("param");
 						autoplay.putAttribute("name", "\"autoplay\"");
@@ -558,7 +598,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, autoplay, neloLogWriter);
 						break;
 
-					// <param name="enablehref" value="flase" />
+						// <param name="enablehref" value="flase" />
 					case 5:
 						Element enablehref = new Element("param");
 						enablehref.putAttribute("name", "\"enablehref\"");
@@ -566,7 +606,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, enablehref, neloLogWriter);
 						break;
 
-					// <param name="enablejavascript" value="flase" />
+						// <param name="enablejavascript" value="flase" />
 					case 6:
 						Element enablejavascript = new Element("param");
 						enablejavascript.putAttribute("name", "\"enablejavascript\"");
@@ -574,7 +614,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, enablejavascript, neloLogWriter);
 						break;
 
-					// <param name="nojava" value="true" />
+						// <param name="nojava" value="true" />
 					case 7:
 						Element nojava = new Element("param");
 						nojava.putAttribute("name", "\"nojava\"");
@@ -582,7 +622,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, nojava, neloLogWriter);
 						break;
 
-					// <param name="AllowHtmlPopupwindow" value="false" />
+						// <param name="AllowHtmlPopupwindow" value="false" />
 					case 8:
 						Element allowHtmlPopupwindow = new Element("param");
 						allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
@@ -590,7 +630,7 @@ public final class XssSaxFilter {
 						this.serialize(writer, allowHtmlPopupwindow, neloLogWriter);
 						break;
 
-					// <param name="enableHtmlAccess" value="false" />
+						// <param name="enableHtmlAccess" value="false" />
 					case 9:
 						Element enableHtmlAccess = new Element("param");
 						enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");
@@ -670,7 +710,7 @@ public final class XssSaxFilter {
 					neloLogWriter.write(element.getName() + "\n");
 				}
 
-				if (this.isBlockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
+				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					element.setName(this.blockingPrefix + element.getName());
 					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
 					writer.write('<');
@@ -735,10 +775,10 @@ public final class XssSaxFilter {
 			writer.write(attrSw.toString());
 
 			if (element.isStartClosed()) {
-				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? " /&gt;" : " />");
+				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? " /&gt;" : " />");
 
 			} else {
-				writer.write((element.isDisabled() && !this.isBlockingPrefixEnabled) ? "&gt;" : ">");
+				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? "&gt;" : ">");
 			}
 
 			//			if (e.isClosed()) {

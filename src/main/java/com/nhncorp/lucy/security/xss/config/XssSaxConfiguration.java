@@ -35,9 +35,11 @@ public final class XssSaxConfiguration {
 	private Map<String, AttributeRule> atts;
 	private boolean neloAsyncLog;
 	private String service = "UnknownService";
-	private boolean isBlockingPrefixEnabled;
+	private boolean blockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
-
+	private boolean filteringTagInCommentEnabled = true;
+	private String filteringTagInCommentType = "strict";
+	
 	private XssSaxConfiguration() {
 		this.tags = new HashMap<String, ElementRule>();
 		this.atts = new HashMap<String, AttributeRule>();
@@ -113,6 +115,11 @@ public final class XssSaxConfiguration {
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableBlockingPrefix(Element.class.cast(list.item(i)));
+			}
+			
+			list = root.getElementsByTagName("filteringTagInComment");
+			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
+				config.enableFilteringTagInComment(Element.class.cast(list.item(i)));
 			}
 
 		} finally {
@@ -302,12 +309,12 @@ public final class XssSaxConfiguration {
 
 	public void setBlockingPrefixEnabled(boolean isEnableBlockingPrefix) {
 
-		this.isBlockingPrefixEnabled = isEnableBlockingPrefix;
+		this.blockingPrefixEnabled = isEnableBlockingPrefix;
 	}
 
 	public boolean isEnableBlockingPrefix() {
 
-		return this.isBlockingPrefixEnabled;
+		return this.blockingPrefixEnabled;
 	}
 
 	public void setBlockingPrefix(String blockingPrefix) {
@@ -316,5 +323,35 @@ public final class XssSaxConfiguration {
 
 	public String getBlockingPrefix() {
 		return blockingPrefix;
+	}
+	
+	private void enableFilteringTagInComment(Element element) {
+		String enable = element.getAttribute("enable");
+		String type = element.getAttribute("type");
+
+		if (enable != null && ("true".equalsIgnoreCase(enable) || "false".equalsIgnoreCase(enable))) {
+			this.setFilteringTagInCommentEnabled("true".equalsIgnoreCase(enable) ? true : false);
+		}
+
+		if (type != null && !type.isEmpty()) {
+			this.setFilteringTagInCommentType(type);
+		}
+	}
+
+	private void setFilteringTagInCommentType(String type) {
+		this.filteringTagInCommentType = type;
+		//strict or config
+	}
+	
+	private void setFilteringTagInCommentEnabled(boolean enabled) {
+		this.filteringTagInCommentEnabled = enabled;
+	}
+
+	public boolean isFilteringTagInCommentEnabled() {
+		return this.filteringTagInCommentEnabled;
+	}
+
+	public boolean isNoTagAllowedInComment() {
+		return "strict".endsWith(this.filteringTagInCommentType);
 	}
 }
