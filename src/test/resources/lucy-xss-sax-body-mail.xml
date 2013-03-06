@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns="http://www.nhncorp.com/lucy-xss"
+extends="lucy-xss-superset-sax.xml">
+	<elementRule>
+		<element name="body" disable="false" /> <!-- <BODY ONLOAD=alert("XSS")>, <BODY BACKGROUND="javascript:alert('XSS')"> -->
+		<element name="iframe" disable="true" /> <!-- <IFRAME SRC=”http://hacker-site.com/xss.html”> -->
+		<element name="meta" disable="true" />
+		<element name="object" disable="true" />
+		<element name="script" disable="true" /> <!-- <SCRIPT> alert(“XSS”); </SCRIPT> -->
+		<element name="style" disable="true" />
+		<element name="link" disable="true" />
+		<element name="base" disable="true" />
+		<element name="basefont" disable="true" />
+		<element name="applet" disable="true" />
+		<element name="frame" disable="true" />
+		<element name="frameset" disable="true" />
+		
+		<element name="a" disable="false">
+			<listener>com.nhncorp.mail.common.xss.AnchorListener</listener>
+		</element>
+		
+		<element name="embed" disable="false">
+			<listener>com.nhncorp.mail.common.xss.MailSaxEmbedListener</listener>
+	    </element>
+	    
+		<!-- IE핵 처리를 위해 추가 삽입해야함. Lucy-XSS Filter 담당자 요청. -->
+		<element name="IEHackExtension" />
+	
+	</elementRule>
+	
+	<blockingPrefix enable="true" prefix="x"/>
+
+	<attributeRule>
+		<attribute name="data" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="src" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(cid:).+]]></allowedPattern>
+		</attribute>
+		<attribute name="style">
+			<notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:p\\*o\\*s\\*i\\*t\\*i\\*o\\*n)\s*:\s*(a\\*b\\*s\\*o\\*l\\*u\\*t\\*e)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="href">
+			<notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
+			<!-- 기존 내용 추가.-->
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|mailto:|x-msg:).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(javascript:m\.util\.viewEmbed\(.\\*).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(javascript:mUtil\.viewEmbed\(.\\*).+]]></allowedPattern>
+ 		</attribute>
+		<attribute name="background">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<!-- 
+			embed태그를 div로 변경하면서 onclick 속성을 사용하게 되어 필터링 룰을 추가함.
+			MAILSUS-15359 허용 패턴 강화 
+		-->
+		<attribute name="onclick" disable="true" exceptionTagList="div">
+			<allowedPattern><![CDATA[(?i)"\s*(mcCore\.viewEmbed\(([^)]*)\);"$)]]></allowedPattern> 
+		</attribute>
+	
+		<!-- nid 속성 추가 -->
+		<attribute name="nid" />
+		
+		<!-- nowrap 속성 추가 -->
+		<attribute name="nowrap" />
+		
+		<!-- wmode 속성 추가 -->
+		<attribute name="wmode" />
+		
+		<!-- flashvars 속성 추가 -->
+		<attribute name="flashvars">
+			<notAllowedPattern><![CDATA[(?:["'`][#\\%x]+[\da-fA-F][\da-fA-F]+)]]></notAllowedPattern>
+		</attribute>
+		
+		<!-- bordercolordark 속성 추가 -->
+		<attribute name="bordercolordark" />
+		
+		<!-- bordercolorlight 속성 추가 -->
+		<attribute name="bordercolorlight" />
+		
+		<!-- 모든 id라는 속성은 허용하지 않음 -->
+		<attribute name="id" disable="true" />
+		
+		<!-- table태그, a태그 이외의 모든 태그에서는 class라는 속성을 허용하지 않음 -->
+		<attribute name="class" disable="true" exceptionTagList="table,a"/>
+		
+	
+		<!-- 
+		<attribute name="data" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="src" base64Decoding="true">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:).+]]></allowedPattern>
+		</attribute>
+		<attribute name="style">
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+		<attribute name="background">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[(?i:e\\*x\\*p\\*r\\*e\\*s\\*s\\*i\\*o\\*n)]]></notAllowedPattern>
+		</attribute>
+	 	<attribute name="href">
+			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(http:|https:|mms:|mailto:|x-msg:).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(javascript:m\.util\.viewEmbed\(.\\*).+]]></allowedPattern>
+			<allowedPattern><![CDATA[(?i)['"]?\s*(javascript:mUtil\.viewEmbed\(.\\*).+]]></allowedPattern>
+		</attribute>
+		 -->
+	</attributeRule>
+</config>
