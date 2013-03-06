@@ -47,4 +47,5 @@
 	</elementRule>
 
 	<blockingPrefix enable="true" prefix="blocking_"/>
+	<element name="iframe" disable="true" />
 </config>
