@@ -135,11 +135,11 @@ public final class XssFilter implements LucyXssFilter {
 				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
 
 				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
-				
+
 				if (filter.filteringTagInCommentEnabled && ! filter.config.isNoTagAllowedInComment()) {
-					
+
 					filter.commentFilter = XssFilter.getCommentFilterInstance(filter.config);
-					
+
 				}
 
 				instanceMap.put(key, filter);
@@ -172,7 +172,7 @@ public final class XssFilter implements LucyXssFilter {
 		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
 
 		filter.filteringTagInCommentEnabled = true;
-		
+
 		return filter;
 	}
 
@@ -420,9 +420,9 @@ public final class XssFilter implements LucyXssFilter {
 
 				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					element.setName(this.blockingPrefix + element.getName());
-					//e.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
-					writer.write('<');
-					writer.write(element.getName());
+					element.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
+					//writer.write('<');
+					//writer.write(element.getName());
 				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
 					if (!this.withoutComment) {
 
@@ -433,11 +433,10 @@ public final class XssFilter implements LucyXssFilter {
 					writer.write(element.getName());
 
 				}
-			} else {
-				if (!this.withoutComment && element.existDisabledAttribute()) {
-					writer.write(BAD_ATT_INFO_START);
-				}
+			}
 
+			if (!element.isDisabled() && !this.withoutComment && element.existDisabledAttribute()) {
+				writer.write(BAD_ATT_INFO_START);
 			}
 
 			Collection<Attribute> atts = element.getAttributes();
@@ -484,11 +483,11 @@ public final class XssFilter implements LucyXssFilter {
 
 			if (element.isStartClosed()) {
 
-				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? " /&gt;" : " />");
+				writer.write(element.isDisabled() ? " /&gt;" : " />");
 
 			} else {
 
-				writer.write((element.isDisabled() && !this.blockingPrefixEnabled) ? "&gt;" : ">");
+				writer.write(element.isDisabled() ? "&gt;" : ">");
 			}
 
 			if (!element.isEmpty()) {
