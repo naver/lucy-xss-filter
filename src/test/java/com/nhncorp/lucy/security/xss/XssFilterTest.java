@@ -652,7 +652,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<a b>";
-		expected = "<blocking_a b>";
+		expected = "<!-- Not Allowed Attribute Filtered ( b) --><blocking_a>";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
@@ -675,7 +675,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 
 		dirty = "<base href=\"x-msg://171/\" abc=\"abcd\" />";
-		expected = "<xbase href=\"x-msg://171/\" abc=\"abcd\" />";
+		expected = "<!-- Not Allowed Attribute Filtered ( abc=\"abcd\") --><xbase href=\"x-msg://171/\" />";
 		clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 
