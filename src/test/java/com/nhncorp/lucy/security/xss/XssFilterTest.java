@@ -1745,7 +1745,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-body.xml");
 		
 		String dirty = "<html><head></head><body><!--[if gte vml 1]><v:shapetype id=\"_x0000_t201\"><![if excel]><x:ClientData ObjectType=\"Drop\"> <x:DropLines>123123 8</x:DropLines> </x:ClientData> <![endif]> </v:shape><![endif]--></body></html>";
-		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><xx:ClientData ObjectType=\"Drop\"> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]> &lt;/v:shape&gt;<![endif]--></body></html>";
+		String expected = "<html><head></head><body><!--[if gte vml 1]><!-- Not Allowed Attribute Filtered ( id=\"_x0000_t201\") --><xv:shapetype><![if excel]><!-- Not Allowed Attribute Filtered ( ObjectType=\"Drop\") --><xx:ClientData> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]> &lt;/v:shape&gt;<![endif]--></body></html>";
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
