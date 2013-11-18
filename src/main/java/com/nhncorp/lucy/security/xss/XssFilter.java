@@ -408,7 +408,9 @@ public final class XssFilter implements LucyXssFilter {
 				this.serialize(writer, element.getContents(), neloLogWriter);
 			}
 		} else {
-			if (!element.isDisabled()) {
+			//TODO 코드 리뷰 필요 
+			// v1.3.3 & v1.5.1 BEFORE if (!element.isDisabled()) {
+			if ((!element.isDisabled() || this.blockingPrefixEnabled)) {
 				checkRule(element);
 			}
 
@@ -525,8 +527,11 @@ public final class XssFilter implements LucyXssFilter {
 
 		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			element.setEnabled(false);
-			return;
+			// v1.3.3 & v1.5.2 BEFORE
+			//element.setEnabled(false);
+			//return;
+			//TODO 코드 리뷰 필요
+			tagRule = new ElementRule(element.getName());
 		}
 
 		tagRule.checkEndTag(element);

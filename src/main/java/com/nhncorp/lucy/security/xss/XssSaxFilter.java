@@ -432,7 +432,9 @@ public final class XssSaxFilter implements LucyXssFilter {
 						element.setEnabled(false);
 					}
 
-					if (!element.isDisabled()) {
+					//TODO 코드 리뷰 필요 
+					// v1.3.3 & v1.5.2 BEFORE if (!element.isDisabled()) {
+					if (!element.isDisabled() || this.blockingPrefixEnabled) {
 						checkRule(element);
 					}
 
@@ -701,7 +703,9 @@ public final class XssSaxFilter implements LucyXssFilter {
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 		} else {
-			if (!element.isDisabled()) {
+			//TODO 코드 리뷰 필요 
+			// v1.3.3 & v1.5.2 BEFORE if (!element.isDisabled()) {
+			if (!element.isDisabled() || this.blockingPrefixEnabled) {
 				checkRule(element);
 			}
 
@@ -815,8 +819,11 @@ public final class XssSaxFilter implements LucyXssFilter {
 
 		ElementRule tagRule = this.config.getElementRule(element.getName());
 		if (tagRule == null) {
-			element.setEnabled(false);
-			return;
+			// v1.3.3 & v1.5.2 BEFORE
+			//element.setEnabled(false);
+			//return;
+			//TODO 코드 리뷰 필요
+			tagRule = new ElementRule(element.getName());
 		}
 
 		//tagRule.checkEndTag(e);
