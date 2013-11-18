@@ -1434,7 +1434,8 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-sax-body-test.xml");
 		
 		String dirty = "<html><head></head><body><!--[if gte vml 1]><v:shapetype id=\"_x0000_t201\"><![if excel]><x:ClientData ObjectType=\"Drop\"> <x:DropLines>123123 8</x:DropLines> </x:ClientData> <![endif]> </v:shape><![endif]--></body></html>";
-		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><xx:ClientData ObjectType=\"Drop\"> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]> </xv:shape><![endif]--></body></html>";
+		String expected = "<html><head></head><body><!--[if gte vml 1]><xv:shapetype id=\"_x0000_t201\"><![if excel]><!-- Not Allowed Attribute Filtered ( ObjectType=\"Drop\") --><xx:ClientData> <xx:DropLines>123123 8</xx:DropLines> </xx:ClientData> <![endif]> </xv:shape><![endif]--></body></html>";
+
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}

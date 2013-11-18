@@ -33,7 +33,7 @@ public final class ElementRule {
 	private Set<String> tags;
 	private List<ElementListener> listeners;
 
-	ElementRule(String name) {
+	public ElementRule(String name) {
 		this.name = name;
 		this.atts = new HashSet<String>();
 		this.tags = new HashSet<String>();
