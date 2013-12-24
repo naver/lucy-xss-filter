@@ -22,6 +22,13 @@
 			<listener>com.nhncorp.lucy.security.xss.listener.StyleListener</listener>
 		</element>
 
+	<element name="a">
+		<attributes>
+			<ref name="style"></ref>
+		</attributes>
+		<listener>com.nhncorp.lucy.security.xss.listener.ATagListener</listener>
+	</element>
+	
 		<element name="table" override="true" endTag="false">
 			<attributes>
 				<ref name="height" />

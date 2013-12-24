@@ -273,7 +273,7 @@
 		<attribute name="src"/>
 		<attribute name="standby"/>
 		<attribute name="start"/>
-		<attribute name="style"/>
+		<attribute name="style" disable="false" exceptionTagList="a"/> <!-- 2013.12.24 수정 : A 태그는 style 속성에 의한 우회 공격 이슈로 style 속성을 배제힌다. -->
 		<attribute name="summary"/>
 		<attribute name="tabindex"/>
 		<attribute name="target"/>
