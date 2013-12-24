@@ -21,7 +21,7 @@
 		<ref name="bordercolorlight"/>
 	</attributeGroup>
 
-	<attributeGroup name="Attrs">
+	<attributeGroup name="I18n">
 		<ref name="BorderColor"/>
 	</attributeGroup>
 	

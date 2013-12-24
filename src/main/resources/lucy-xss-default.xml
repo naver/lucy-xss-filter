@@ -145,7 +145,6 @@
 	
 	<!-- HTML5 added at 2012.04.10 -->
 	<attributeGroup name="Html5GlobalAttr">
-		<ref name="Attrs"/>
 		<ref name="tabindex"/>
 		<ref name="accesskey"/>
 		<ref name="contenteditable"/>
@@ -169,8 +168,11 @@
 
 	<elementRule>
 		<element name="a" endTag="true">
-			<attributes>
-				<ref name="Attrs"/>
+			<attributes> <!-- Attrs attribute ref removal at 2013.12.24 -->
+				<ref name="I18n"/>
+				<ref name="id"/>
+				<ref name="class"/>
+				<ref name="title"/>
 				<ref name="charset"/>
 				<ref name="type"/>
 				<ref name="name"/>
@@ -682,6 +684,7 @@
 
 		<element name="head">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="I18n"/>
 				<ref name="profile"/>
 				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
@@ -710,6 +713,7 @@
 
 		<element name="html">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="I18n"/>
 				<ref name="version"/>
 				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
@@ -733,6 +737,7 @@
 
 		<element name="iframe" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Core"/>
 				<ref name="longdesc"/>
 				<ref name="name"/>
@@ -944,6 +949,7 @@
 
 		<element name="meta">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="I18n"/>
 				<ref name="content"/>
 				<ref name="http-equiv"/>
@@ -1063,6 +1069,7 @@
 
 		<element name="param">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="id"/>
 				<ref name="name"/>
 				<ref name="type"/>
@@ -1153,6 +1160,7 @@
 
 		<element name="script" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="charset"/>
 				<ref name="defer"/>
 				<ref name="src"/>
@@ -1222,6 +1230,7 @@
 
 		<element name="style" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="I18n"/>
 				<ref name="type"/>
 				<ref name="media"/>
@@ -1371,6 +1380,7 @@
 
 		<element name="title" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="I18n"/>
 				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
@@ -1433,6 +1443,7 @@
 
 		<element name="wbr">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/> <!-- HTML5 added at 2012.04.10 -->
 			</attributes>
 		</element>
@@ -1453,6 +1464,7 @@
 	<!-- HTML5 added at 2012.04.10 Start-->
 		<element name="article" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1461,6 +1473,7 @@
 		</element>
 		<element name="aside" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1469,6 +1482,7 @@
 		</element>
 		<element name="audio" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="autoplay"/>
 				<ref name="controls"/>
@@ -1484,6 +1498,7 @@
 		</element>
 		<element name="bdi" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1492,6 +1507,7 @@
 		</element>
 		<element name="canvas" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="height"/>
 				<ref name="width"/>
@@ -1502,6 +1518,7 @@
 		</element>
 		<element name="command">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="checked"/>
 				<ref name="disabled"/>
@@ -1513,6 +1530,7 @@
 		</element>
 		<element name="datalist" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1522,6 +1540,7 @@
 		</element>
 		<element name="details" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="open"/>
 			</attributes>
@@ -1533,6 +1552,7 @@
 		</element>
 		<element name="figcaption" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1541,6 +1561,7 @@
 		</element>
 		<element name="figure" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1551,6 +1572,7 @@
 		</element>
 		<element name="footer" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1559,6 +1581,7 @@
 		</element>
 		<element name="header" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1567,6 +1590,7 @@
 		</element>
 		<element name="hgroup" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1575,6 +1599,7 @@
 		</element>
 		<element name="keygen">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="autofocus"/>
 				<ref name="challenge"/>
@@ -1586,6 +1611,7 @@
 		</element>
 		<element name="mark" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1594,6 +1620,7 @@
 		</element>
 		<element name="meter" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="form"/>
 				<ref name="high"/>
@@ -1609,6 +1636,7 @@
 		</element>
 		<element name="nav" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1617,6 +1645,7 @@
 		</element>
 		<element name="output" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="for"/>
 				<ref name="form"/>
@@ -1628,6 +1657,7 @@
 		</element>
 		<element name="progress" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="max"/>
 				<ref name="value"/>
@@ -1638,6 +1668,7 @@
 		</element>
 		<element name="rp">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1646,6 +1677,7 @@
 		</element>
 		<element name="section" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1654,6 +1686,7 @@
 		</element>
 		<element name="source">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="media"/>
 				<ref name="src"/>
@@ -1662,6 +1695,7 @@
 		</element>
 		<element name="summary" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 			</attributes>
 			<elements>
@@ -1670,6 +1704,7 @@
 		</element>
 		<element name="time" endTag="true">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="datetime"/>
 				<ref name="pubdate"/>
@@ -1680,6 +1715,7 @@
 		</element>
 		<element name="track">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="default"/>
 				<ref name="kind"/>
@@ -1690,6 +1726,7 @@
 		</element>
 		<element name="video">
 			<attributes>
+				<ref name="Attrs"/>
 				<ref name="Html5GlobalAttr"/>
 				<ref name="autoplay"/>
 				<ref name="controls"/>
