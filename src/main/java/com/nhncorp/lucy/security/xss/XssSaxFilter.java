@@ -842,7 +842,14 @@ public final class XssSaxFilter implements LucyXssFilter {
 					att.setEnabled(false);
 				} else {
 					if (!attRule.getExceptionTagList().contains(element.getName().toLowerCase())) {
+						//Exception 리스트에 포함이 안되면, 
+						//attribute Rule에 따라 disable 값을 설정한다.
 						attRule.checkDisabled(att);
+					} else {
+						//Exception 리스트에 포함이 되면,
+						//Rule과 반대로 disable 값을 설정한다.
+						attRule.checkDisabled(att);
+						att.setEnabled(att.isDisabled());
 					}
 					attRule.checkAttributeValue(att);
 					attRule.executeListener(att);
