@@ -38,6 +38,13 @@
 			</elements>
 		</element>
 		
+		<element name="a">
+			<attributes>
+				<ref name="style"></ref>
+			</attributes>
+			<listener>com.nhncorp.lucy.security.xss.listener.ATagListener</listener>
+		</element>
+	
 	</elementRule>
 	
 	<attributeRule>
