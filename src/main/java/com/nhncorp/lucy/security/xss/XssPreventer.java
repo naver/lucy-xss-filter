@@ -42,7 +42,7 @@ public class XssPreventer {
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.            
 	 * @return 신뢰할 수 있는 코드.
 	 */
-	public static String htmlEscaper(String dirty) {
+	public static String escape(String dirty) {
 		return StringEscapeUtils.escapeHtml(dirty).replaceAll("'", "&#39");
 	}
 	
@@ -53,7 +53,7 @@ public class XssPreventer {
 	 *            htmlEscaper를 수행 후 코드.            
 	 * @return htmlEscaper를 수행 전의 코드.
 	 */
-	public static String htmlUnEscaper(String clean) {
+	public static String unescape(String clean) {
 		return StringEscapeUtils.unescapeHtml(clean).replaceAll("&#39", "'");
 	}
 }
