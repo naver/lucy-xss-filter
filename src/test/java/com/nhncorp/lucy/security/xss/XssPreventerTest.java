@@ -25,7 +25,7 @@ public class XssPreventerTest {
 		String dirty = "\"><script>alert('xss');</script>";
 		String clean = XssPreventer.htmlEscaper(dirty);
 		
-		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert('xss');&lt;/script&gt;");
+		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.htmlUnEscaper(clean));
 	}
 }

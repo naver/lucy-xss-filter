@@ -6,7 +6,7 @@
  */
 package com.nhncorp.lucy.security.xss;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,12 +32,6 @@ import org.apache.commons.logging.LogFactory;
 public class XssPreventer {
 	
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
-	
-	public enum PreventionRule {
-		//보안팀 필수 룰, 아래로 내려갈수록 보안 룰이 엄격해짐
-		//보안팀 권고 룰
-		//OWASP 권고 룰
-	}
 		
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})가 포함된 위험한 코드에 대하여 
@@ -49,7 +43,7 @@ public class XssPreventer {
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public static String htmlEscaper(String dirty) {
-		return StringEscapeUtils.escapeHtml4(dirty);
+		return StringEscapeUtils.escapeHtml(dirty).replaceAll("'", "&#39");
 	}
 	
 	/**
@@ -60,6 +54,6 @@ public class XssPreventer {
 	 * @return htmlEscaper를 수행 전의 코드.
 	 */
 	public static String htmlUnEscaper(String clean) {
-		return StringEscapeUtils.unescapeHtml4(clean);
+		return StringEscapeUtils.unescapeHtml(clean).replaceAll("&#39", "'");
 	}
 }
