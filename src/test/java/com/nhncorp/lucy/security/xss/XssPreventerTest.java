@@ -23,9 +23,9 @@ public class XssPreventerTest {
 	// 시스템을 공격하는 코드를 필터링 하는지와 원복했을 때 복구가 정상적으로 되는지 검사한다.
 	public void testXssPreventer() {
 		String dirty = "\"><script>alert('xss');</script>";
-		String clean = XssPreventer.htmlEscaper(dirty);
+		String clean = XssPreventer.escape(dirty);
 		
 		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
-		Assert.assertEquals(dirty, XssPreventer.htmlUnEscaper(clean));
+		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
 }
