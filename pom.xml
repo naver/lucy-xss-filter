@@ -178,7 +178,7 @@
 				</includes>
 			</testResource>
 		</testResources>
-
+		<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -290,6 +290,7 @@
 				<version>1.0.0</version>
 			</plugin>
 		</plugins>
+		</pluginManagement>
 	</build>
 	<reporting>
 		<plugins>
