@@ -663,7 +663,19 @@ public final class XssSaxFilter implements LucyXssFilter {
 				writer.write(REMOVE_TAG_INFO_END);
 			}
 		} else {
+			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
+			// * : Occurs zero or more times, is short for {0,}
 			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // IE에서 핵이 그데로 노출되는 문제 방지 및 공백제거처리
+
+			int startIndex = stdName.indexOf("<!") + 1;
+			int lastIntndex = stdName.lastIndexOf(">");
+
+			String firststdName = stdName.substring(0, startIndex);
+			String middlestdName = stdName.substring(startIndex, lastIntndex).replaceAll("<", "&lt;").replaceAll(">", "&gt;"); 
+			String laststdName = stdName.substring(lastIntndex);
+
+			stdName = firststdName + middlestdName + laststdName;
+
 			writer.write(stdName);
 
 			//			if (ie.isClosed()) {
