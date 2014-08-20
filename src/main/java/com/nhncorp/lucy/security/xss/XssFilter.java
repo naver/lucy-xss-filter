@@ -369,7 +369,18 @@ public final class XssFilter implements LucyXssFilter {
 				this.serialize(writer, ie.getContents(), neloLogWriter);
 			}
 		} else {
-			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>"); // 공백제거처리
+			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
+			// * : Occurs zero or more times, is short for {0,}
+			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
+			
+			int startIndex = stdName.indexOf("<!") + 1;
+			int lastIntndex = stdName.lastIndexOf(">");
+
+			String firststdName = stdName.substring(0, startIndex);
+			String middlestdName = stdName.substring(startIndex, lastIntndex).replaceAll("<", "&lt;").replaceAll(">", "&gt;"); 
+			String laststdName = stdName.substring(lastIntndex);
+
+			stdName = firststdName + middlestdName + laststdName;
 			writer.write(stdName);
 
 			if (!ie.isEmpty()) {
