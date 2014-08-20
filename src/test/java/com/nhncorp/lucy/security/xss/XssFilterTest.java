@@ -1937,8 +1937,8 @@ public class XssFilterTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance();
 		String dirty = "<!--[if <img src=x onerror=alert(123) //] -->";
 		String clean = filter.doFilter(dirty);
-	    String expected = "<!--[if &lt;img src=x onerror=alert(123) //]>";
+		String expected = "<!--[if &lt;img src=x onerror=alert(123) //]>";
 	
-	    Assert.assertEquals(expected, clean);
+		Assert.assertEquals(expected, clean);
 	}
 }
