@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -377,7 +378,7 @@ public final class XssFilter implements LucyXssFilter {
 			int lastIntndex = stdName.lastIndexOf(">");
 
 			String firststdName = stdName.substring(0, startIndex);
-			String middlestdName = stdName.substring(startIndex, lastIntndex).replaceAll("<", "&lt;").replaceAll(">", "&gt;"); 
+			String middlestdName = StringUtils.replaceEach(stdName.substring(startIndex, lastIntndex), new String[] {"<", ">"}, new String[] {"&lt;", "&gt;"}); 
 			String laststdName = stdName.substring(lastIntndex);
 
 			stdName = firststdName + middlestdName + laststdName;
