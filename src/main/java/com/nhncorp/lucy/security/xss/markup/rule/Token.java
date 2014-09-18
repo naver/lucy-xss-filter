@@ -13,7 +13,7 @@ import java.util.List;
  * 이 클래스는 하나의 토큰을 나타내며, Tree Node 형태로 하위에 Token 들을 유지 하고 있다.
  * 각각의 토큰은 이름과 하위 토큰들로 구성된다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public final class Token {

@@ -44,7 +44,7 @@ import com.nhncorp.lucy.security.xss.markup.Text;
  * ...
  * </pre>
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public final class XssFilter implements LucyXssFilter {

@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
  * ...
  * </pre>
  *
- * @author Web Platform Development Lab
+ * @author Naver Labs
  *
  */
 public class XssPreventer {

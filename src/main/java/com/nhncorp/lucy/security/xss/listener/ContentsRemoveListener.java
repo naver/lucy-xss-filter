@@ -10,7 +10,7 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
 import com.nhncorp.lucy.security.xss.markup.Element;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class ContentsRemoveListener implements ElementListener {
 	public void handleElement(Element element) {

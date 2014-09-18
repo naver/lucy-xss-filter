@@ -12,7 +12,7 @@ import com.nhncorp.lucy.security.xss.markup.Element;
 /**
  * 이 클래스는 Embed 태그에 대한 보안 필터링을 수행한다.
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public class EmbedSecurityListener implements ElementListener {

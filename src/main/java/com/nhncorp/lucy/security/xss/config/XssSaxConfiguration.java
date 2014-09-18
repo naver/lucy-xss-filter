@@ -25,7 +25,7 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
  * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public final class XssSaxConfiguration {

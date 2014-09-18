@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 이 클래스는 패키지 외부에서 참조 되지 않는다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 class Group extends NonTerminal {

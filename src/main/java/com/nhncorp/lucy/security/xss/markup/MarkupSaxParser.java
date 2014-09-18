@@ -37,7 +37,7 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  *	위의 파싱 룰정의는 XML specification 에서 정의한 EBNF Notation 을 사용하였다.
  * </pre>
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public final class MarkupSaxParser {
