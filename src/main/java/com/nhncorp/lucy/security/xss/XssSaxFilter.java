@@ -358,9 +358,23 @@ public final class XssSaxFilter implements LucyXssFilter {
 				//content.serialize(writer);
 
 			} else if ("iEHExStartTag".endsWith(tokenName)) {
-				IEHackExtensionElement element = new IEHackExtensionElement(token.getText());
-				this.serialize(writer, element, neloLogWriter);
-
+				IEHackExtensionElement iehackElement = new IEHackExtensionElement(token.getText());
+				checkIEHackRule(iehackElement);
+				
+				if (iehackElement.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
+					if (this.isNeloLogEnabled) {
+						neloLogWriter.write(this.neloElementRemoveMSG);
+						neloLogWriter.write(iehackElement.getName() + "\n");
+					}
+					if (!this.withoutComment) {
+						writer.write(REMOVE_TAG_INFO_START);
+						writer.write(iehackElement.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
+						writer.write(REMOVE_TAG_INFO_END);
+					}
+				}
+				
+				iehackElement.serialize(writer);
+				
 			} else if ("startTag".equals(tokenName)) {
 				Token tagNameToken = token.getChild("tagName");
 				if (tagNameToken == null) {

@@ -372,17 +372,7 @@ public final class XssFilter implements LucyXssFilter {
 		} else {
 			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
 			// * : Occurs zero or more times, is short for {0,}
-			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
-			
-			int startIndex = stdName.indexOf("<!") + 1;
-			int lastIntndex = stdName.lastIndexOf(">");
-
-			String firststdName = stdName.substring(0, startIndex);
-			String middlestdName = StringUtils.replaceEach(stdName.substring(startIndex, lastIntndex), new String[] {"<", ">"}, new String[] {"&lt;", "&gt;"}); 
-			String laststdName = stdName.substring(lastIntndex);
-
-			stdName = firststdName + middlestdName + laststdName;
-			writer.write(stdName);
+			ie.serialize(writer);
 
 			if (!ie.isEmpty()) {
 				this.serialize(writer, ie.getContents(), neloLogWriter);
@@ -391,6 +381,8 @@ public final class XssFilter implements LucyXssFilter {
 			if (ie.isClosed()) {
 				// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
 				// IE Hack 시작 태그의 종류 판별 및 태그맞춤 cf) 시작 스트링이 <!-- 인지 <! 인지에 따라 IE Hack 닫는 태그 달라짐.
+				String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
+				
 				if(stdName.indexOf("<!--") != -1) {
 					writer.write("<![endif]-->");
 				} else {
