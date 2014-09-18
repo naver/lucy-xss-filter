@@ -8,7 +8,7 @@
 package com.nhncorp.lucy.security.xss;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class CommonUtils {
 	/**

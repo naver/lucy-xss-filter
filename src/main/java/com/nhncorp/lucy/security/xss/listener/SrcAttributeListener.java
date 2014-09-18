@@ -12,7 +12,7 @@ import com.nhncorp.lucy.security.xss.markup.Attribute;
 /**
  * 이 클래스는 src attribute를 기준으로 태그에 대한 보안 필터링을 수행한다.
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public class SrcAttributeListener implements AttributeListener {

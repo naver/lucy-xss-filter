@@ -18,7 +18,7 @@ import com.nhncorp.lucy.security.xss.Constants;
 import com.nhncorp.lucy.security.xss.markup.Element;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class SecurityUtils {
 	/**
