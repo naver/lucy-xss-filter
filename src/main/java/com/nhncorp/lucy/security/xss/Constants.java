@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class Constants {
 	public static final Map<String, String> mimeTypes = new HashMap<String, String>();

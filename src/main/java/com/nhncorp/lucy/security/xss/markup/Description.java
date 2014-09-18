@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class Description extends Content {
 	/**

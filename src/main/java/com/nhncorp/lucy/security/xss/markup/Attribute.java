@@ -13,7 +13,7 @@ import java.io.Writer;
 /**
  * 이 클래스는 Tag 내에 있는 Attribute 을 나타내며, Attribute 이름과 그 값을 유지한다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public class Attribute {

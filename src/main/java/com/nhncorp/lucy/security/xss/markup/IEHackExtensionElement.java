@@ -6,7 +6,7 @@ import java.io.Writer;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class IEHackExtensionElement extends Element {
 	public IEHackExtensionElement(String name) {

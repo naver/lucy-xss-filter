@@ -52,7 +52,7 @@ import com.nhncorp.lucy.security.xss.markup.rule.Token;
  * ...
  * </pre>
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public final class XssSaxFilter implements LucyXssFilter {

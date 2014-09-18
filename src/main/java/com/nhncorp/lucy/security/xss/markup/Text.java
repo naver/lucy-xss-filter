@@ -14,7 +14,7 @@ import java.io.Writer;
  * 일반 텍스트라 함은 {@link Comment Comment}, {@link Element Element} 이 아닌 
  * 모든 {@link Content Content}가 그 대상이 된다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public class Text extends Content {

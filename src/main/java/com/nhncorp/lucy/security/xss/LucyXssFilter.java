@@ -10,7 +10,7 @@ package com.nhncorp.lucy.security.xss;
 import java.io.Writer;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public interface LucyXssFilter {
 

@@ -24,7 +24,7 @@ import com.nhncorp.lucy.security.xss.config.XssConfiguration;
 /**
  * 이 클래스는 {@code "white-url.xml"} 을 바탕으로 White List를 생성한다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public final class WhiteUrlList {

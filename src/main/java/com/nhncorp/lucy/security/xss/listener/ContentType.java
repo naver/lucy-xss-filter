@@ -9,7 +9,7 @@ package com.nhncorp.lucy.security.xss.listener;
 import java.util.Date;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class ContentType {
 	private String contentType;
