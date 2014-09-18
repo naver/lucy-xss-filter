@@ -22,7 +22,7 @@ import com.nhncorp.lucy.security.xss.markup.rule.ParsingRule.UNARY;
  * 특정 Input String 에 대한 {@link #tokenize(String) tokenize(String)} 을 수행한다. <br/>
  * Singleton 으로 구현이 되었으며, 파싱 룰정의는 XML specification 에서 정의한 EBNF Notation 에 근거 하였다.
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public final class ParsingGrammar {

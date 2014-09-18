@@ -15,7 +15,7 @@ import com.nhncorp.lucy.security.xss.LucyXssFilter;
  * 이 클래스는 코멘트를 나타낸다.
  * 즉, {@code '<!--'}으로 시작하여 {@code '-->'} 으로 끝나는 모든 Content 를 나타낸다. 
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public class Comment extends Content {

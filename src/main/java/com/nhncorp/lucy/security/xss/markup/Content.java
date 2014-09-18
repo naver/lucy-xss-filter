@@ -25,7 +25,7 @@ import java.io.Writer;
  * </ul>
  * </p>
  * 
- * @author Web Platform Development Team
+ * @author Naver Labs
  * 
  */
 public abstract class Content {

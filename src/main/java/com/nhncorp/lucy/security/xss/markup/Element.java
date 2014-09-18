@@ -19,7 +19,7 @@ import java.util.Map;
  * 하나의 Tag 는 Tag Name과 {@link Attribute Attribute} 들을 포함을 하며,
  * 또한 하위에 {@link Content Content} 들을 포함할 수 있다.
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public class Element extends Content {

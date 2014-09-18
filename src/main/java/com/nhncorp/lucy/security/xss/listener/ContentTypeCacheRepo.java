@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 public class ContentTypeCacheRepo {
 	private static final int HARD_CACHE_CAPACITY = 1000;

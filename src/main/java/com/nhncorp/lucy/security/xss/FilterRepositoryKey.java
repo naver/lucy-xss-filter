@@ -8,7 +8,7 @@
 package com.nhncorp.lucy.security.xss;
 
 /**
- * @author nbp
+ * @author Naver Labs
  */
 class FilterRepositoryKey {
 	String fileName;
