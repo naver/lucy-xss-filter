@@ -3,6 +3,8 @@ package com.nhncorp.lucy.security.xss.markup;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author nbp
  */
@@ -16,25 +18,20 @@ public class IEHackExtensionElement extends Element {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public void serialize(Writer writer) throws IOException {
-
-		if (writer == null) {
-			return;
-		}
-
-		String valid = this.getName().replaceAll("-->", ">");
-		writer.write(valid);
-
-		if (!this.isEmpty()) {
-			for (Content content : this.contents) {
-				content.serialize(writer);
-			}
-		}
-
-		if (this.isClosed) {
-			writer.write("<![endif]-->");
-		}
+		
+		// IE에서 핵이 그대로 노출되는 문제 방지 및 공백제거처리
+		String stdName = getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
+	
+		int startIndex = stdName.indexOf("<!") + 1;
+		int lastIntndex = stdName.lastIndexOf(">");
+	
+		String firststdName = stdName.substring(0, startIndex);
+		String middlestdName = StringUtils.replaceEach(stdName.substring(startIndex, lastIntndex), new String[] {"<", ">"}, new String[] {"&lt;", "&gt;"});
+		String laststdName = stdName.substring(lastIntndex);
+	
+		stdName = firststdName + middlestdName + laststdName;
+	
+		writer.write(stdName);
 	}
-
 }
