@@ -10,16 +10,35 @@
 	<version>1.6.1</version>
 	<name>Lucy XSS Filter</name>
 	<packaging>jar</packaging>
-	<!-- <url>http://repo.nhncorp.com/lucy/</url> -->
 	<inceptionYear>2008</inceptionYear>
 	<description>XSS Filter for Web Service</description>
 
-
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
 	<scm>
-		<connection>scm:svn:http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/tags</connection>
-		<url>http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/tags</url>
-		<developerConnection>scm:svn:http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/trunk</developerConnection>
-	</scm>
+		<url>https://github.com/naver/lucy-xss-filter</url>
+		<connection>scm:git:git://github.com/naver/lucy-xss-filter.git</connection>
+		<developerConnection>scm:git:git@github.com:naver/lucy-xss-filter.git</developerConnection>
+		<tag>HEAD</tag>
+ 	</scm>
+ 	
+ 	<developers>
+		<developer>
+			<name>Sanghyuk Jung</name>
+			<id>benelog</id>
+		</developer>
+	
+		<developer>
+			<name>Hyeongkyu Lee</name>
+			<id>leeplay</id>
+		</developer>	
+	</developers>
 
 	<dependencies>
 		<dependency>
@@ -132,10 +151,68 @@
 						<tarLongFileMode>gnu</tarLongFileMode>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
 	
+	<profiles>
+		<profile>
+			<id>klocwork</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.klocwork.ps</groupId>
+						<artifactId>kwmaven</artifactId>
+						<executions>
+							<execution>
+								<configuration>
+									<buildspec_filename>../klocwork/kwinject.out</buildspec_filename>
+								</configuration>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -172,6 +249,43 @@
 					<outputEncoding>UTF-8</outputEncoding>
 					<windowTitle>Lucy-XSS ${project.version} Cross Reference</windowTitle>
 					<docTitle>Lucy-XSS ${project.version} Cross Reference</docTitle>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<excludeFilterFile>
+						findbugs-exclude.xml
+					</excludeFilterFile>
+					<xmlOutput>true</xmlOutput>
+					<xmlOutputDirectory>
+						${project.build.directory}/findbugs
+					</xmlOutputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<linkXref>true</linkXref>
+					<sourceEncoding>UTF-8</sourceEncoding>
+					<targetJdk>1.5</targetJdk>
+					<rulesets>
+						<ruleset>/rulesets/unusedcode.xml</ruleset>
+						<ruleset>/rulesets/basic.xml</ruleset>
+						<ruleset>/rulesets/imports.xml</ruleset>
+						<ruleset>/rulesets/design.xml</ruleset>
+					</rulesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
 				</configuration>
 			</plugin>
 		</plugins>
