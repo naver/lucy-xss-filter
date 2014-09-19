@@ -6,7 +6,7 @@
  */
 package com.nhncorp.lucy.security.xss;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,17 +43,31 @@ public class XssPreventer {
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public static String escape(String dirty) {
-		return StringEscapeUtils.escapeHtml(dirty).replaceAll("'", "&#39");
+		
+		String clean = StringEscapeUtils.escapeHtml4(dirty);
+		
+		if (clean == null) {
+			return null;
+		}
+		
+		return clean.replaceAll("'", "&#39");
 	}
 	
 	/**
-	 * 이 메소드는 htmlEscaper를 수행하기 전의 코드로 원복하는 기능을 제공한다. <br/>   
+	 * 이 메소드는 XssPreventer를 수행하기 전의 코드로 원복하는 기능을 제공한다. <br/>   
 	 * 
 	 * @param clean
-	 *            htmlEscaper를 수행 후 코드.            
-	 * @return htmlEscaper를 수행 전의 코드.
+	 *            XssPreventer를 수행 후 문자열.            
+	 * @return XssPreventer를 수행 전의 문자열.
 	 */
 	public static String unescape(String clean) {
-		return StringEscapeUtils.unescapeHtml(clean).replaceAll("&#39", "'");
+		
+		String str = StringEscapeUtils.unescapeHtml4(clean);
+		
+		if (str == null) {
+			return null;
+		}
+		
+		return str.replaceAll("&#39", "'");
 	}
 }
