@@ -7,7 +7,7 @@
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
 	<artifactId>lucy-xss</artifactId>
-	<version>1.6.1</version>
+	<version>1.6.2</version>
 	<name>Lucy XSS Filter</name>
 	<packaging>jar</packaging>
 	<inceptionYear>2008</inceptionYear>
