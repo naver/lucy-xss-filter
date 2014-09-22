@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.nhncorp.lucy.security.xss.Constants;
 import com.nhncorp.lucy.security.xss.markup.Element;

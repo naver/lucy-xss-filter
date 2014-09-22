@@ -19,13 +19,23 @@ import org.junit.Test;
  */
 public class XssPreventerTest {
 	
-	@Test
 	// 시스템을 공격하는 코드를 필터링 하는지와 원복했을 때 복구가 정상적으로 되는지 검사한다.
+	@Test
 	public void testXssPreventer() {
 		String dirty = "\"><script>alert('xss');</script>";
 		String clean = XssPreventer.escape(dirty);
 		
 		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
+		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
+	}
+
+	//한글 유니코드 인코딩 여부 테스트
+	@Test
+	public void testXssPreventerUnicode() {
+		String dirty = "\"><script>alert('이형규');</script>";
+		String clean = XssPreventer.escape(dirty);
+		
+		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39이형규&#39);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
 }
