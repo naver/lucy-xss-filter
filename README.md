@@ -7,6 +7,10 @@ Lucy-XSS(Cross Site Scripting)는 악의적인 XSS 코드의 위험으로부터 
 		화이트리스트(White List) 설정 방식으로 구현한 Java 기반의 필터 라이브러리이다. 
 		Lucy-XSS를 사용하여 전사 표준 XSS 관련 보안 정책을 적용할 수 있으며, 블랙리스트 방식을 사용하는 기존 필터보다 안전하게 웹 서비스를 제공할 수 있다.
 
+		아래 그림은 XssFilter의 작동 구조를 나타낸 것이다. 필터링 대상 HTML 문자열이 유입되면 악의적인 XSS 코드를 제거한 후 안전한 HTML 문자열을 반환하는 구조이다.
+		
+		![XSSFILTER L](docs/XssFilter_Structure.png "XssFilter")
+		
 	* XssPreventer
 
 화이트리스트(White List) 설정 방식으로 구현한 Java 기반의 필터 라이브러리이다. 
