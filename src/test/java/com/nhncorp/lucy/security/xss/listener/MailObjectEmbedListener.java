@@ -9,7 +9,7 @@ package com.nhncorp.lucy.security.xss.listener;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.nhncorp.lucy.security.xss.event.ElementListener;
 import com.nhncorp.lucy.security.xss.markup.Element;
