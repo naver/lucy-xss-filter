@@ -1,4 +1,4 @@
-## Lucy-XSS
+## Lucy-XSS : XssFilter, XssPreventer  
 Lucy-XSS(Cross Site Scripting)는 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 두 가지 방식의 방어 라이브러리를 제공한다.
 
 ## XssFilter : 화이트리스트(White List) 설정 방식으로 구현한 Java 기반의 필터 라이브러리
@@ -13,10 +13,13 @@ White List Object Model과 비교하여 필터링한다.
 
 ## XssPreventer : 파라미터 문자열을 변환하는 apache-common-lang 기반의 라이브러리
 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 apache-common-lang기반의 라이브러리이다. 
-Lucy-XSS Filter와의 차이점은 Lucy-XSS Preventer는 파라미터가 HTML 태그로 인식할 수 없도록 모든 문자열을 단순 변환하고 
-Lucy-XSS Filter는 White List 방식으로 허용한 HTML은 필터링하지 않는다는 차이가 있다.
-
-
+Lucy-XSS Filter와의 차이점은 Lucy-XSS Preventer는 파라미터가 HTML 태그로 인식할 수 없도록 모든 문자열을 아래처럼 단순 변환한다.
+```
+< → &lt; 
+> → &gt; 
+" → &quot; 
+' → &#39;
+```
 
 ## Getting started
 
