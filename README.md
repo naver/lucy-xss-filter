@@ -1,5 +1,5 @@
 ## Lucy-XSS : XssFilter, XssPreventer  
-Lucy-XSS(Cross Site Scripting)는 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 두 가지 방식의 방어 라이브러리를 제공한다.
+Lucy-XSS(Cross Site Scripting)는 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 두 가지 방식의 방어 라이브러리(XssFilter, XssPreventer)를 제공한다.
 
 ## XssFilter : 화이트리스트(White List) 설정 방식으로 구현한 Java 기반의 필터 라이브러리
 Lucy-XSS(Cross Site Scripting) Filter는 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 기능을 화이트리스트(White List) 설정 방식으로 구현한 
@@ -21,14 +21,48 @@ Lucy-XSS Filter와의 차이점은 Lucy-XSS Preventer는 파라미터가 HTML �
 ' → &#39;
 ```
 
+## XssFilter, XssPreventer 선택 기준
+XSS Filter는 보안에 중점을 두면서도, HTML 태그 또한 정상 동작하도록 하는 White List 방식의 XSS 공격 방어 라이브러리이다. 
+XSS Preventer는 파라미터로 받은 문자열을 Escape(<→&lt; >→&gt; "→&quot; '→&#39;) 하는 XSS공격 방어 라이브러리이다. 
+
+즉 HTML이 아닌 단순 텍스트 파라미터에 대해서는 XSS Preventer를 사용해 전체를 Escaping 하는 것이 올바른 대응 방법이고 
+게시판, 메일, 방명록 등 HTML 태그 기능이 필요한 서비스는 XSS Filter를 사용해 필터링 하는 것이 효과적인 방법이므로 개발자는 두 가지 상황을 고려해 방어 라이브러리를 사용해야 한다.
+
+
 ## Getting started
 
 
 
 ## Usage examples
 
+* XssPreventer
+``` java
+@Test
+public void testXssPreventer() {
+	String dirty = "\"><script>alert('xss');</script>";
+	String clean = XssPreventer.escape(dirty);
+		
+	Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
+	Assert.assertEquals(dirty, XssPreventer.unescape(clean));
+}
+```
 
-
+* XssFilter : dom
+``` java
+@Test
+public void pairQuoteCheckOtherCase() {
+	XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+	String dirty = "<img src=\"<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+	String expected = "<img src=\"\"><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+	String clean = filter.doFilter(dirty);
+	Assert.assertEquals(expected, clean);
+		
+	dirty = "<img src='<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
+	expected = "<img src=''><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
+	clean = filter.doFilter(dirty);
+	Assert.assertEquals(expected, clean);
+}
+```
 ## Contributing to Lucy
 
 
