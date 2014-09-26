@@ -63,6 +63,17 @@ public void pairQuoteCheckOtherCase() {
 	Assert.assertEquals(expected, clean);
 }
 ```
+
+* XssFilter : sax
+``` java
+@Test
+public void testSuperSetFix() {
+	XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+	String clean = "<TABLE class=\"NHN_Layout_Main\" style=\"TABLE-LAYOUT: fixed\" cellSpacing=\"0\" cellPadding=\"0\" width=\"743\">" + "</TABLE>" + "<SPAN style=\"COLOR: #66cc99\"></SPAN>";
+	String filtered = filter.doFilter(clean);
+	Assert.assertEquals(clean, filtered);
+}
+```
 ## Contributing to Lucy
 
 
