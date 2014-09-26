@@ -30,11 +30,12 @@ XSS Preventer는 파라미터로 받은 문자열을 Escape(<→&lt; >→&gt; "�
 
 
 ## Getting started
+We also offer an interactive tutorial for quickly learning the basics of using Lucy-XSS.
 
+For up-to-date install instructions, see the Docs.
 
 
 ## Usage examples
-
 * XssPreventer
 ``` java
 @Test
