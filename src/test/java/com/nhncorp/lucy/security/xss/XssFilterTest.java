@@ -851,7 +851,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		Assert.assertEquals(expected, clean);
 	}
 	
-	@Test
+	/*@Test
 	public void neloLogNoXss() throws IOException {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-nelo-advanced.xml");
 		String targetStr = readString(NORMAL_HTML_FILE);
@@ -914,7 +914,7 @@ public class XssFilterTest extends XssFilterTestCase {
 		String dirty = "<!--[if !supportMisalignedColumns]><h1></h1><![endif]-->";
 		String neloStr = filter.doFilterNelo(dirty);
 		Assert.assertEquals("", neloStr);
-	}
+	}*/
 	
 	/**
 	 * src에 script 패턴이 존재 시 무조건 필터링 되는 문제 테스트
