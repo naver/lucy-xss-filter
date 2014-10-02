@@ -42,7 +42,7 @@ public final class XssSaxConfiguration {
 
 	private Map<String, ElementRule> tags;
 	private Map<String, AttributeRule> atts;
-	private boolean neloAsyncLog;
+//	private boolean neloAsyncLog;
 	private String service = "UnknownService";
 	private boolean blockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
@@ -116,10 +116,10 @@ public final class XssSaxConfiguration {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
 
-			list = root.getElementsByTagName("neloAsyncLog");
+/*			list = root.getElementsByTagName("neloAsyncLog");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
-			}
+			}*/
 
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
@@ -176,7 +176,7 @@ public final class XssSaxConfiguration {
 		return rule;
 	}
 
-	private void enableNeloAsyncLog(Element element) {
+	/*private void enableNeloAsyncLog(Element element) {
 		String enable = element.getAttribute("enable");
 		String serviceName = element.getAttribute("service");
 
@@ -187,7 +187,7 @@ public final class XssSaxConfiguration {
 		if (serviceName != null && !serviceName.isEmpty()) {
 			this.setService(serviceName);
 		}
-	}
+	}*/
 
 	private void addElementRule(Element element) {
 		String name = element.getAttribute("name");
@@ -300,14 +300,14 @@ public final class XssSaxConfiguration {
 		}
 	}
 
-	public void setNeloAsyncLog(boolean neloAsyncLog) {
+/*	public void setNeloAsyncLog(boolean neloAsyncLog) {
 		this.neloAsyncLog = neloAsyncLog;
 	}
 
 	public boolean enableNeloAsyncLog() {
 		return neloAsyncLog;
 	}
-
+*/
 	public void setService(String service) {
 		this.service = service;
 	}
