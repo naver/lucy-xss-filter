@@ -64,17 +64,17 @@ public final class XssFilter implements LucyXssFilter {
 	private static final String BAD_ATT_INFO_END = ") -->";
 	private static final String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
 	private static final String REMOVE_TAG_INFO_END = ") -->";
-	private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
-	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
-	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
+//	private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
+//	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
+//	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
 	private static final String CONFIG = "lucy-xss-superset.xml";
 	private static final String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
-	private boolean isNeloLogEnabled;
+//	private boolean isNeloLogEnabled;
 	private String service;
-	private String neloElementMSG;
-	private String neloAttrMSG;
-	private String neloElementRemoveMSG;
+//	private String neloElementMSG;
+//	private String neloAttrMSG;
+//	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean blockingPrefixEnabled;
 	private boolean filteringTagInCommentEnabled;
@@ -134,15 +134,15 @@ public final class XssFilter implements LucyXssFilter {
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
-				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+//				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
 				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
 
 				filter.withoutComment = withoutComment;
-				filter.neloElementMSG = ELELMENT_NELO_MSG;
+/*				filter.neloElementMSG = ELELMENT_NELO_MSG;
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
+				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
 
 				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
 
@@ -171,15 +171,15 @@ public final class XssFilter implements LucyXssFilter {
 	public static XssFilter getCommentFilterInstance(XssConfiguration config) {
 
 		XssFilter filter = new XssFilter(config);
-		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
+//		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 		filter.service = filter.config.getService();
 		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 		filter.blockingPrefix = filter.config.getBlockingPrefix();
 
 		filter.withoutComment = true;
-		filter.neloElementMSG = ELELMENT_NELO_MSG;
+/*		filter.neloElementMSG = ELELMENT_NELO_MSG;
 		filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;
+		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
 
 		filter.filteringTagInCommentEnabled = true;
 
@@ -237,12 +237,12 @@ public final class XssFilter implements LucyXssFilter {
 			}
 		}
 
-		if (this.isNeloLogEnabled) {
+/*		if (this.isNeloLogEnabled) {
 			String neloStr = neloLogWriter.toString();
 			if (neloStr != null && neloStr.length() > 0) {
 				LOG.error("@[" + this.service + "]" + neloStr);
 			}
-		}
+		}*/
 	}
 
 	/**
@@ -251,7 +251,7 @@ public final class XssFilter implements LucyXssFilter {
 	 * @param writer
 	 * @param neloLogWriter
 	 */
-	String doFilterNelo(String dirty) {
+/*	String doFilterNelo(String dirty) {
 		StringWriter neloLogWriter = new StringWriter();
 		StringWriter writer = new StringWriter();
 		if (dirty == null || "".equals(dirty)) {
@@ -279,7 +279,7 @@ public final class XssFilter implements LucyXssFilter {
 		} else {
 			return "";
 		}
-	}
+	}*/
 
 	/**
 	 * 이 메소드는 특정 Tag 내 특정 Attribute의 값에 삽입되는 XSS({@code Cross Site Scripting})이
@@ -365,10 +365,10 @@ public final class XssFilter implements LucyXssFilter {
 		}
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-			if (this.isNeloLogEnabled) {
+		/*	if (this.isNeloLogEnabled) {
 				neloLogWriter.write(this.neloElementRemoveMSG);
 				neloLogWriter.write(ie.getName() + "\n");
-			}
+			}*/
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
@@ -406,10 +406,10 @@ public final class XssFilter implements LucyXssFilter {
 		checkRuleRemove(element);
 
 		if (element.isRemoved()) {
-			if (this.isNeloLogEnabled) {
+		/*	if (this.isNeloLogEnabled) {
 				neloLogWriter.write(this.neloElementRemoveMSG);
 				neloLogWriter.write(element.getName() + "\n");
-			}
+			}*/
 
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
@@ -428,10 +428,10 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (element.isDisabled()) {
-				if (this.isNeloLogEnabled) {
+				/*if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloElementMSG);
 					neloLogWriter.write(element.getName() + "\n");
-				}
+				}*/
 
 				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					element.setName(this.blockingPrefix + element.getName());
@@ -464,7 +464,7 @@ public final class XssFilter implements LucyXssFilter {
 					if (!element.isDisabled() && att.isDisabled()) {
 						hasAttrXss = true;
 
-						if (this.isNeloLogEnabled || !this.withoutComment) {
+						if (!this.withoutComment) {
 							attrXssSw.write(' ');
 							att.serialize(attrXssSw);
 						}
@@ -477,11 +477,11 @@ public final class XssFilter implements LucyXssFilter {
 
 			if (hasAttrXss) {
 				String attrXssString = attrXssSw.toString();
-				if (this.isNeloLogEnabled) {
+				/*if (this.isNeloLogEnabled) {
 					neloLogWriter.write(this.neloAttrMSG);
 					neloLogWriter.write(element.getName());
 					neloLogWriter.write(attrXssString + "\n");
-				}
+				}*/
 
 				if (!this.withoutComment) {
 					writer.write(attrXssString);
