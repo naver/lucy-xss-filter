@@ -87,7 +87,6 @@ They are probably not perfect, please let us know if anything feels wrong or inc
 Lucy is licensed under the Apache License, Version 2.0. See LICENSE for full license text.
 
 ## Maintainer
-[![benelog](https://avatars1.githubusercontent.com/u/910151?v=2&s=100)](https://github.com/benelog)
-[![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
+[![benelog](https://avatars1.githubusercontent.com/u/910151?v=2&s=100)](https://github.com/benelog)[![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
 
 
