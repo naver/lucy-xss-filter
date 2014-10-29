@@ -25,7 +25,7 @@ public class XssPreventerTest {
 		String dirty = "\"><script>alert('xss');</script>";
 		String clean = XssPreventer.escape(dirty);
 		
-		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
+		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39;xss&#39;);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
 
@@ -35,7 +35,17 @@ public class XssPreventerTest {
 		String dirty = "\"><script>alert('이형규');</script>";
 		String clean = XssPreventer.escape(dirty);
 		
-		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39이형규&#39);&lt;/script&gt;");
+		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39;이형규&#39;);&lt;/script&gt;");
+		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
+	}
+	
+	// 추가된 ' escape 테스트
+	@Test
+	public void testXssPreventerSingleQuote() {
+		String dirty = "<script>alert('1');</script>";
+		String clean = XssPreventer.escape(dirty);
+		
+		Assert.assertEquals(clean, "&lt;script&gt;alert(&#39;1&#39;);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
 }

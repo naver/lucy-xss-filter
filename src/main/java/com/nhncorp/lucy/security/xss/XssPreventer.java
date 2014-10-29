@@ -50,7 +50,7 @@ public class XssPreventer {
 			return null;
 		}
 		
-		return clean.replaceAll("'", "&#39");
+		return clean.replaceAll("'", "&#39;");
 	}
 	
 	/**
@@ -68,6 +68,6 @@ public class XssPreventer {
 			return null;
 		}
 		
-		return str.replaceAll("&#39", "'");
+		return str.replaceAll("&#39;", "'");
 	}
 }
