@@ -7,13 +7,8 @@
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
 	<artifactId>lucy-xss</artifactId>
-<<<<<<< HEAD
 	<version>1.6.3</version>
-	<name>NHNCorp Lucy XSS Filter</name>
-=======
-	<version>1.6.2</version>
 	<name>Lucy XSS Filter</name>
->>>>>>> opentest
 	<packaging>jar</packaging>
 	<inceptionYear>2008</inceptionYear>
 	<description>XSS Filter for Web Service</description>
@@ -107,120 +102,6 @@
 				</includes>
 			</testResource>
 		</testResources>
-<<<<<<< HEAD
-		<pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-					<debug>true</debug>
-					<optimize>true</optimize>
-					<encoding>utf-8</encoding>
-					<showDeprecations>true</showDeprecations>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.nhncorp.maven</groupId>
-				<artifactId>maven-revision-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>create</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/Mock*</exclude>
-						<exclude>**/Abstract*</exclude>
-						<exclude>**/*Helper</exclude>
-						<exclude>**/*$*</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>release.xml</descriptor>
-					</descriptors>
-					<finalName>lucy-xss-${pom.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-					<tarLongFileMode>gnu</tarLongFileMode>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<tagBase>http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/tags</tagBase>
-				</configuration>
-			</plugin>
-			
-			
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<version>3.0.2</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-					<jdk>${jdk-version}</jdk>
-					<generateXml>true</generateXml>
-					<generateHtml>true</generateHtml>
-					<generateHistorical>false</generateHistorical>
-					<licenseLocation>clover.license</licenseLocation>
-					<singleCloverDatabase>false</singleCloverDatabase>
-					<includesTestSourceRoots>false</includesTestSourceRoots>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-nhnstyle-plugin</artifactId>
-				<version>2.3.3</version>
-				<dependencies>
-					<dependency>
-						<groupId>com.nhncorp.quality</groupId>
-						<artifactId>nhn-checkstyle</artifactId>
-						<version>1.2</version>
-					</dependency>
-					<dependency>
-						<groupId>com.nhncorp.quality</groupId>
-						<artifactId>checkstyle</artifactId>
-						<version>4.4-p6</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
-			</plugin>
-			<plugin>
-				<groupId>com.nhncorp.maven</groupId>
-				<artifactId>maven-klocwork-plugin</artifactId>
-				<version>1.0.0</version>
-			</plugin>
-		</plugins>
-=======
 	
 		<pluginManagement>
 			<plugins>
@@ -276,7 +157,6 @@
 					<version>2.3.1</version>
 				</plugin>
 			</plugins>
->>>>>>> opentest
 		</pluginManagement>
 	</build>
 	
