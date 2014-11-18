@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ## Lucy-XSS : XssFilter, XssPreventer  
 Lucy-XSS(Cross Site Scripting)는 악의적인 XSS 코드의 위험으로부터 웹 애플리케이션을 보호하는 두 가지 방식의 방어 라이브러리(XssFilter, XssPreventer)를 제공한다.
 
