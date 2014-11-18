@@ -7,7 +7,8 @@ Lucy-XSS(Cross Site Scripting) Filter는 악의적인 XSS 코드의 위험으로
 Java 기반의 필터 라이브러리이다. Lucy-XSS Filter를 사용하여 전사 표준 XSS 관련 보안 정책을 적용할 수 있으며, 블랙리스트 방식을 사용하는 기존 필터보다 안전하게 
 웹 서비스를 제공할 수 있다.
 
-![Lucy-XSS Filter structure.jpg](/files/18411)
+![Lucy-XSS Filter structure.jpg](https://raw.githubusercontent.com/leeplay/xsstest/master/docs/images/XssFilter_Structure.png)
+
 Lucy-XSS Filter 객체를 생성하면 Configuration Builder는 White List Configuration에 정의된 내용을 바탕으로 White List Object Model을 생성하여 
 Lucy-XSS Filter Core로 전달한다. Lucy-XSS Filter Core는 Markup Parser(DOM, SAX 둘 다 지원 )가 필터링 대상 HTML 문자열을 파싱하여 생성한 HTML Object Model을 
 White List Object Model과 비교하여 필터링한다.
@@ -180,6 +181,3 @@ Lucy is licensed under the Apache License, Version 2.0. See LICENSE for full lic
 
 ## Maintainer
 [![benelog](https://avatars1.githubusercontent.com/u/910151?v=2&s=100)](https://github.com/benelog)[![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
-
-
->>>>>>> opentest
