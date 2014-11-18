@@ -1,3 +1,7 @@
+## [1.6.3]
+Enhancements
+* XssPreventer escape 오류 수정  
+
 ## [1.6.2]
 Enhancements
 * XssPreventer의 한글 데이터 unicode encoding 문제로 인해 apache-common-lang 3.3.2 적용 
