@@ -85,7 +85,6 @@ For more information, please see ....doc
 
 ## Contributing to Lucy
 Want to hack on Lucy-XSS? Awesome! There are instructions to get you started here.
-
 They are probably not perfect, please let us know if anything feels wrong or incomplete.
 
 ## Licensing
