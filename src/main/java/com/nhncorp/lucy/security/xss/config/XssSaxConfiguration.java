@@ -1,9 +1,18 @@
 /*
- * @(#) XssSaxConfiguration.java 2010. 8. 11
- *
- * Copyright 2010 NHN Corp. All rights Reserved.
- * NHN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
+ *	Copyright 2014 Naver Corp.
+ *	
+ *	Licensed under the Apache License, Version 2.0 (the "License");
+ *	you may not use this file except in compliance with the License.
+ *	You may obtain a copy of the License at
+ *	
+ *		http://www.apache.org/licenses/LICENSE-2.0
+ *	
+ *	Unless required by applicable law or agreed to in writing, software
+ *	distributed under the License is distributed on an "AS IS" BASIS,
+ *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *	See the License for the specific language governing permissions and
+ *	limitations under the License.
+ */	
 package com.nhncorp.lucy.security.xss.config;
 
 import java.io.IOException;
@@ -25,7 +34,7 @@ import com.nhncorp.lucy.security.xss.event.ElementListener;
  * 이 클래스는 XSS Filter 설정 내용을 나타낸다. <br/>
  * 만약, 설정 내용을 담고 있는 파일이 존재 하지 않거나 예상치 못한 포멧을 가지고 있다면, Exception을 발생 시킨다.
  *
- * @author Web Platform Development Team
+ * @author Naver Labs
  *
  */
 public final class XssSaxConfiguration {
@@ -33,7 +42,7 @@ public final class XssSaxConfiguration {
 
 	private Map<String, ElementRule> tags;
 	private Map<String, AttributeRule> atts;
-	private boolean neloAsyncLog;
+//	private boolean neloAsyncLog;
 	private String service = "UnknownService";
 	private boolean blockingPrefixEnabled;
 	private String blockingPrefix = "diabled_";
@@ -107,10 +116,10 @@ public final class XssSaxConfiguration {
 				config.addAttributeRule(Element.class.cast(list.item(i)));
 			}
 
-			list = root.getElementsByTagName("neloAsyncLog");
+/*			list = root.getElementsByTagName("neloAsyncLog");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableNeloAsyncLog(Element.class.cast(list.item(i)));
-			}
+			}*/
 
 			list = root.getElementsByTagName("blockingPrefix");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
@@ -167,7 +176,7 @@ public final class XssSaxConfiguration {
 		return rule;
 	}
 
-	private void enableNeloAsyncLog(Element element) {
+	/*private void enableNeloAsyncLog(Element element) {
 		String enable = element.getAttribute("enable");
 		String serviceName = element.getAttribute("service");
 
@@ -178,7 +187,7 @@ public final class XssSaxConfiguration {
 		if (serviceName != null && !serviceName.isEmpty()) {
 			this.setService(serviceName);
 		}
-	}
+	}*/
 
 	private void addElementRule(Element element) {
 		String name = element.getAttribute("name");
@@ -291,14 +300,14 @@ public final class XssSaxConfiguration {
 		}
 	}
 
-	public void setNeloAsyncLog(boolean neloAsyncLog) {
+/*	public void setNeloAsyncLog(boolean neloAsyncLog) {
 		this.neloAsyncLog = neloAsyncLog;
 	}
 
 	public boolean enableNeloAsyncLog() {
 		return neloAsyncLog;
 	}
-
+*/
 	public void setService(String service) {
 		this.service = service;
 	}

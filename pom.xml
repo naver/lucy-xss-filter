@@ -2,104 +2,48 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<organization>
-		<name>NHN Corp.</name>
-		<url>http://www.nhncorp.com/</url>
+		<name>Naver Labs</name>
+		<url>http://www.navercorp.com/</url>
 	</organization>
 	<groupId>com.nhncorp.lucy</groupId>
 	<artifactId>lucy-xss</artifactId>
+<<<<<<< HEAD
 	<version>1.6.3</version>
 	<name>NHNCorp Lucy XSS Filter</name>
+=======
+	<version>1.6.2</version>
+	<name>Lucy XSS Filter</name>
+>>>>>>> opentest
 	<packaging>jar</packaging>
-	<url>http://repo.nhncorp.com/lucy/</url>
 	<inceptionYear>2008</inceptionYear>
 	<description>XSS Filter for Web Service</description>
 
-	<profiles>
-		<profile>
-            <id>klocwork</id>
-            <build>
-               <plugins>
-                  <plugin>
-                     <groupId>com.klocwork.ps</groupId>
-                     <artifactId>kwmaven</artifactId>
-                     <configuration>
-                        <buildspec_filename>${KWINJECT_OUT_PATH}</buildspec_filename>
-                     </configuration>
-                     <executions>
-                        <execution>
-                           <phase>validate</phase>
-                           <goals>
-                              <goal>run</goal>
-                           </goals>
-                         </execution>
-                      </executions>
-                   </plugin>
-                </plugins>
-            </build>
-        </profile>
-	</profiles>
-
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
 	<scm>
-		<connection>scm:svn:http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/tags</connection>
-		<url>http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/tags</url>
-		<developerConnection>scm:svn:http://svn.bds.nhncorp.com/lucy-xss/lucy-xss/trunk</developerConnection>
-	</scm>
-
-	<issueManagement>
-		<system>jira</system>
-		<url>http://bts.nhncorp.com/nhnbts/browse/XSSFILTERSUS</url>
-	</issueManagement>
-
-	<ciManagement>
-		<notifiers>
-			<notifier>
-				<type>mail</type>
-				<address>beardol100@nhncorp.com</address>
-			</notifier>
-		</notifiers>
-	</ciManagement>
-
-	<distributionManagement>
-		<repository>
-			<id>nhn.release.repository</id>
-			<name>nhncorp.com.release</name>
-			<url>http://repo.nhncorp.com/maven2</url>
-			<layout>default</layout>
-		</repository>
-		<snapshotRepository>
-			<id>nhn.snapshot.repository</id>
-			<name>nhncorp.com.snapshot</name>
-			<url>http://repo.nhncorp.com/m2-snapshot-repository</url>
-			<layout>default</layout>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>nhn.release</id>
-			<name>NHN Release Repository</name>
-			<url>http://repo.nhncorp.com/maven2</url>
-		</repository>
-		<repository>
-			<id>nhn.snapshot</id>
-			<name>NHN Snapshot Repository</name>
-			<url>http://repo.nhncorp.com/m2-snapshot-repository/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>nhn repository</id>
-			<name>NHN Maven2 Repository</name>
-			<url>http://repo.nhncorp.com/maven2</url>
-		</pluginRepository>
-	</pluginRepositories>
+		<url>https://github.com/naver/lucy-xss-filter</url>
+		<connection>scm:git:git://github.com/naver/lucy-xss-filter.git</connection>
+		<developerConnection>scm:git:git@github.com:naver/lucy-xss-filter.git</developerConnection>
+		<tag>HEAD</tag>
+ 	</scm>
+ 	
+ 	<developers>
+		<developer>
+			<name>Sanghyuk Jung</name>
+			<id>benelog</id>
+		</developer>
+	
+		<developer>
+			<name>Hyeongkyu Lee</name>
+			<id>leeplay</id>
+		</developer>	
+	</developers>
 
 	<dependencies>
 		<dependency>
@@ -112,12 +56,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.nhncorp.nelo</groupId>
-			<artifactId>nelo-appender</artifactId>
-			<version>1.1.4</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -136,15 +74,6 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.4</version>
 		</dependency>
-		<!-- 
-		<dependency>
-		<groupId>net.sourceforge.htmlcleaner</groupId>
-		<artifactId>htmlcleaner</artifactId>
-		<version>2.2</version>
-	</dependency>
-	
-	 -->
-	 
 	</dependencies>
 
 	<build>
@@ -178,6 +107,7 @@
 				</includes>
 			</testResource>
 		</testResources>
+<<<<<<< HEAD
 		<pluginManagement>
 		<plugins>
 			<plugin>
@@ -290,8 +220,119 @@
 				<version>1.0.0</version>
 			</plugin>
 		</plugins>
+=======
+	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.5</source>
+						<target>1.5</target>
+						<debug>true</debug>
+						<optimize>true</optimize>
+						<encoding>utf-8</encoding>
+						<showDeprecations>true</showDeprecations>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<excludes>
+							<exclude>**/Mock*</exclude>
+							<exclude>**/Abstract*</exclude>
+							<exclude>**/*Helper</exclude>
+							<exclude>**/*$*</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<configuration>
+						<descriptors>
+							<descriptor>release.xml</descriptor>
+						</descriptors>
+						<finalName>lucy-xss-${pom.version}</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+						<tarLongFileMode>gnu</tarLongFileMode>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+			</plugins>
+>>>>>>> opentest
 		</pluginManagement>
 	</build>
+	
+	<profiles>
+		<profile>
+			<id>klocwork</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.klocwork.ps</groupId>
+						<artifactId>kwmaven</artifactId>
+						<executions>
+							<execution>
+								<configuration>
+									<buildspec_filename>../klocwork/kwinject.out</buildspec_filename>
+								</configuration>
+								<phase>validate</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<reporting>
 		<plugins>
 			<plugin>
@@ -365,14 +406,6 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-nhnstyle-plugin</artifactId>
-				<version>2.3.3</version>
-				<configuration>
-					<configLocation>checkstyle-UTF8(ver1.2).xml</configLocation>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,9 +1,26 @@
 /*
+<<<<<<< HEAD
  * @(#) XssPreventer.java 2014. 7. 22
  *
  * Copyright 2014 Naver Corp. All rights Reserved.
  * Naver PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
+=======
+ *	Copyright 2014 Naver Corp.
+ *	
+ *	Licensed under the Apache License, Version 2.0 (the "License");
+ *	you may not use this file except in compliance with the License.
+ *	You may obtain a copy of the License at
+ *	
+ *		http://www.apache.org/licenses/LICENSE-2.0
+ *	
+ *	Unless required by applicable law or agreed to in writing, software
+ *	distributed under the License is distributed on an "AS IS" BASIS,
+ *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *	See the License for the specific language governing permissions and
+ *	limitations under the License.
+ */	
+>>>>>>> opentest
 package com.nhncorp.lucy.security.xss;
 
 import org.junit.Assert;
@@ -38,6 +55,7 @@ public class XssPreventerTest {
 		Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39;이형규&#39;);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
+<<<<<<< HEAD
 	
 	// 추가된 ' escape 테스트
 	@Test
@@ -48,4 +66,6 @@ public class XssPreventerTest {
 		Assert.assertEquals(clean, "&lt;script&gt;alert(&#39;1&#39;);&lt;/script&gt;");
 		Assert.assertEquals(dirty, XssPreventer.unescape(clean));
 	}
+=======
+>>>>>>> opentest
 }

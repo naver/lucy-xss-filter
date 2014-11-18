@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<white-url><!-- 카페 설정 파일 샘플입니다. 적절하게 수정해서 사용하시기바랍니다.-->
+	<src>
+		<domain name="http://www.naver.com" desc="네이버">
+			<pattern>http://serviceapi.nmv.naver.com*</pattern>
+			<pattern>http://scrap.ad.naver.com/*</pattern>
+		</domain>
+		<domain name="" desc="네이버 뮤직 서비스">
+			<pattern>http://test-player.naver.com/naverPlayer/posting/*</pattern>
+			<pattern>http://alpha-player.naver.com/naverPlayer/posting/*</pattern>
+			<pattern>http://beta-player.naver.com/naverPlayer/posting/*</pattern>
+			<pattern>http://musicplayer.naver.com/naverPlayer/posting/*</pattern>
+			<pattern>http://player.music.naver.com/naverPlayer/posting/*</pattern>
+			<pattern>http://dev.player.music.naver.com*</pattern>
+			<pattern>http://test.player.music.naver.com*</pattern>
+			<pattern>http://qa.player.music.naver.com*</pattern>
+			<pattern>http://staging.player.music.naver.com*</pattern>
+			<pattern>http://alpha.player.music.naver.com*</pattern>
+			<pattern>http://beta.player.music.naver.com*</pattern>
+			<pattern>http://stage.player.music.naver.com*</pattern>
+		</domain>
+		<domain name="" desc="네이버 아이두게임">
+			<pattern>http://idogame.hangame.com/idogamevideo/v1/*</pattern>
+			<pattern>http://dev-idogame.hangame.com/idogame/ClientBin/iDoGamePlayer.xap*</pattern>
+			<pattern>http://idogame.hangame.com/idogame/ClientBin/iDoGamePlayer.xap*</pattern>
+		</domain>
+		<domain name="http://www.daum.net" desc="다음">
+			<pattern>http://flvs.daum.net/flvPlayer.swf*</pattern>
+			<pattern>http://v.daum.net/*</pattern>
+			<pattern>http://api.v.daum.net/*</pattern>
+			<pattern>http://tvpot.daum.net/playlist/playlist.swf*</pattern>
+		</domain>
+		<domain name="http://www.mncast.com" desc="엠엔캐스트">
+			<pattern>http://dory.mncast.com/mncHMovie.swf*</pattern>
+			<pattern>http://dory.mncast.com/mncastPlayer.swf*</pattern>
+		</domain>
+		<domain name="http://www.youtube.com" desc="Youtube">
+			<pattern>http://www.youtube.com/v/*</pattern>
+		</domain>
+		<domain name="http://www.mgoon.com" desc="엠군">
+			<pattern>http://play.mgoon.com/Video/*</pattern>
+			<pattern>http://doc.mgoon.com/player/*</pattern>
+			<pattern>http://play.mgoon.com/Game/*</pattern>
+			<pattern>http://play.mgoon.com/Photo/*</pattern>
+		</domain>
+		<domain name="http://www.pandora.tv" desc="판도라TV">
+			<pattern>http://flvr.pandora.tv/flv2pan/*</pattern>
+			<pattern>http://imgcdn.pandora.tv/gplayer/pandora_EGplayer.swf*</pattern>
+			<pattern>http://imgcdn.pandora.tv/gplayer/flJal.swf*</pattern>
+		</domain>
+		<domain name="http://www.tagstory.com" desc="태그스토리">
+			<pattern>http://play.tagstory.com/player/*</pattern>
+		</domain>
+		<domain name="http://www.pullbbang.com" desc="풀빵닷컴">
+			<pattern>http://play.pullbbang.com/player_pum.swf*</pattern>
+		</domain>
+		<domain name="http://www.freechal.com" desc="프리챌Q">
+			<pattern>http://eq.freechal.com/flvPlayer.swf*</pattern>
+		</domain>
+		<domain name="http://www.pixcow.com" desc="픽스카우">
+			<pattern>http://www.pixcow.com/flash_content2/*</pattern>
+		</domain>
+		<domain name="http://www.tagstory.com" desc="키위닷컴">
+			<pattern>http://play.tagstory.com/asp/keywui/player/*</pattern>
+		</domain>
+		<domain name="" desc="zazan">
+			<pattern>http://ezplay.mediaup.co.kr/ezPlayFMX_Siom/zazan_player.swf*</pattern>
+		</domain>
+		<domain name="" desc="아이플">
+			<pattern>http://player.iple.com/pages/movie/embshell/emb_player.swf*</pattern>
+		</domain>
+		<domain name="" desc="미래에셋 미디어">
+			<pattern>http://media.miraeasset.com//swf/*</pattern>
+		</domain>
+		<domain name="" desc="서울시 인터넷방송">
+			<pattern>http://tv.seoul.go.kr/common/player/posting/window_media_player.asp*</pattern>
+		</domain>
+		<domain name="" desc="게임스팟 동영상">
+			<pattern>mms://vod.gamespot.lgcdn.com/*</pattern>
+		</domain>
+		<domain name="" desc="광고정보센터">
+			<pattern>mms://media.adic.co.kr/*</pattern>
+		</domain>
+		<domain name="" desc="광주비엔날레">
+			<pattern>http://2005.gwangju-biennale.org/*</pattern>
+		</domain>
+		<domain name="" desc="무비위크">
+			<pattern>http://www.movieweek.co.kr/movie/multimedia/*</pattern>
+		</domain>
+		<domain name="" desc="비법닷컴">
+			<pattern>http://www.vipup.com/scrap/scrap.asp*</pattern>
+		</domain>
+		<domain name="" desc="아시아나 국제단편영화제">
+			<pattern>http://www.aisff.org/*</pattern>
+		</domain>
+		<domain name="" desc="영상 역사관">
+			<pattern>mms://125.60.2.110/e_history/*</pattern>
+		</domain>
+		<domain name="" desc="중소기업청">
+			<pattern>http://www.smba.go.kr/mov/*</pattern>
+		</domain>
+		<domain name="" desc="트라트라고">
+			<pattern>http://ucc.tlatlago.com/html/uccPlayer/*</pattern>
+		</domain>
+		<domain name="" desc="팬덤티비">
+			<pattern>http://www.fandomtv.com/flash/*</pattern>
+		</domain>		
+		<domain name="" desc="아이스크랩">
+			<pattern>http://www.eyescrap.com/news/common/swf/ArticleViewer01.swf*</pattern>
+		</domain>
+		<domain name="" desc="싸이월드 동영상">
+			<pattern>http://dbi.video.cyworld.com/v.sk/*</pattern>
+		</domain>
+		<domain name="" desc="이글루스 동영상">
+			<pattern>http://v.egloos.com/v.sk/*</pattern>
+		</domain>
+		<domain name="" desc="윙버스 위젯">
+			<pattern>http://widget.wingbus.com/flash/*</pattern>
+		</domain>
+		<domain name="" desc="뮤직쉐이크">
+			<pattern>http://www.musicshake.com/musicshakePlayer.swf*</pattern>
+		</domain>
+		<domain name="" desc="아프리카">
+			<pattern>http://live.afreeca.com:8057/*</pattern>
+			<pattern>http://afbbs.afreeca.com:8080/*</pattern>
+		</domain>
+		<domain name="" desc="플레이NC">
+			<pattern>http://static.plaync.co.kr/plaza/pcc/view/viewskin_s.swf*</pattern>
+		</domain>
+		<domain name="" desc="XTM">
+			<pattern>http://img.xtmtv.com/images/*</pattern>
+		</domain>
+		<domain name="" desc="아이서브">
+			<pattern>http://tv.co.kr/pum/tvcell_basic.swf*</pattern>
+			<pattern>http://tv.co.kr/pum/tvcell_mini.swf*</pattern>
+		</domain>
+		<domain name="" desc="UC씽">
+			<pattern>http://ucsing.mnet.com/L_swf/ucsing_player.swf*</pattern>
+		</domain>
+		<domain name="" desc="브랜드카페">
+			<pattern>http://event.agencyw.com/adidas/200805/original_incafe.swf*</pattern>
+		</domain>
+		<domain name="" desc="plaync 열린광장">
+			<pattern>http://static.plaync.co.kr/plaza/cartoon/view/viewskin_s.swf*</pattern>
+		</domain>
+		<domain name="" desc="소셜 추천 결과 차트 제공">
+			<pattern>http://www.wisia.com/flash/chart.swf*</pattern>
+		</domain>
+		<domain name="" desc="프리노믹스">
+			<pattern>http://www.linkwide.kr/common/widget/phonelink.swf*</pattern>
+		</domain>
+		<domain name="" desc="한게임 플래시게임">
+			<pattern>http://alpha-flashrep.hangame.com/flashgame/*</pattern>
+			<pattern>http://alpha-images.hangame.co.kr/*</pattern>
+			<pattern>http://images.hangame.co.kr*</pattern>
+		</domain>	
+		<domain name="" desc="와이즈라인">
+			<pattern>http://wiseline.com/flash/wl_website.swf*</pattern>
+		</domain>	
+		<domain name="" desc="피파온라인2 스쿼드메이커">
+			<pattern>http://fifaonline.pmang.com/squad/t.nwz*</pattern>
+		</domain>	
+		<domain name="http://www.musicshake.com" desc="뮤직쉐이크">
+			<pattern>http://eng.musicshake.com/musicshakePlayer.swf*</pattern>
+			<pattern>http://us.musicshake.com/musicshakePlayer.swf*</pattern>
+			<pattern>http://ip.musicshake.com/musicshakePlayer.swf*</pattern>
+		</domain>	
+		<domain name="http://www.clubbox.co.kr" desc="CLUB BOX">
+			<pattern>http://sticube.clubbox.co.kr/common/swf/Widget.swf*</pattern>
+		</domain>	
+		<domain name="http://www.tourvis.com/" desc="SK투어비스">
+			<pattern>http://map.tourvis.com/info/TourInfoMapC.swf*</pattern>
+		</domain>	
+		<domain name="http://www.btory.com" desc="BTORY">
+			<pattern>http://www.btory.com/assets/flex/X2Viewer.swf*</pattern>
+		</domain>	
+		<domain name="http://www.snaps.co.kr" desc="SNAPS">
+			<pattern>http://www.snaps.co.kr/swf/LinkedApp.swf*</pattern>
+		</domain>	
+		<domain name="http://www.nate.com" desc="네이트">
+			<pattern>http://v.nate.com/v.sk/*</pattern>
+			<pattern>http://w.blogdoc.nate.com*</pattern>			
+		</domain>	
+		<domain name="http://www.paoin.com" desc="파오인 신문지면 뷰어">
+			<pattern>http://www.paoin.com/Common/swf/ArticleViewer02.swf*</pattern>
+			<pattern>http://thumb.paoin.com/paoweb/common/flash/ArticleViewer02.swf*</pattern>
+			<pattern>http://thumb.paoin.com/paoweb/common/flash/ArticleShare.swf*</pattern>
+		</domain>	
+		<domain name="http://www.atzine.com" desc="엣진 서비스">
+			<pattern>http://www.atzine.com/*</pattern>
+		</domain>	
+		<domain name="http://www.jjanglive.com" desc="짱라이브 위젯">
+			<pattern>http://www.jjanglive.com/flash/webClient.swf*</pattern>
+			<pattern>http://www.jjanglive.com/flash/AdShowClient.swf*</pattern>
+		</domain>	
+		<domain name="http://www.pmang.com" desc="피망">
+			<pattern>http://file.pmang.com/images/pmang/gamepub/player/pm_player.swf*</pattern>
+			<pattern>http://www.pmang.com/gamepub/media/player.nwz*</pattern>
+		</domain>	
+		<domain name="http://adsoftheworld.com/" desc="AdsOfTheWorld">
+			<pattern>http://adsoftheworld.com/sites/all/library/flash/*</pattern>
+		</domain>	
+		<domain name="http://www.ccmpia.com" desc="CCMPIA">
+			<pattern>http://www.ccmpia.com/scripts/bgm2.php*</pattern>
+		</domain>	
+		<domain name="http://www.kbs.co.kr" desc="KBS 찜 서비스">
+			<pattern>http://www.kbs.co.kr/zzim/vmplayer/vmplayer.xap*</pattern>
+			<pattern>http://vmark.kbs.co.kr/zzim/vmplayer/vmplayer.xap*</pattern>
+			<pattern>http://vmark.kbs.co.kr/temp/VMARK_ZZIM_PLAYER_FOR_BEING_EMBEDDED.xap*</pattern>
+			<pattern>http://event.dn.naver.com/sbsplayer/vmplayer.xap</pattern>
+		</domain>	
+		<domain name="http://www.sbs.co.kr" desc="SBS">
+			<pattern>http://netv.sbs.co.kr/sbox/silverlight/ClientBin/NeTVPlayer.xap*</pattern>
+			<pattern>http://news.sbs.co.kr/viewer/ClientBin/NeTVPlayer.xap*</pattern>
+			<pattern>http://news.sbs.co.kr/viewer/ClientBin/NewsPlayer.xap*</pattern>
+			<pattern>http://wizard2.sbs.co.kr*</pattern>
+			<pattern>http://wizard2.sbs.co.kr*</pattern>
+			<pattern>http://wizard2.sbs.co.kr/w3/template/ClientBin/tp1_caption_viewer.xap*</pattern>
+			<pattern>http://sbsplayer.sbs.co.kr/ClientBin/SBSPlayer.Viewer.xap*</pattern>
+		</domain>	
+		<domain name="http://www.imbc.com" desc="하나더TV">
+			<pattern>http://onemore.imbc.com/ClientBin/oneplus.xap*</pattern>
+		</domain>	
+		<domain name="http://www.detailview.co.kr" desc="디테일뷰">
+			<pattern>http://storage.detailview.co.kr*</pattern>
+			<pattern>http://www.detailview.co.kr*</pattern>
+			<pattern>http://beta.detailview.co.kr*</pattern>
+		</domain>		
+		<domain name="http://www.brightcove.com" desc="Brightcove">
+			<pattern>http://c.brightcove.com*</pattern>
+		</domain>		
+		<domain name="http://www.hyundai-kiamotors.com" desc="현대기아자동차">
+			<pattern>http://vod.hyundai-kiamotors.com*</pattern>
+		</domain>		
+		<domain name="http://www.techdays.co.kr" desc="techdays">
+			<pattern>http://www.techdays.co.kr*</pattern>
+		</domain>
+		<domain name="http://synki.aronti.com" desc="아론티 싱키">
+			<pattern>http://synki.aronti.com*</pattern>
+		</domain>
+		<domain name="http://www.wowplan.co.kr" desc="와우플랜">
+			<pattern>http://www.wowplan.co.kr*</pattern>
+		</domain>
+		<domain name="http://happyimg2.naver.net/" desc="해피빈"> 
+			<pattern>http://happyimg2.naver.net/img3/flash/congstore/*</pattern> 
+		</domain>		
+	</src>
+</white-url>
