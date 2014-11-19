@@ -1,11 +1,4 @@
 /*
-<<<<<<< HEAD
- * @(#) XssPreventer.java 2014. 7. 22
- *
- * Copyright 2014 Naver Corp. All rights Reserved.
- * Naver PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-=======
  *	Copyright 2014 Naver Corp.
  *	
  *	Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +13,6 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */	
->>>>>>> opentest
 package com.nhncorp.lucy.security.xss;
 
 import org.apache.commons.lang3.StringEscapeUtils;

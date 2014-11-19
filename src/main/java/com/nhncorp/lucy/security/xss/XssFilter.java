@@ -381,21 +381,7 @@ public final class XssFilter implements LucyXssFilter {
 		} else {
 			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
 			// * : Occurs zero or more times, is short for {0,}
-<<<<<<< HEAD
-			String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
-			
-			int startIndex = stdName.indexOf("<!") + 1;
-			int lastIntndex = stdName.lastIndexOf(">");
-
-			String firststdName = stdName.substring(0, startIndex);
-			String middlestdName = StringUtils.replaceEach(stdName.substring(startIndex, lastIntndex), new String[] {"<", ">"}, new String[] {"&lt;", "&gt;"}); 
-			String laststdName = stdName.substring(lastIntndex);
-
-			stdName = firststdName + middlestdName + laststdName;
-			writer.write(stdName);
-=======
 			ie.serialize(writer);
->>>>>>> opentest
 
 			if (!ie.isEmpty()) {
 				this.serialize(writer, ie.getContents(), neloLogWriter);
