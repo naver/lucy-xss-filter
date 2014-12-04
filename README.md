@@ -1,5 +1,6 @@
 ## Lucy-XSS : XssFilter, XssPreventer  
-Lucy-XSS to provide a defense library of two ways(XssFilter, XssPreventer) to protect Web applications from XSS attacks, Using the Lucy-XSS Filter, it is possible to apply the security policy of the company standard.
+Lucy-XSS to provide a defense library of two ways(XssFilter, XssPreventer) to protect Web applications from XSS attacks. Using the Lucy-XSS Filter, it is possible to apply the security policy of the standard. 
+Of course, if you want, it is possible to change the standard of the company. (The current default standard is Navercorp.)
 
 ## XssFilter
 - Java-based library that supports the method of setting the white-list to protect the web application.
@@ -81,4 +82,7 @@ They are probably not perfect, please let us know if anything feels wrong or inc
 Lucy is licensed under the Apache License, Version 2.0. See LICENSE for full license text.
 
 ## Maintainer
-[![benelog](https://avatars1.githubusercontent.com/u/910151?v=2&s=100)](https://github.com/benelog)[![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
+[![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
+[![Seongmin Woo](https://avatars2.githubusercontent.com/u/1201462?v=3&s=100)](https://github.com/seongminwoo)
+[![Jaehee Ahn](https://avatars2.githubusercontent.com/u/1201462?v=3&s=100)](https://github.com/JaeHeeAhn)
+
