@@ -35,11 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * ...
  * </pre>
  *
-<<<<<<< HEAD
- * @author Web Platform Development Lab
-=======
  * @author Naver Labs
->>>>>>> opentest
  *
  */
 public class XssPreventer {
