@@ -86,3 +86,4 @@ Lucy is licensed under the Apache License, Version 2.0. See LICENSE for full lic
 ## Maintainer
 [![leeplay](https://avatars1.githubusercontent.com/u/7857613?v=2&s=100)](https://github.com/leeplay)
 [![Seongmin Woo](https://avatars2.githubusercontent.com/u/1201462?v=3&s=100)](https://github.com/seongminwoo)
+[![Jaehee Ahn](https://avatars3.githubusercontent.com/u/3446448?v=3&s=100)](https://github.com/JaeHeeAhn)
