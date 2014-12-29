@@ -6,7 +6,7 @@
 	</organization>
 	<groupId>com.navercorp.lucy</groupId>
 	<artifactId>lucy-xss</artifactId>
-	<version>1.6.3-SNAPSHOT</version>
+	<version>1.6.3</version>
 	<name>Lucy XSS Filter</name>
 	<packaging>jar</packaging>
 	<inceptionYear>2008</inceptionYear>
