@@ -1,18 +1,23 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<organization>
 		<name>Naver Labs</name>
-		<url>http://www.navercorp.com/</url>
+		<url>http://lab.naver.com/</url>
 	</organization>
-	<groupId>com.nhncorp.lucy</groupId>
+	<groupId>com.navercorp.lucy</groupId>
 	<artifactId>lucy-xss</artifactId>
-	<version>1.6.3</version>
+	<version>1.6.3-SNAPSHOT</version>
 	<name>Lucy XSS Filter</name>
 	<packaging>jar</packaging>
 	<inceptionYear>2008</inceptionYear>
 	<description>XSS Filter for Web Service</description>
-
+	
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	
 	<licenses>
 		<license>
 			<name>Apache License Version 2.0</name>
@@ -38,8 +43,22 @@
 			<name>Hyeongkyu Lee</name>
 			<id>leeplay</id>
 		</developer>	
+		
+		<developer>
+			<name>Seongmin Woo</name>
+			<id>seongminwoo</id>
+		</developer>
+		
+		<developer>
+			<name>Jaehee Ahn</name>
+			<id>JaeHeeAhn</id>
+		</developer>
 	</developers>
-
+	
+	<properties>
+		<additionalparam>-Xdoclint:none</additionalparam>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
