@@ -28,6 +28,18 @@ Lucy-XSS is an open source library of two defense modules to protect Web applica
 - Simple text parameter other than HTML should be filtered using the XssPreventer.
 - Use Xss Filter if you need to receive HTML tags for input. (eg:  mail, visitors' book,  message board service)
 
+
+## Release Information
+The latest stable release of lucy-xss is 1.6.3. You can pull it from the central Maven repositories.
+
+```xml
+<dependency>
+	<groupId>com.navercorp.lucy</groupId>
+	<artifactId>lucy-xss</artifactId>
+	<version>1.6.3</version>
+</dependency>
+```
+
 ## Getting started
 We also offer an interactive tutorial for learning basic uses of Lucy-XSS.
 See Docs for instructions on installing Luxy-xss.
