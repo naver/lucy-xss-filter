@@ -44,6 +44,9 @@ The latest stable release of lucy-xss is 1.6.3. You can pull it from the central
 We also offer an interactive tutorial for learning basic uses of Lucy-XSS.
 See Docs for instructions on installing Luxy-xss.
 
+[To begin using the library, please see the Quick Start Guide.](https://github.com/naver/lucy-xss-filter/blob/master/docs/manual/kr/04.%20quick%20guide/4.1%20Quick%20Start%20guide.md)
+
+
 ## Usage examples
 * XssPreventer
 
