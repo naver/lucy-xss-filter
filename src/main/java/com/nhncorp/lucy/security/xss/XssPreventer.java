@@ -15,6 +15,9 @@
  */	
 package com.nhncorp.lucy.security.xss;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,7 +44,9 @@ import org.apache.commons.logging.LogFactory;
 public class XssPreventer {
 	
 	private static final Log LOG = LogFactory.getLog(XssFilter.class);
-		
+	private static Pattern escapePattern = Pattern.compile("'");
+	private static Pattern unescapePttern = Pattern.compile("&#39;");
+
 	/**
 	 * 이 메소드는 XSS({@code Cross Site Scripting})가 포함된 위험한 코드에 대하여 
 	 * 신뢰할 수 있는 코드로 변환하는 기능을 제공한다.
@@ -59,7 +64,13 @@ public class XssPreventer {
 			return null;
 		}
 		
-		return clean.replaceAll("'", "&#39;");
+		Matcher matcher = escapePattern.matcher(clean);
+		
+		if (matcher.find()) {
+			return matcher.replaceAll("&#39;");
+		}
+		
+		return clean;
 	}
 	
 	/**
@@ -77,6 +88,12 @@ public class XssPreventer {
 			return null;
 		}
 		
-		return str.replaceAll("&#39;", "'");
+		Matcher matcher = unescapePttern.matcher(str);
+		
+		if (matcher.find()) {
+			return matcher.replaceAll("'");
+		}
+		
+		return str;
 	}
 }
