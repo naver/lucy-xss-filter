@@ -190,7 +190,7 @@
 						<executions>
 							<execution>
 								<configuration>
-									<buildspec_filename>../klocwork/kwinject.out</buildspec_filename>
+									<buildspec_filename>${KWINJECT_OUT_PATH}</buildspec_filename>
 								</configuration>
 								<phase>validate</phase>
 								<goals>
