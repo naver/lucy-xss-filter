@@ -98,6 +98,10 @@ Want to hack on Lucy-XSS? Awesome! There are instructions to get you started her
 They are probably not perfect, please let us know if anything feels wrong or incomplete.
 (Please wait. We are preparing for contribution guide.)
 
+## Other Lucy Related Projects
+
+- [lucy-xss-servlet-filter](https://github.com/naver/lucy-xss-servlet-filter) : java servlet filter library to protect Web applications from XSS attacks.
+
 ## Licensing
 Lucy is licensed under the Apache License, Version 2.0. See LICENSE for full license text.
 
