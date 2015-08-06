@@ -1,7 +1,15 @@
-/target/
-/bin/
+#Eclipse
 /.settings/
 *.project
 *.classpath
+
+#Project
+/target/
+/bin/
 *.releaseBackup
 *.properties
+
+# Intellij
+.idea/
+*.iml
+*.iws
