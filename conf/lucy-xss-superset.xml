@@ -13,6 +13,24 @@
 		<element name="style" disable="true" />
 		<element name="link" disable="true" />
 		<element name="base" disable="true" />
+		<element name="button" endTag="true">
+			<attributes>
+				<ref name="Attrs"/>
+				<ref name="name"/>
+				<ref name="value"/>
+				<ref name="type"/>
+				<ref name="disabled"/>
+				<ref name="tabindex"/>
+				<ref name="accesskey"/>
+				<ref name="Html5GlobalAttr"/>
+				<ref name="autofocus"/>
+				<ref name="form"/>
+				<ref name="formenctype"/>
+				<ref name="formmethod"/>
+				<ref name="formnovalidate"/>
+				<ref name="formtarget"/>
+			</attributes>
+		</element>
 	</elementRule>
 	
 	<attributeRule>

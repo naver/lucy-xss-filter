@@ -34,6 +34,7 @@
 		<attribute name="href">
   		 <notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
  		</attribute>
+		<attribute name="formaction" disable="true"/>
 	</attributeRule>
 
 </config>

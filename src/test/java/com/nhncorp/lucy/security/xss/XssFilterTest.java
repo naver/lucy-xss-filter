@@ -1745,7 +1745,16 @@ public class XssFilterTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
-	
+
+	@Test
+	public void buttonFormactionOnSuperset() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<button formaction=\"http://serviceapi.nmv.naver.com/\">";
+		String expected = "<!-- Not Allowed Tag Filtered -->&lt;button formaction=\"http://serviceapi.nmv.naver.com/\"&gt;";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
 	/**
 	 * Iehack 태그는 어느 태그 밑에도 올 수 있어야 한다.
 	 */
