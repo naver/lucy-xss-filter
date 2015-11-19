@@ -1425,7 +1425,16 @@ public class XssFilterSAXSimpleTest extends XssFilterTestCase {
 		String clean = filter.doFilter(dirty);
 		Assert.assertEquals(expected, clean);
 	}
-	
+
+	@Test
+	public void buttonFormactionOnSuperset() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<button formaction=\"http://serviceapi.nmv.naver.com/\">";
+		String expected = "<!-- Not Allowed Attribute Filtered ( formaction=\"http://serviceapi.nmv.naver.com/\") --><button>";
+		String clean = filter.doFilter(dirty);
+		Assert.assertEquals(expected, clean);
+	}
+
 	@Test
 	public void embedListenerOnSuperset() {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
