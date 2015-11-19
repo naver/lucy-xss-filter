@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- version 20151119-1 -->
 <config xmlns="http://www.nhncorp.com/lucy-xss"
 	extends="lucy-xss-default.xml">
 
