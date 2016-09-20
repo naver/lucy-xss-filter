@@ -190,7 +190,7 @@
 						<executions>
 							<execution>
 								<configuration>
-									<buildspec_filename>../klocwork/kwinject.out</buildspec_filename>
+									<buildspec_filename>${KWINJECT_OUT_PATH}</buildspec_filename>
 								</configuration>
 								<phase>validate</phase>
 								<goals>
@@ -282,6 +282,14 @@
 					<xmlOutputDirectory>
 						${project.build.directory}/findbugs
 					</xmlOutputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<format>xml</format>
 				</configuration>
 			</plugin>
 			<plugin>
