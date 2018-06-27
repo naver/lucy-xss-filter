@@ -120,7 +120,7 @@ public class Element extends Content {
 	/**
 	 * 이 메소드는 Tag 가 닫혀 있는지 여부를 세팅한다.
 	 *
-	 * @param close	Tag 가 닫혀 있는지 여부.
+	 * @param startClose	Tag 가 닫혀 있는지 여부.
 	 */
 	public void setStartClose(boolean startClose) {
 		this.isStartClosed = startClose;
