@@ -13,7 +13,7 @@
 			</listener>
 		</element>
 		<element name="img" disable="false">
-			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			<listener>com.nhncorp.lucy.security.xss.listener.ImgListener
 			</listener>
 		</element>
 		<element name="style" disable="false">

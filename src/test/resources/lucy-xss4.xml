@@ -11,10 +11,10 @@
 			<listener>com.nhncorp.lucy.security.xss.listener.ObjectListener</listener>
 		</element>
 		<element name="img" disable="false">
-			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener</listener>
+			<listener>com.nhncorp.lucy.security.xss.listener.ImgListener</listener>
 		</element>
 	</elementRule>
-	
+
 	<attributeRule>
 		<attribute name="src">
 			<notAllowedPattern><![CDATA[(?i:file:[/]{1,3}[a-zA-Z]:[^>]*)]]></notAllowedPattern>

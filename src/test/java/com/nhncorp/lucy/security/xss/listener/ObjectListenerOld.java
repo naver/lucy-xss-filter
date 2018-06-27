@@ -1,18 +1,18 @@
 /*
  *	Copyright 2014 Naver Corp.
- *	
+ *
  *	Licensed under the Apache License, Version 2.0 (the "License");
  *	you may not use this file except in compliance with the License.
  *	You may obtain a copy of the License at
- *	
+ *
  *		http://www.apache.org/licenses/LICENSE-2.0
- *	
+ *
  *	Unless required by applicable law or agreed to in writing, software
  *	distributed under the License is distributed on an "AS IS" BASIS,
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- */	
+ */
 package com.nhncorp.lucy.security.xss.listener;
 
 import java.util.regex.Pattern;
@@ -22,9 +22,9 @@ import com.nhncorp.lucy.security.xss.markup.Element;
 
 /**
  * 이 클래스는 Object 태그에 대한 보안 필터링을 수행한다.
- * 
+ *
  * @author Web Platform Development Team
- * 
+ *
  */
 public class ObjectListenerOld implements ElementListener {
 	private static final Pattern INVOKEURLS = Pattern
@@ -59,7 +59,7 @@ public class ObjectListenerOld implements ElementListener {
 		return false;
 	}
 
-	public void handleElement(Element e) {
+	public void handleElement(Element element) {
 		boolean invokeURLsExisted = false;
 		boolean autostartExisted = false;
 		boolean allowScriptAccessExisted = false;
@@ -72,8 +72,8 @@ public class ObjectListenerOld implements ElementListener {
 		boolean enableHtmlAccessExisted = false;
 
 		String allowNetworkingValue = "\"all\"";
-		if (e.getElements() != null) {
-			for (Element param : e.getElements()) {
+		if (element.getElements() != null) {
+			for (Element param : element.getElements()) {
 				if ("param".equalsIgnoreCase(param.getName())
 						&& containsURLName(param.getAttributeValue("name"))
 						&& !this.isWhiteUrl(param.getAttributeValue("value"))) {
@@ -82,7 +82,7 @@ public class ObjectListenerOld implements ElementListener {
 				}
 			}
 
-			for (Element param : e.getElements()) {
+			for (Element param : element.getElements()) {
 				if (!"param".equalsIgnoreCase(param.getName())) {
 					continue;
 				}
@@ -127,7 +127,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element invokeURLs = new Element("param");
 			invokeURLs.putAttribute("name", "\"invokeURLs\"");
 			invokeURLs.putAttribute("value", "\"false\"");
-			e.addContent(invokeURLs);
+			element.addContent(invokeURLs);
 		}
 
 		// <param name="autostart" value="false" />
@@ -135,7 +135,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element autostart = new Element("param");
 			autostart.putAttribute("name", "\"autostart\"");
 			autostart.putAttribute("value", "\"false\"");
-			e.addContent(autostart);
+			element.addContent(autostart);
 		}
 
 		// <param name="allowScriptAccess" value="never" />
@@ -143,7 +143,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element allowScriptAccess = new Element("param");
 			allowScriptAccess.putAttribute("name", "\"allowScriptAccess\"");
 			allowScriptAccess.putAttribute("value", "\"never\"");
-			e.addContent(allowScriptAccess);
+			element.addContent(allowScriptAccess);
 		}
 
 		// <param name="allowNetworking" value="all|internal" />
@@ -152,7 +152,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element allowNetworking = new Element("param");
 			allowNetworking.putAttribute("name", "\"allowNetworking\"");
 			allowNetworking.putAttribute("value", allowNetworkingValue);
-			e.addContent(allowNetworking);
+			element.addContent(allowNetworking);
 		}
 
 		// <param name="autoplay" value="false" />
@@ -160,7 +160,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element autoplay = new Element("param");
 			autoplay.putAttribute("name", "\"autoplay\"");
 			autoplay.putAttribute("value", "\"false\"");
-			e.addContent(autoplay);
+			element.addContent(autoplay);
 		}
 
 		// <param name="enablehref" value="flase" />
@@ -168,7 +168,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element enablehref = new Element("param");
 			enablehref.putAttribute("name", "\"enablehref\"");
 			enablehref.putAttribute("value", "\"false\"");
-			e.addContent(enablehref);
+			element.addContent(enablehref);
 		}
 
 		// <param name="enablejavascript" value="flase" />
@@ -176,7 +176,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element enablejavascript = new Element("param");
 			enablejavascript.putAttribute("name", "\"enablejavascript\"");
 			enablejavascript.putAttribute("value", "\"false\"");
-			e.addContent(enablejavascript);
+			element.addContent(enablejavascript);
 		}
 
 		// <param name="nojava" value="true" />
@@ -184,7 +184,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element nojava = new Element("param");
 			nojava.putAttribute("name", "\"nojava\"");
 			nojava.putAttribute("value", "\"true\"");
-			e.addContent(nojava);
+			element.addContent(nojava);
 		}
 
 		// <param name="AllowHtmlPopupwindow" value="false" />
@@ -192,7 +192,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element allowHtmlPopupwindow = new Element("param");
 			allowHtmlPopupwindow.putAttribute("name", "\"AllowHtmlPopupwindow\"");
 			allowHtmlPopupwindow.putAttribute("value", "\"false\"");
-			e.addContent(allowHtmlPopupwindow);
+			element.addContent(allowHtmlPopupwindow);
 		}
 
 		// <param name="enableHtmlAccess" value="false" />
@@ -200,7 +200,7 @@ public class ObjectListenerOld implements ElementListener {
 			Element enableHtmlAccess = new Element("param");
 			enableHtmlAccess.putAttribute("name", "\"enableHtmlAccess\"");
 			enableHtmlAccess.putAttribute("value", "\"false\"");
-			e.addContent(enableHtmlAccess);
+			element.addContent(enableHtmlAccess);
 		}
 	}
 

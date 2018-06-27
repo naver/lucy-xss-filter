@@ -2,11 +2,11 @@
 
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
 
-	<elementRule>	
+	<elementRule>
 		<element name="IEHackExtension">
 			<listener>com.nhncorp.lucy.security.xss.listener.IEHackExtensionListenerWithCallOfSetName</listener>
 		</element>
-	</elementRule>	
-	
+	</elementRule>
+
 	<blockingPrefix enable="true" prefix="blocking_"/>
 </config>

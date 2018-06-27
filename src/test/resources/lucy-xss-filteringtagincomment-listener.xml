@@ -3,7 +3,7 @@
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
 	<filteringTagInComment enable="true" type="config"/>
 	<element name="img" disable="false">
-			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			<listener>com.nhncorp.lucy.security.xss.listener.ImgListener
 			</listener>
 	</element>
 </config>

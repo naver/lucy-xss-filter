@@ -15,33 +15,32 @@
  */	
 package com.nhncorp.lucy.security.xss.markup.rule;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class TokenTest {
 	@Test
 	public void test() {
-		Token t = new Token(null);
-		t.setValue(new CharArraySegment(new char[] {'a', 'b', 'c', 'd'}, 0, 1));
-		Assert.assertEquals("", t.getName());
+		Token token = new Token(null);
+		token.setValue(new CharArraySegment(new char[] {'a', 'b', 'c', 'd'}, 0, 1));
+		assertEquals("", token.getName());
 
-		t.addChild(null);
-		t.addChild(new Token("test0"));
-		t.addChildren(null);
-
-		Assert.assertNull(t.getChild(0));
+		token.addChild(null);
+		token.addChild(new Token("test0"));
+		token.addChildren(null);
+		assertNull(token.getChild(0));
 
 		List<Token> list = new ArrayList<Token>();
 		list.add(new Token("test1"));
 		list.add(new Token("test2"));
 		list.add(new Token("test3"));
-		t.addChildren(list);
-		t.setValue(null);
-
-		Assert.assertNull(t.getChild(0));
-		Assert.assertNull(t.getChild("none"));
+		token.addChildren(list);
+		token.setValue(null);
+		assertNull(token.getChild(0));
+		assertNull(token.getChild("none"));
 	}
 }
