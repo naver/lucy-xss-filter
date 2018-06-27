@@ -15,7 +15,7 @@
 			<attributes>
 				<ref name="movietype"/>
 			</attributes>
-			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			<listener>com.nhncorp.lucy.security.xss.listener.ImgListener
 			</listener>
 		</element>
 
@@ -37,16 +37,16 @@
 				<ref name="a"/>
 			</elements>
 		</element>
-		
+
 		<element name="a">
 			<attributes>
 				<ref name="style"></ref>
 			</attributes>
 			<listener>com.nhncorp.lucy.security.xss.listener.ATagListener</listener>
 		</element>
-	
+
 	</elementRule>
-	
+
 	<attributeRule>
 		<attribute name="movietype"/>
 	</attributeRule>

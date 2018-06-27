@@ -3,7 +3,7 @@
 <config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset.xml">
 
 	<filteringTagInComment enable="true" type="config"/>
-	
+
 	<elementRule>
 		<element name="style" disable="false" />
 		<element name="embed" disable="false">
@@ -15,7 +15,7 @@
 			</listener>
 		</element>
 		<element name="img" disable="false">
-			<listener>com.nhncorp.lucy.security.xss.listener.IMGListener
+			<listener>com.nhncorp.lucy.security.xss.listener.ImgListener
 			</listener>
 		</element>
 		<element name="style" disable="false">
@@ -28,7 +28,7 @@
 		</attributes>
 		<listener>com.nhncorp.lucy.security.xss.listener.ATagListener</listener>
 	</element>
-	
+
 		<element name="table" override="true" endTag="false">
 			<attributes>
 				<ref name="height" />
