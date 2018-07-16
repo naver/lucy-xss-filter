@@ -138,7 +138,7 @@ public final class XssFilter implements LucyXssFilter {
 				return filter;
 			}
 		} catch (Exception e) {
-			throw new XssFilterException(e.getMessage());
+			throw new XssFilterException(e);
 		}
 	}
 
