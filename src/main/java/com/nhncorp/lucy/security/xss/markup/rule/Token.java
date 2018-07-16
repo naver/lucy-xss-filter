@@ -1,18 +1,18 @@
 /*
  *	Copyright 2014 Naver Corp.
- *	
+ *
  *	Licensed under the Apache License, Version 2.0 (the "License");
  *	you may not use this file except in compliance with the License.
  *	You may obtain a copy of the License at
- *	
+ *
  *		http://www.apache.org/licenses/LICENSE-2.0
- *	
+ *
  *	Unless required by applicable law or agreed to in writing, software
  *	distributed under the License is distributed on an "AS IS" BASIS,
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- */	
+ */
 package com.nhncorp.lucy.security.xss.markup.rule;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import java.util.List;
 /**
  * 이 클래스는 하나의 토큰을 나타내며, Tree Node 형태로 하위에 Token 들을 유지 하고 있다.
  * 각각의 토큰은 이름과 하위 토큰들로 구성된다.
- * 
+ *
  * @author Naver Labs
- * 
+ *
  */
 public final class Token {
 	private String name;
@@ -36,7 +36,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 토큰 이름을 리턴한다.
-	 * 
+	 *
 	 * @return	토큰 이름.
 	 */
 	public String getName() {
@@ -65,7 +65,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 토큰이 유지 하고 있는 String 값을 리턴한다.
-	 * 
+	 *
 	 * @return	토큰 String.
 	 */
 	public String getText() {
@@ -104,7 +104,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 특정 index 에 해당하는 하위 토큰을 리턴한다.
-	 * 
+	 *
 	 * @param index	하위 토큰 index 값.
 	 * @return	특정 index 에 해당하는 하위 토큰.
 	 * @throws IndexOutOfBoundsException	Index 값이 해당 범위를 벗어 날때 발생.
@@ -115,7 +115,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 특정 토큰 이름에 해당하는 첫 번째 하위 토큰을 리턴한다.
-	 * 
+	 *
 	 * @param name	하위 토큰 이름.
 	 * @return	특정 토큰 이름에 해당하는 첫 번째 하위 토큰.
 	 */
@@ -137,7 +137,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 모든 하위 토큰들을 리턴한다.
-	 * 
+	 *
 	 * @return	모든 하위 토큰들이 포함된 {@code List}.
 	 */
 	public List<Token> getChildren() {
@@ -146,7 +146,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 특정 토큰 이름에 해당하는 하위 토큰들을 리턴한다.
-	 * 
+	 *
 	 * @param name	하위 토큰 이름.
 	 * @return	특정 토큰 이름에 해당하는 하위 토큰들이 포함된 {@code List}.
 	 */
@@ -168,7 +168,7 @@ public final class Token {
 
 	/**
 	 * 이 메소드는 모든 하위 토큰들의 갯수를 리턴한다.
-	 * 
+	 *
 	 * @return	모든 하위 토큰들의 갯수.
 	 */
 	public int getChildCount() {

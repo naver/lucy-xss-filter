@@ -59,7 +59,6 @@ public class XssFilterPerformance extends XssFilterTestCase {
 			main.product(0, args);
 			return;
 		}
-
 		main.product(1000, DEFAULT_SMALL_FILES);
 	}
 
@@ -180,9 +179,7 @@ public class XssFilterPerformance extends XssFilterTestCase {
 					}
 				});
 			}
-
 			latch.await();
-
 		} catch (Exception e) {
 			 throw new RuntimeException(e);
 		}
@@ -231,9 +228,7 @@ public class XssFilterPerformance extends XssFilterTestCase {
 					}
 				});
 			}
-
 			latch.await();
-
 		} catch (Exception e) {
 			 throw new RuntimeException(e);
 		}
@@ -274,9 +269,7 @@ public class XssFilterPerformance extends XssFilterTestCase {
 					}
 				});
 			}
-
 			latch.await();
-
 		} catch (Exception e) {
 			 throw new RuntimeException(e);
 		}

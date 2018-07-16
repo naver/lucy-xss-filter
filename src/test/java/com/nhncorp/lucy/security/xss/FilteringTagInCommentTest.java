@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-
 public class FilteringTagInCommentTest {
 	@Test
 	public void testConfig() throws IOException {

@@ -1,18 +1,18 @@
 /*
  *	Copyright 2014 Naver Corp.
- *	
+ *
  *	Licensed under the Apache License, Version 2.0 (the "License");
  *	you may not use this file except in compliance with the License.
  *	You may obtain a copy of the License at
- *	
+ *
  *		http://www.apache.org/licenses/LICENSE-2.0
- *	
+ *
  *	Unless required by applicable law or agreed to in writing, software
  *	distributed under the License is distributed on an "AS IS" BASIS,
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- */	
+ */
 package com.nhncorp.lucy.security.xss.config;
 
 import java.io.IOException;
@@ -163,7 +163,7 @@ public final class XssConfiguration {
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableBlockingPrefix(Element.class.cast(list.item(i)));
 			}
-			
+
 			list = root.getElementsByTagName("filteringTagInComment");
 			for (int i = 0; list.getLength() > 0 && i < list.getLength(); i++) {
 				config.enableFilteringTagInComment(Element.class.cast(list.item(i)));
@@ -656,7 +656,7 @@ public final class XssConfiguration {
 		this.childAttrRef = null;
 		this.parentAttrGroupRef = null;
 	}
-	
+
 	private void enableFilteringTagInComment(Element element) {
 		String enable = element.getAttribute("enable");
 		String type = element.getAttribute("type");
@@ -674,7 +674,7 @@ public final class XssConfiguration {
 		this.filteringTagInCommentType = type;
 		//strict or config
 	}
-	
+
 	private void setFilteringTagInCommentEnabled(boolean enabled) {
 		this.filteringTagInCommentEnabled = enabled;
 	}
@@ -682,7 +682,7 @@ public final class XssConfiguration {
 	public boolean isFilteringTagInCommentEnabled() {
 		return this.filteringTagInCommentEnabled;
 	}
-	
+
 	public boolean isNoTagAllowedInComment() {
 		return "strict".endsWith(this.filteringTagInCommentType);
 	}
