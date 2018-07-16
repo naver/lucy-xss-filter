@@ -1,18 +1,18 @@
 /*
  *	Copyright 2014 Naver Corp.
- *	
+ *
  *	Licensed under the Apache License, Version 2.0 (the "License");
  *	you may not use this file except in compliance with the License.
  *	You may obtain a copy of the License at
- *	
+ *
  *		http://www.apache.org/licenses/LICENSE-2.0
- *	
+ *
  *	Unless required by applicable law or agreed to in writing, software
  *	distributed under the License is distributed on an "AS IS" BASIS,
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- */	
+ */
 package com.nhncorp.lucy.security.xss.markup;
 
 import java.io.IOException;
@@ -33,19 +33,19 @@ import java.io.Writer;
  * 	</li>
  * </ul>
  * </p>
- * 
+ *
  * @author Naver Labs
- * 
+ *
  */
 public abstract class Content {
 	/**
-	 * 이 멤버 변수는 Content 의 부모 Element 를 나타낸다. 
+	 * 이 멤버 변수는 Content 의 부모 Element 를 나타낸다.
 	 */
 	protected Element parent;
 
 	/**
 	 * 이 메소드는 부모 Element 를 리턴한다.
-	 * 
+	 *
 	 * @return	부모 Element.
 	 */
 	public Element getParent() {
@@ -54,7 +54,7 @@ public abstract class Content {
 
 	/**
 	 * 이 메소드는 부모 Element 를 세팅한다.
-	 * 
+	 *
 	 * @param parent	부모 Element
 	 */
 	public void setParent(Element parent) {
@@ -66,7 +66,7 @@ public abstract class Content {
 	 * <br/><br/>
 	 * {@link Element Element}를 제외한 모든 {@link Content Content} 들에 대해
 	 * '<'과 '>'을 각각 {@code '&lt;', '&gt;'}으로 변환한다.
-	 * 
+	 *
 	 * @param writer	Writer 객체.
 	 * @throws IOException	I/O 에러 발생 시.
 	 */

@@ -1,18 +1,18 @@
 /*
  *	Copyright 2014 Naver Corp.
- *	
+ *
  *	Licensed under the Apache License, Version 2.0 (the "License");
  *	you may not use this file except in compliance with the License.
  *	You may obtain a copy of the License at
- *	
+ *
  *		http://www.apache.org/licenses/LICENSE-2.0
- *	
+ *
  *	Unless required by applicable law or agreed to in writing, software
  *	distributed under the License is distributed on an "AS IS" BASIS,
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- */	
+ */
 package com.nhncorp.lucy.security.xss;
 
 import java.io.IOException;
@@ -214,10 +214,10 @@ public final class XssFilter implements LucyXssFilter {
 	 * 이 메소드는 XSS({@code Cross Site Scripting})이 포함된 위험한 코드에 대하여 신뢰할 수 있는 코드로
 	 * 변환하거나, 삭제하는 기능을 제공한다. <br/> {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
 	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
-	 * 
+	 *
 	 * @param dirty
 	 *            XSS({@code Cross Site Scripting})이 포함된 위험한 코드.
-	 * @param writer            
+	 * @param writer
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public void doFilter(String dirty, Writer writer) {
@@ -286,7 +286,7 @@ public final class XssFilter implements LucyXssFilter {
 	 * 포함된 위험한 코드를 신뢰할 수 있는 코드로 변환하거나, 삭제하는 기능을 제공한다. <br/>
 	 * {@code "lucy-xss.xml"} 설정(사용자 설정 파일)에 따라 필터링을 수행한다.
 	 * 사용자 설정 파일을 명시적으로 지정하지 않는 getInstance() 로 필터 객체를 생성했을 경우, lucy-xss-superset.xml 설정을 사용한다.
-	 * 
+	 *
 	 * @param tagName
 	 *            특정 Tag 이름.
 	 * @param attName
@@ -391,7 +391,7 @@ public final class XssFilter implements LucyXssFilter {
 				// 중첩 IE Hack 태그 처리 로직(메일서비스개발랩 요구사항)
 				// IE Hack 시작 태그의 종류 판별 및 태그맞춤 cf) 시작 스트링이 <!-- 인지 <! 인지에 따라 IE Hack 닫는 태그 달라짐.
 				String stdName = ie.getName().replaceAll("-->", ">").replaceFirst("<!--\\s*", "<!--").replaceAll("]\\s*>", "]>");
-				
+
 				if(stdName.indexOf("<!--") != -1) {
 					writer.write("<![endif]-->");
 				} else {
@@ -421,7 +421,7 @@ public final class XssFilter implements LucyXssFilter {
 				this.serialize(writer, element.getContents(), neloLogWriter);
 			}
 		} else {
-			//TODO 코드 리뷰 필요 
+			//TODO 코드 리뷰 필요
 			// v1.3.3 & v1.5.1 BEFORE if (!element.isDisabled()) {
 			if ((!element.isDisabled() || this.blockingPrefixEnabled)) {
 				checkRule(element);
@@ -563,7 +563,7 @@ public final class XssFilter implements LucyXssFilter {
 					att.setEnabled(false);
 				} else {
 					if (!attRule.getExceptionTagList().contains(element.getName().toLowerCase())) {
-						//Exception 리스트에 포함이 안되면, 
+						//Exception 리스트에 포함이 안되면,
 						//attribute Rule에 따라 disable 값을 설정한다.
 						attRule.checkDisabled(att);
 					} else {

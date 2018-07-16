@@ -61,7 +61,6 @@ public class XssFilterPerformanceSax extends XssFilterTestCase {
 			main.product(0, args);
 			return;
 		}
-
 		main.product(1000, DEFAULT_SMALL_FILES);
 	}
 
@@ -153,7 +152,6 @@ public class XssFilterPerformanceSax extends XssFilterTestCase {
 		while (loop-->0) {
 			tagInTag.append(" attribute" + loop + "=" + "value");
 		}
-
 		tagInTag.append("></div>");
 
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");

@@ -51,7 +51,6 @@ public class XssFilterOomTest extends XssFilterTestCase {
 		XssFilter filter = XssFilter.getInstance();
 		String target = readString(BIG_EML_FILES_8M);
 		String clean = filter.doFilter(target);
-
 	}
 
 	@Test
@@ -97,13 +96,13 @@ public class XssFilterOomTest extends XssFilterTestCase {
 	@Test
 	public void test6MFileSizeCaseConcurrentRun() throws Exception {
 		ExecutorService service = Executors.newFixedThreadPool(100);
-        final CountDownLatch latch = new CountDownLatch(10);
-            for (int i = 0; i < 10; i++) {
-                final int index = i;
-                service.execute(new Runnable() {
-                    public void run() {
-                    	XssFilter filter = XssFilter.getInstance();
-                		String target = "";
+		final CountDownLatch latch = new CountDownLatch(10);
+			for (int i = 0; i < 10; i++) {
+				final int index = i;
+				service.execute(new Runnable() {
+					public void run() {
+						XssFilter filter = XssFilter.getInstance();
+						String target = "";
 						try {
 							target = readString(BIG_HTML_FILES_6M);
 							String result = filter.doFilter(target);
@@ -111,11 +110,10 @@ public class XssFilterOomTest extends XssFilterTestCase {
 						} finally {
 							latch.countDown();
 						}
-
-                    }
-                });
-            }
-            latch.await();
+				}
+			});
+		}
+		latch.await();
 	}
 
 	@Ignore
