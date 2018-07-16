@@ -49,7 +49,7 @@ public final class ParsingGrammar {
 		try {
 			InputStream input = ParsingGrammar.class.getResourceAsStream(RULE_FILE);
 			reader = new BufferedReader(new InputStreamReader(input));
-			StringBuffer buffer = null;
+			StringBuilder buffer = null;
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("//")) {
@@ -62,7 +62,7 @@ public final class ParsingGrammar {
 					if (buffer != null) {
 						this.readNotation(buffer.toString());
 					}
-					buffer = new StringBuffer();
+					buffer = new StringBuilder();
 					buffer.append(line.trim());
 				} else if (buffer != null) {
 					buffer.append(line.trim());

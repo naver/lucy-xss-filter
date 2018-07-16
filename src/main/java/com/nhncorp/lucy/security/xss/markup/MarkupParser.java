@@ -252,7 +252,7 @@ public final class MarkupParser {
 	}
 
 	private static String read(Reader reader) throws IOException {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		try {
 			char[] cbuf = new char[1024];
 			int rc;

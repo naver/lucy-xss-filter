@@ -232,7 +232,7 @@ public final class XssFilter implements LucyXssFilter {
 			return "";
 		}
 
-		StringBuffer dirty = new StringBuffer();
+		StringBuilder dirty = new StringBuilder();
 		dirty.append('<').append(tagName);
 		dirty.append(' ').append(attName).append('=').append(dirtyAttValue);
 		dirty.append('>').append("</").append(tagName).append('>');

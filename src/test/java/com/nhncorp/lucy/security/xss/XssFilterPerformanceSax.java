@@ -126,7 +126,7 @@ public class XssFilterPerformanceSax extends XssFilterTestCase {
 	@Ignore
 	@Test
 	public void stackoverflowForManyTagRelationSaxFilter() {
-		StringBuffer tagInTag = new StringBuffer();
+		StringBuilder tagInTag = new StringBuilder();
 
 		int loop = 100000;
 		while (loop-->0) {
@@ -146,7 +146,7 @@ public class XssFilterPerformanceSax extends XssFilterTestCase {
 	@Ignore
 	@Test
 	public void stackoverflowForManyAttributeSaxFilter() {
-		StringBuffer tagInTag = new StringBuffer("<div");
+		StringBuilder tagInTag = new StringBuilder("<div");
 
 		int loop = 100000;
 		while (loop-->0) {
