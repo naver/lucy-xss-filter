@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -150,7 +151,6 @@ public final class XssFilter implements LucyXssFilter {
 	 * @return XssFilter 객체
 	 */
 	public static XssFilter getCommentFilterInstance(XssConfiguration config) {
-
 		XssFilter filter = new XssFilter(config);
 		filter.service = filter.config.getService();
 		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
@@ -198,18 +198,21 @@ public final class XssFilter implements LucyXssFilter {
 	public void doFilter(String dirty, Writer writer) {
 		StringWriter logWriter = new StringWriter();
 
-		if (dirty == null || dirty.length() == 0) {
-			LOG.debug("target string is empty. doFilter() method end.");
+		if (StringUtils.isEmpty(dirty)) {
+			LOG.debug("Source string is empty. doFilter() method end.");
 			return;
 		}
 
 		Collection<Content> contents = MarkupParser.parse(dirty);
 
-		if (contents != null && !contents.isEmpty()) {
-			try {
-				this.serialize(writer, contents, logWriter);
-			} catch (IOException ioe) {
-			}
+		if (isEmpty(contents)) {
+			return;
+		}
+
+		try {
+			this.serialize(writer, contents);
+		} catch (IOException ioe) {
+			// ignore
 		}
 	}
 
@@ -238,19 +241,21 @@ public final class XssFilter implements LucyXssFilter {
 		dirty.append('>').append("</").append(tagName).append('>');
 
 		Collection<Content> contents = MarkupParser.parse(dirty.toString());
-		if (contents != null && !contents.isEmpty()) {
-			for (Content content : contents) {
-				if (content instanceof Element) {
-					Element tag = Element.class.cast(content);
-					this.checkRule(tag);
+		if (isEmpty(contents)) {
+			return "";
+		}
 
-					Attribute att = tag.getAttribute(attName);
-					if (att != null) {
-						if (att.isDisabled()) {
-							return "";
-						} else {
-							return att.getValue();
-						}
+		for (Content content : contents) {
+			if (content instanceof Element) {
+				Element tag = Element.class.cast(content);
+				this.checkRule(tag);
+
+				Attribute att = tag.getAttribute(attName);
+				if (att != null) {
+					if (att.isDisabled()) {
+						return "";
+					} else {
+						return att.getValue();
 					}
 				}
 			}
@@ -259,28 +264,30 @@ public final class XssFilter implements LucyXssFilter {
 		return "";
 	}
 
-	private void serialize(Writer writer, Collection<Content> contents, StringWriter neloLogWriter) throws IOException {
-		if (contents != null && !contents.isEmpty()) {
-			for (Content content : contents) {
-				if (content instanceof Text || content instanceof Description) {
-					content.serialize(writer);
-				} else if (content instanceof Comment) {
-					this.serialize(writer, Comment.class.cast(content));
-				} else if (content instanceof IEHackExtensionElement) {
-					this.serialize(writer, IEHackExtensionElement.class.cast(content), neloLogWriter);
-				} else if (content instanceof Element) {
-					this.serialize(writer, Element.class.cast(content), neloLogWriter);
-				}
+	private boolean isEmpty(Collection<Content> contents) {
+		return contents == null || contents.isEmpty();
+	}
+
+	private void serialize(Writer writer, Collection<Content> contents) throws IOException {
+		for (Content content : contents) {
+			if (content instanceof Text || content instanceof Description) {
+				content.serialize(writer);
+			} else if (content instanceof Comment) {
+				this.serialize(writer, Comment.class.cast(content));
+			} else if (content instanceof IEHackExtensionElement) {
+				this.serialize(writer, IEHackExtensionElement.class.cast(content));
+			} else if (content instanceof Element) {
+				this.serialize(writer, Element.class.cast(content));
 			}
 		}
+
 	}
 
 	private void serialize(Writer writer, Comment comment) throws IOException {
-
 		comment.serializeFilteringTagInComment(writer, this.filteringTagInCommentEnabled, this.commentFilter);
 	}
 
-	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, IEHackExtensionElement ie) throws IOException {
 
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
 
@@ -304,7 +311,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents(), neloLogWriter);
+				this.serialize(writer, ie.getContents());
 			}
 		} else {
 			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
@@ -312,7 +319,7 @@ public final class XssFilter implements LucyXssFilter {
 			ie.serialize(writer);
 
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents(), neloLogWriter);
+				this.serialize(writer, ie.getContents());
 			}
 
 			if (ie.isClosed()) {
@@ -329,7 +336,7 @@ public final class XssFilter implements LucyXssFilter {
 		}
 	}
 
-	private void serialize(Writer writer, Element element, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, Element element) throws IOException {
 		boolean hasAttrXss = false;
 		checkRuleRemove(element);
 
@@ -341,7 +348,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!element.isEmpty()) {
-				this.serialize(writer, element.getContents(), neloLogWriter);
+				this.serialize(writer, element.getContents());
 			}
 		} else {
 			//TODO 코드 리뷰 필요
@@ -415,7 +422,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!element.isEmpty()) {
-				this.serialize(writer, element.getContents(), neloLogWriter);
+				this.serialize(writer, element.getContents());
 			}
 
 			if (element.isClosed()) {
