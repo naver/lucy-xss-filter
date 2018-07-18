@@ -184,13 +184,13 @@ public final class Token {
 	}
 
 	private String toString(int level) {
-		StringBuffer indentSb = new StringBuffer();
+		StringBuilder indentSb = new StringBuilder();
 
 		for (int i = 0; i < level; i++) {
 			indentSb.append("\t");
 		}
 
-		StringBuffer buffer = new StringBuffer(String.format("%s%s : [%s]", indentSb.toString(), this.getName(), this.getText()));
+		StringBuilder buffer = new StringBuilder(String.format("%s%s : [%s]", indentSb.toString(), this.getName(), this.getText()));
 		if (this.getChildCount() > 0) {
 			for (Token child : this.getChildren()) {
 				buffer.append("\n");

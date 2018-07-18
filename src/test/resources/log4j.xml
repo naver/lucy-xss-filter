@@ -8,38 +8,9 @@
 			<param name="ConversionPattern" value="%m%n" />
 		</layout>
 	</appender>
-
-	<!-- define nelo appender -->
-	<appender name="nelo" class="com.nhncorp.lucy.log.NeloAppender">
-		<param name="Threshold" value="ERROR" />
-		<param name="projectName" value="XSSFILTER_LOG" />
-		<param name="host" value="ecs.naver.com" />
-		<param name="port" value="10007" />
-		<param name="encoding" value="utf-8" />
-		<param name="timeout" value="1200" />
-		<param name="enable" value="true" />
-		<param name="errorCodeType" value="default" />
-		<param name="debug" value="true"/>
-	</appender>
-
-	<!-- define nelo-async appender -->
-	<appender name="nelo-async" class="org.apache.log4j.AsyncAppender">
-		<param name="Threshold" value="ERROR" />
-		<param name="blocking" value="false" />
-		<param name="locationInfo" value="true" />
-		<param name="bufferSize" value="2048"/>
-		<appender-ref ref="nelo" />
-	</appender>
-
-	<!-- // define loggers // -->
-	<logger name="com.nhncorp.lucy.security.xss" additivity="false">
-		<level value="ERROR" />
-		<appender-ref ref="nelo-async" />
-	</logger>
-
 	<!-- // define root // -->
 	<root>
-		<level value="WARN" />
+		<level value="DEBUG" />
 		<appender-ref ref="STDOUT" />
 	</root>
 </log4j:configuration>

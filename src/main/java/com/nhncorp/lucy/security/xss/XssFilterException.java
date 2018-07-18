@@ -25,4 +25,7 @@ public class XssFilterException extends RuntimeException {
 		super(message);
 	}
 
+	public XssFilterException(Throwable cause){
+		super(cause);
+	}
 }

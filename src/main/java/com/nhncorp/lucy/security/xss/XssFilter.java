@@ -64,17 +64,10 @@ public final class XssFilter implements LucyXssFilter {
 	private static final String BAD_ATT_INFO_END = ") -->";
 	private static final String REMOVE_TAG_INFO_START = "<!-- Removed Tag Filtered (";
 	private static final String REMOVE_TAG_INFO_END = ") -->";
-//	private static final String ELELMENT_NELO_MSG = " (Disabled Element)";
-//	private static final String ATTRIBUTE_NELO_MSG = " (Disabled Attribute)";
-//	private static final String ELELMENT_REMOVE_NELO_MSG = " (Removed Element)";
 	private static final String CONFIG = "lucy-xss-superset.xml";
 	private static final String IE_HACK_EXTENSION = "IEHackExtension";
 	private boolean withoutComment;
-//	private boolean isNeloLogEnabled;
 	private String service;
-//	private String neloElementMSG;
-//	private String neloAttrMSG;
-//	private String neloElementRemoveMSG;
 	private String blockingPrefix;
 	private boolean blockingPrefixEnabled;
 	private boolean filteringTagInCommentEnabled;
@@ -117,13 +110,6 @@ public final class XssFilter implements LucyXssFilter {
 	 *             설정파일 로딩 실패 시 발생(malformed인 경우).
 	 */
 	public static XssFilter getInstance(String fileName, boolean withoutComment) throws XssFilterException {
-		/**
-		XssFilter filter = instanceMap.get(fileName);
-		if (filter != null) {
-			filter.withoutComment = withoutComment;
-			return filter;
-		}
-		 **/
 		try {
 			synchronized (XssFilter.class) {
 				FilterRepositoryKey key = new FilterRepositoryKey(fileName, withoutComment);
@@ -134,15 +120,11 @@ public final class XssFilter implements LucyXssFilter {
 					return filter;
 				}
 				filter = new XssFilter(XssConfiguration.newInstance(fileName));
-//				filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 				filter.service = filter.config.getService();
 				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
 
 				filter.withoutComment = withoutComment;
-/*				filter.neloElementMSG = ELELMENT_NELO_MSG;
-				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
 
 				filter.filteringTagInCommentEnabled = filter.config.isFilteringTagInCommentEnabled();
 
@@ -157,7 +139,7 @@ public final class XssFilter implements LucyXssFilter {
 				return filter;
 			}
 		} catch (Exception e) {
-			throw new XssFilterException(e.getMessage());
+			throw new XssFilterException(e);
 		}
 	}
 
@@ -169,18 +151,11 @@ public final class XssFilter implements LucyXssFilter {
 	 * @return XssFilter 객체
 	 */
 	public static XssFilter getCommentFilterInstance(XssConfiguration config) {
-
 		XssFilter filter = new XssFilter(config);
-//		filter.isNeloLogEnabled = filter.config.enableNeloAsyncLog();
 		filter.service = filter.config.getService();
 		filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 		filter.blockingPrefix = filter.config.getBlockingPrefix();
-
 		filter.withoutComment = true;
-/*		filter.neloElementMSG = ELELMENT_NELO_MSG;
-		filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
-		filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
-
 		filter.filteringTagInCommentEnabled = true;
 
 		return filter;
@@ -221,65 +196,25 @@ public final class XssFilter implements LucyXssFilter {
 	 * @return 신뢰할 수 있는 코드.
 	 */
 	public void doFilter(String dirty, Writer writer) {
-		StringWriter neloLogWriter = new StringWriter();
+		StringWriter logWriter = new StringWriter();
 
-		if (dirty == null || dirty.length() == 0) {
-			LOG.debug("target string is empty. doFilter() method end.");
+		if (StringUtils.isEmpty(dirty)) {
+			LOG.debug("Source string is empty. doFilter() method end.");
 			return;
 		}
 
 		Collection<Content> contents = MarkupParser.parse(dirty);
 
-		if (contents != null && !contents.isEmpty()) {
-			try {
-				this.serialize(writer, contents, neloLogWriter);
-			} catch (IOException ioe) {
-			}
+		if (isEmpty(contents)) {
+			return;
 		}
 
-/*		if (this.isNeloLogEnabled) {
-			String neloStr = neloLogWriter.toString();
-			if (neloStr != null && neloStr.length() > 0) {
-				LOG.error("@[" + this.service + "]" + neloStr);
-			}
-		}*/
+		try {
+			this.serialize(writer, contents);
+		} catch (IOException ioe) {
+			// ignore
+		}
 	}
-
-	/**
-	 * 테스트 코드에서 neloLog 테스트를 위해 만든, 메소드. Access Modifier 가 default 여서 외부로 노출되지 않는다.
-	 * @param dirty
-	 * @param writer
-	 * @param neloLogWriter
-	 */
-/*	String doFilterNelo(String dirty) {
-		StringWriter neloLogWriter = new StringWriter();
-		StringWriter writer = new StringWriter();
-		if (dirty == null || "".equals(dirty)) {
-			LOG.debug("target string is empty. doFilter() method end.");
-			return null;
-		}
-
-		Collection<Content> contents = MarkupParser.parse(dirty);
-
-		if (contents != null && !contents.isEmpty()) {
-			try {
-				this.serialize(writer, contents, neloLogWriter);
-			} catch (IOException ioe) {
-			}
-		}
-
-		String neloStr = neloLogWriter.toString();
-
-		if (this.isNeloLogEnabled) {
-			if (neloStr != null && neloStr.length() > 0) {
-				return "@[" + this.service + "]" + neloStr;
-			} else {
-				return neloStr;
-			}
-		} else {
-			return "";
-		}
-	}*/
 
 	/**
 	 * 이 메소드는 특정 Tag 내 특정 Attribute의 값에 삽입되는 XSS({@code Cross Site Scripting})이
@@ -300,25 +235,27 @@ public final class XssFilter implements LucyXssFilter {
 			return "";
 		}
 
-		StringBuffer dirty = new StringBuffer();
+		StringBuilder dirty = new StringBuilder();
 		dirty.append('<').append(tagName);
 		dirty.append(' ').append(attName).append('=').append(dirtyAttValue);
 		dirty.append('>').append("</").append(tagName).append('>');
 
 		Collection<Content> contents = MarkupParser.parse(dirty.toString());
-		if (contents != null && !contents.isEmpty()) {
-			for (Content content : contents) {
-				if (content instanceof Element) {
-					Element tag = Element.class.cast(content);
-					this.checkRule(tag);
+		if (isEmpty(contents)) {
+			return "";
+		}
 
-					Attribute att = tag.getAttribute(attName);
-					if (att != null) {
-						if (att.isDisabled()) {
-							return "";
-						} else {
-							return att.getValue();
-						}
+		for (Content content : contents) {
+			if (content instanceof Element) {
+				Element tag = Element.class.cast(content);
+				this.checkRule(tag);
+
+				Attribute att = tag.getAttribute(attName);
+				if (att != null) {
+					if (att.isDisabled()) {
+						return "";
+					} else {
+						return att.getValue();
 					}
 				}
 			}
@@ -327,28 +264,30 @@ public final class XssFilter implements LucyXssFilter {
 		return "";
 	}
 
-	private void serialize(Writer writer, Collection<Content> contents, StringWriter neloLogWriter) throws IOException {
-		if (contents != null && !contents.isEmpty()) {
-			for (Content content : contents) {
-				if (content instanceof Text || content instanceof Description) {
-					content.serialize(writer);
-				} else if (content instanceof Comment) {
-					this.serialize(writer, Comment.class.cast(content));
-				} else if (content instanceof IEHackExtensionElement) {
-					this.serialize(writer, IEHackExtensionElement.class.cast(content), neloLogWriter);
-				} else if (content instanceof Element) {
-					this.serialize(writer, Element.class.cast(content), neloLogWriter);
-				}
+	private boolean isEmpty(Collection<Content> contents) {
+		return contents == null || contents.isEmpty();
+	}
+
+	private void serialize(Writer writer, Collection<Content> contents) throws IOException {
+		for (Content content : contents) {
+			if (content instanceof Text || content instanceof Description) {
+				content.serialize(writer);
+			} else if (content instanceof Comment) {
+				this.serialize(writer, Comment.class.cast(content));
+			} else if (content instanceof IEHackExtensionElement) {
+				this.serialize(writer, IEHackExtensionElement.class.cast(content));
+			} else if (content instanceof Element) {
+				this.serialize(writer, Element.class.cast(content));
 			}
 		}
+
 	}
 
 	private void serialize(Writer writer, Comment comment) throws IOException {
-
 		comment.serializeFilteringTagInComment(writer, this.filteringTagInCommentEnabled, this.commentFilter);
 	}
 
-	private void serialize(Writer writer, IEHackExtensionElement ie, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, IEHackExtensionElement ie) throws IOException {
 
 		ElementRule iEHExRule = this.config.getElementRule(IE_HACK_EXTENSION);
 
@@ -365,10 +304,6 @@ public final class XssFilter implements LucyXssFilter {
 		}
 
 		if (ie.isDisabled()) { // IE Hack 태그가 비활성화 되어 있으면, 태그 삭제.
-		/*	if (this.isNeloLogEnabled) {
-				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(ie.getName() + "\n");
-			}*/
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(ie.getName().replaceAll("<", "&lt;").replaceFirst(">", "&gt;"));
@@ -376,7 +311,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents(), neloLogWriter);
+				this.serialize(writer, ie.getContents());
 			}
 		} else {
 			// \s : A whitespace character, short for [ \t\n\x0b\r\f]
@@ -384,7 +319,7 @@ public final class XssFilter implements LucyXssFilter {
 			ie.serialize(writer);
 
 			if (!ie.isEmpty()) {
-				this.serialize(writer, ie.getContents(), neloLogWriter);
+				this.serialize(writer, ie.getContents());
 			}
 
 			if (ie.isClosed()) {
@@ -401,16 +336,11 @@ public final class XssFilter implements LucyXssFilter {
 		}
 	}
 
-	private void serialize(Writer writer, Element element, StringWriter neloLogWriter) throws IOException {
+	private void serialize(Writer writer, Element element) throws IOException {
 		boolean hasAttrXss = false;
 		checkRuleRemove(element);
 
 		if (element.isRemoved()) {
-		/*	if (this.isNeloLogEnabled) {
-				neloLogWriter.write(this.neloElementRemoveMSG);
-				neloLogWriter.write(element.getName() + "\n");
-			}*/
-
 			if (!this.withoutComment) {
 				writer.write(REMOVE_TAG_INFO_START);
 				writer.write(element.getName());
@@ -418,7 +348,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!element.isEmpty()) {
-				this.serialize(writer, element.getContents(), neloLogWriter);
+				this.serialize(writer, element.getContents());
 			}
 		} else {
 			//TODO 코드 리뷰 필요
@@ -428,19 +358,11 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (element.isDisabled()) {
-				/*if (this.isNeloLogEnabled) {
-					neloLogWriter.write(this.neloElementMSG);
-					neloLogWriter.write(element.getName() + "\n");
-				}*/
-
 				if (this.blockingPrefixEnabled) { //BlockingPrefix를 사용하는 설정인 경우, <, > 에 대한 Escape 대신에 Element 이름을 조작하여 동작을 막는다.
 					element.setName(this.blockingPrefix + element.getName());
 					element.setEnabled(true); // 아래 close 태그 만드는 부분에서 escape 처리를 안하기 위한 꽁수. isBlockingPrefixEnabled 검사하도록 로직 수정.
-					//writer.write('<');
-					//writer.write(element.getName());
 				} else { //BlockingPrefix를 사용하지 않는 설정인 경우, <, > 에 대한 Escape 처리.
 					if (!this.withoutComment) {
-
 						writer.write(BAD_TAG_INFO);
 					}
 
@@ -477,12 +399,6 @@ public final class XssFilter implements LucyXssFilter {
 
 			if (hasAttrXss) {
 				String attrXssString = attrXssSw.toString();
-				/*if (this.isNeloLogEnabled) {
-					neloLogWriter.write(this.neloAttrMSG);
-					neloLogWriter.write(element.getName());
-					neloLogWriter.write(attrXssString + "\n");
-				}*/
-
 				if (!this.withoutComment) {
 					writer.write(attrXssString);
 					writer.write(BAD_ATT_INFO_END);
@@ -506,7 +422,7 @@ public final class XssFilter implements LucyXssFilter {
 			}
 
 			if (!element.isEmpty()) {
-				this.serialize(writer, element.getContents(), neloLogWriter);
+				this.serialize(writer, element.getContents());
 			}
 
 			if (element.isClosed()) {
