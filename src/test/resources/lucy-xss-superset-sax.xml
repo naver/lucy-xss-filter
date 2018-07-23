@@ -30,6 +30,7 @@
 		</attribute>
 		<attribute name="href">
   			<notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
  		</attribute>
 		<attribute name="formaction" disable="true"/>
 	</attributeRule>

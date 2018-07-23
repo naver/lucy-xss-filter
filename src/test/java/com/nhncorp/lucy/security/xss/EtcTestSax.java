@@ -128,6 +128,15 @@ public class EtcTestSax {
 		assertEquals(expected, clean);
 	}
 
+	@Test
+	public void hrefPatternJavascriptWorkaround() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<a href='j&#97;vascr&#x69;pt:alert(1)'>Link</a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href='j&#97;vascr&#x69;pt:alert(1)') --><a>Link</a>";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
 	@Ignore
 	@Test
 	public void hexCodeAttackPaatern1() {
