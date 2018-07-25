@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- version 20151119-1 -->
-<config xmlns="http://www.nhncorp.com/lucy-xss"
-	extends="lucy-xss-default.xml">
-
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-default.xml">
 	<elementRule>
 		<element name="body" disable="true" /> <!-- <BODY ONLOAD=alert("XSS")>, <BODY BACKGROUND="javascript:alert('XSS')"> -->
 		<element name="embed" disable="true" />
@@ -32,7 +30,6 @@
 			</attributes>
 		</element>
 	</elementRule>
-	
 	<attributeRule>
 		<attribute name="data" base64Decoding="true">
 			<notAllowedPattern><![CDATA[(?i:s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
@@ -50,8 +47,8 @@
 			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
 		</attribute>
 		<attribute name="href">
-  		 <notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
- 		</attribute>
+			<notAllowedPattern><![CDATA[(?i:j\\*a\\*v\\*a\\*s\\*c\\*r\\*i\\*p\\*t\\*:)]]></notAllowedPattern>
+			<notAllowedPattern><![CDATA[&[#\\%x]+[\da-fA-F][\da-fA-F]+]]></notAllowedPattern>
+		</attribute>
 	</attributeRule>
-
 </config>
