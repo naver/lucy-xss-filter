@@ -1,0 +1,87 @@
+= Quick Start
+
+Lucy XSS Filter는 https://search.maven.org/[Maven Central Repository] 에 배포되어 있다.
+`pom.xml` 에 아래와 같이 의존성을 선언한다.
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.navercorp.lucy</groupId>
+    <artifactId>lucy-xss</artifactId>
+    <version>X.X.X</version>
+</dependency>
+----
+
+
+== XssPreventer
+문자열에서 HTML으로 인식될만한 요소를 완전히 제거한다. 예를 들면 `<` 는 `&#38;&#108;&#116;&#59;` , `>` 는 `&#38;&#103;&#116;&#59;` 등으로 변환한다.
+
+// 본문에 `&lt;` 라고 쓰면 HTML에서 <로 바로 변환되기 때문에  `&#38;&#108;&#116;&#59;`와 같이 썼다.
+
+특별한 설정없이 `XssPreventer.escape(String)` 메서드를 호출한다.
+
+[source,java]
+----
+String clean = XssPreventer.escape(dirty);
+----
+
+== XssFilter
+HTML 요소를 허용하되 XSS 공격에 위험한 요소를 걸러내야할 때 사용한다.
+HTML이 허용되는 게시판의 본문 등에 적용할 수 있다.
+
+=== SAX 방식
+아래와 같이 검사 규칙에 대한 설정 파일을 작성한다.
+
+* `lucy-xss-superset-sax.xml` 을 이 저장소의 `/conf/lucy-xss-superset-sax.xml` 을 참조해 작성한다.
+** 특별히 추가할 정책이 없다며 해당 파일을 그대로 써도 좋다.
+* `lucy-xss-sax.xml` 을 `/conf/lucy-xss-sax.xml` 참조해 작성한다.
+* 모든 설정 파일을 작성 후 클래스패스의 최상위 경로에 저장한다.
+
+나머지 사용법은 DOM 방식일 때와 동일한다. `XssFilter` 대신 `XssSaxFilter` 를 사용한다.
+
+[source,java]
+----
+LucyXssFilter filter = XssSaxFilter.getInstance("lucy-xss-sax.xml");
+String clean = filter.doFilter(String dirty);
+----
+
+=== DOM 방식
+아래와 같이 검사 규칙에 대한 설정 파일을 작성한다.
+
+* `lucy-xss-superset.xml` 을 이 저장소의 `/conf/lucy-xss-superset.xml` 을 참조해 작성한다.
+** 특별히 추가할 정책이 없다며 해당 파일을 그대로 써도 좋다.
+* `lucy-xss.xml` 를 `/conf/lucy-xss.xml` 참조해 작성한다.
+* 모든 설정 파일을 작성 후 클래스패스의 최상위 경로에 저장한다.
+
+`XssFilter.getInstance()` 메서드로 LucyXssFilter의 인스턴스를 생성한다.
+해당 메서드에 입력 파라미터가 없을 경우, `lucy-xss-superset.xml` 에 정의된 규칙으로 `LucyXssFilter` 인스턴스를 생성한다.
+모든 설정 파일이 없을 경우 jar 파일 안에 내장된 `lucy-xss-default.xml` 에 정의된 규칙을 읽는다.
+
+[source,java]
+----
+LucyXssFilter filter = XssFilter.getInstance();
+----
+
+
+특정 설정 파일을 명시할때는 `XssFilter.getInstance(String)` 메서드를 활용한다.
+
+[source,java]
+----
+LucyXssFilter filter = XssFilter.getInstance("lucy-xss.xml");
+----
+
+
+공격패턴 검출시 디버그를 위해 추가되는 주석문을 표시하지 않기 위해서는 다음과 같이 인스턴스를 생성한다.
+
+[source,java]
+----
+LucyXssFilter filterComment = XssFilter.getInstance("lucy-xss.xml", true);
+----
+
+
+문자열 필터링은 아래와 `doFilter(String)` 메서드를 활용한다.
+
+[source,java]
+----
+String clean = filter.doFilter(dirty);
+----

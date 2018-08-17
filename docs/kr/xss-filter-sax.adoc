@@ -1,0 +1,113 @@
+= XssSaxFilter
+기본적으로 제공되는 SAX 방식용 화이트리스트 설정 파일은 다음과 같다.
+
+* lucy-xss-default-sax.xml
+** HTML 4.0을 기본으로 하며, HTML 5.0과 Internet Explorer에 특화된 몇 가지 명세를 추가한 기본 설정 파일이다.
+** lucy-xss-x.x.x.jar 파일 내부에 포함되어 배포된다.
+* lucy-xss-superset-sax.xml :
+** lucy-xss-default-sax.xml을 상속받아 작성된 파일이다. 회사의 보안부서에서 기초 정책을 저으이하고 있다.
+** 이 저장소의 conf 디렉토리 아래에서 배포된다.
+
+`XssSaxFilter.getInstance()` 메서드로 설정 파일을 지정하지 않은 경우에는 `lucy-xss-superset-sax.xml` 파일을 클래스패스에서 찾아 읽는다.
+lucy-xss-superset-sax.xml 파일이 존재하지 않으면, jar 파일에 내장된 `lucy-xss-default-sax.xml` 을 읽어 들인다.
+
+[source,java]
+----
+XssSaxFilter filter = XssSaxFilter.getInstance();
+----
+
+`lucy-xss-superset-sax.xml` 을 명시적으로 지정하여 인스턴스를 생성할 수도 있다.
+
+[source,java]
+----
+XssSaxFilter otherFilter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+----
+
+서비스별로 특수한 정책을 설정해야한다면 다음과 같이 설정파일을 작성한다.
+
+`lucy-xss-superset-sax.xml` 을 상속받도록 extends 속성을 추가한다.
+
+[source,xml]
+----
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset-sax.xml">
+
+</config>
+----
+
+애플리케이션의 성격에 따라서 상위 설정 파일에서 정의한 규칙을 재정의하거나 새로운 규칙을 추가한다.
+
+[source,xml]
+----
+<config xmlns="http://www.nhncorp.com/lucy-xss" extends="lucy-xss-superset-sax.xml">
+    <elementRule>
+    </elementRule>
+
+    <attributeRule>
+    </attributeRule>
+</config>
+----
+
+입력 파라미터로 직접 작성한 XSS 설정파일("lucy-xss-sax.xml")을 읽어 들여 인스턴스를 생성한다.
+
+[source,java]
+----
+XssSaxFilter otherFilter = XssSaxFilter.getInstance("lucy-xss-sax.xml");
+----
+
+공격패턴 검출시 디버그를 위해 추가되는 주석문을 표시하지 않기 위해서는 다음과 같이 인스턴스를 생성한다.
+
+[source,java]
+----
+XssSaxFilter filterNoComment = XssSaxFilter.getInstance(true);
+----
+
+[source,java]
+----
+XssSaxFilter otherFilterNoComment = XssSaxFilter.getInstance("lucy-xss-sax.xml", true);
+----
+
+
+`doFilter()` 메서드로 필터링을 수행한다.
+
+[source,java]
+----
+String clean = filter.doFilter(String dirty);
+----
+
+주요 메서드들은 다음과 같다.
+
+* `static XssSaxFilter getInstance()` : 이 메소드는 XSS 코드가 포함된 HTML 의 모든 태그를 신뢰할 수 있는 문자열로 변환해 반환한다
+* `static XssSaxFilter getInstance(boolean withoutComment)` : 이 메소드는 escape하기 전의 문자열로 변환해 리턴한다.
+* `static XssSaxFilter getInstance(String fileName)` : 이 메소드는 입력한 파일 이름에 해당하는 설정 파일을 사용하여 생성한 Lucy-XSS Filter 객체를 반환한다. 해당 파일을 찾을 수 없는 경우, 예외(exception)를 발생시킨다. 공격 패턴 검출 시 추가되는 주석문을 제거하는 인스턴스 변수는 디폴트로 false 값이 지정되어 주석문이 표시된다
+* `static XssSaxFilter getInstance(String filename, boolean withoutComment)` : getInstance(String fileName) 메소드와 동일하게 동작한다. 단, 공격 패턴 검출 시 추가되는 주석문 삭제를 나타내는 인스턴스 변수값이 withoutComment 파라미터 값에 의해 결정된다. true 이면 주석문을 표시하지 않는다
+* `String doFilter(String dirty)` : 이 메소드는 XSS 코드가 포함된 HTML 문자열을 신뢰할 수 있는 코드로 변환하거나 삭제한 후 결과물을 인자로 받은 writer객체에 write한다. 즉 외부에서 writer를 제어할 수 있는 인터페이스를 제공한다
+* `String doFilter(char[] dirty, int offset, int count, Writer writer)` : 이 메소드는 XSS 코드가 포함된 HTML 문자열을 char[]로 받아 신뢰할 수 있는 코드로 변환하거나 삭제한 후 결과물을 인자로 받은 writer객체에 write한다. 즉 외부에서 writer를 제어할 수 있는 인터페이스를 제공한다.
+* `String doFilter(String tagName, String attName, String dirtyAttValue)` : 이 메소드는 특정 HTML 요소 내의 속성 값으로 삽입되는 XSS 코드를 신뢰할 수 있는 코드로 변환하거나 삭제한다.
+
+XssSaxFilter는 아래와 같은 규칙으로 필터링을 한다.
+
+* 닫는 태그를 검사하지 않는다(닫는 태그가 없다고 공격 태그로 간주하지는 않는다).
+* 부모 자식 관계는 검사하지 않는다(ex) DIV 태그가 어느 태그에도 올 수 있다).
+* 태그와 속성 관계 또한 검사하지 않는다(속성의 사용가능 여부, 속성 값의 XSS 공격 검사는 여전히 한다).
+* start tag 없이 end tag만 있을 경우, 필터링 없이 그대로 노출한다.
+** 예) 필터링 전: `</div>`, 필터링 후: `</div>`
+* 기존 XssFilter는 `</div>` 만 있을 경우 필터링 처리되어 `&#38;&#108;&#116;&#59;/div&#38;&#103;&#116;&#59;` 가 출력된다.
+* 태그, 속성들의 포함관계를 검사하지 않기 때문에, 서비스 입장에서는 특정 위치에서의 태그 사용을 위해 필요했던 추가적인 설정들이 줄어든다.
+
+== 성능과 메모리 사용량
+XssSaxFilter는 DOM 트리 생성 과정 및 부모 자식 간의 검사가 생략되어 DOM 방식에 비해 속도가 약 20% 빨라졌다.
+특히 중첩된 태그가 많은 인풋일 수록 SAX 방식에서 큰 속도 향상이 있다.
+
+DOM 파서 방식의 XssFilter를 사용할 때는 입력된 문자열의 크기 대비 8배의 메모리를 사용하였으나,XssSaxFilter는 약 3배 사용한다. (출력 문자열 + 입력 무자열의 char[]배열 + 기타 설정용 객체)
+
+Java에서 String 클래스는 내부적으로 문자열을 저장하기 위하여 char 형의 배열을 사용한다.
+이때 char 형은 자바의 문자 인코딩 방식이 유니코드이므로 1바이트가 아니라 2바이트의 크기를 가진다.
+따라서 XssFilter의 대상 문자열을 파일에서 읽을 경우, 파일 용량의 약 2배 이상의 메모리가 필요하다는 점을 염두에 두어야한다.
+
+메모리에 민감한 서비스에서는 XssFilter 객체 생성시 `getInstance(java.lang.String filename, boolean withoutComment)` 메소드의 withoutComment 인자로 true 를 넘기길 권장한다.
+즉 공격 패턴 검출 시 추가되는 주석문 생성 옵션을 끌 경우 메모리 사용량을 약 10% 줄일 수 있다.
+
+[source,java]
+----
+XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml", true);
+----

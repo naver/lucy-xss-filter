@@ -1,0 +1,22 @@
+= 소개
+
+XSS(Cross Site Scripting) 공격을 방어하는 Java 라이브러리
+
+* 화이트 리스트(White List) 설정 방식
+** 블랙리스트 방식에 비해 새로운 공격 유형에 더 안전함
+* 규칙을 선언한 XML 파일 사이의 상속, 오버라이딩 가능
+** 보안 정책을 정하는 부서에서 상위 설정 파일을 제공하고 서비스별로 필요한 정책을 하위 선언 파일에 기술하는 방식으로 사용이 가능함
+* 메모리를 효율적으로 쓰는 SAX 방식의 HTML 파싱 모듈 제공
+* HTML5, HTML4 Transitional DTD 명세 지원
+* 공격 패턴 검출 시 주석문으로 알림
+** `<!-- Not Allowed Tag Filtered -->` 주석을 추가해서 허용되지 않는 태그임을 알려줌
+* 기능 확장이 지점 제공 (ElementListener, AttributeListener)
+* Malformed HTML도 파싱 가능
+** EBNF(Extended Backus-Naur Form) Notation을 기반으로 재정의된 파싱 규칙을 사용하여 Malformed HTML도 원본의 변형 없이 파싱함
+
+[NOTE]
+.XSS란?
+====
+XSS(cross-site scripting)는 웹페이지에 악의적인 스크립트 코드를 주입할수 있는 취약점이다.
+
+====

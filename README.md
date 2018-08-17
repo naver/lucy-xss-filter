@@ -1,4 +1,4 @@
-[![logo](https://raw.githubusercontent.com/naver/lucy-xss-filter/master/docs/images/logo/LUCYXSS_792x269px_white.jpg)](https://github.com/naver/lucy-xss-filter)
+[![logo](images/logo/LUCYXSS_792x269px_white.jpg)](https://github.com/naver/lucy-xss-filter)
 
 ## Lucy-XSS : XssFilter, XssPreventer  
 Lucy-XSS is an open source library of two defense modules to protect Web applications from XSS attacks. It supports the white-list rule based security policy. The current default rule is Naver's standard. You can change the default rule if you want.
@@ -9,7 +9,7 @@ Lucy-XSS is an open source library of two defense modules to protect Web applica
 - If you use the filter with the white-list method, it will provide tighter security measures for websites from XSS attacks than the existing filter that uses the black-list method.
 - Support for both DOM and SAX Parser.
 
-![Lucy-XSS Filter structure.jpg](https://raw.githubusercontent.com/naver/lucy-xss-filter/master/docs/images/XssFilter_Structure.png)
+![Lucy-XSS Filter structure.jpg](images/XssFilter_Structure.png)
 
 ## XssPreventer
 - Use the apache-common-lang3 library to prevent XSS attack.
@@ -40,12 +40,6 @@ The latest stable release of lucy-xss is 1.6.3. You can pull it from the central
 </dependency>
 ```
 
-## Getting started
-We also offer an interactive tutorial for learning basic uses of Lucy-XSS.
-See Docs for instructions on installing Luxy-xss.
-
-[To begin using the library, please see the Quick Start Guide.](https://github.com/naver/lucy-xss-filter/blob/master/docs/manual/kr/04.%20quick%20guide/4.1%20Quick%20Start%20guide.md)
-
 
 ## Usage examples
 * XssPreventer
@@ -55,9 +49,21 @@ See Docs for instructions on installing Luxy-xss.
 public void testXssPreventer() {
 	String dirty = "\"><script>alert('xss');</script>";
 	String clean = XssPreventer.escape(dirty);
-		
-	Assert.assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
-	Assert.assertEquals(dirty, XssPreventer.unescape(clean));
+
+	assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
+	assertEquals(dirty, XssPreventer.unescape(clean));
+}
+```
+
+* XssFilter : SAX
+
+``` java
+@Test
+public void testSuperSetFix() {
+	XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+	String expected = "<TABLE class=\"Naver_Layout_Main\" style=\"TABLE-LAYOUT: fixed\" cellSpacing=\"0\" cellPadding=\"0\" width=\"743\">" + "</TABLE>" + "<SPAN style=\"COLOR: #66cc99\"></SPAN>";
+	String actual = filter.doFilter(clean);
+	assertEquals(expected, actual);
 }
 ```
 
@@ -69,36 +75,26 @@ public void pairQuoteCheckOtherCase() {
 	XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
 	String dirty = "<img src=\"<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
 	String expected = "<img src=\"\"><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
-	String clean = filter.doFilter(dirty);
-	Assert.assertEquals(expected, clean);
+	String actual = filter.doFilter(dirty);
+	assertEquals(expected, actual);
 		
 	dirty = "<img src='<img src=1\\ onerror=alert(1234)>\" onerror=\"alert('XSS')\">";
 	expected = "<img src=''><!-- Not Allowed Attribute Filtered ( onerror=alert(1234)) --><img src=1\\>\" onerror=\"alert('XSS')\"&gt;";
-	clean = filter.doFilter(dirty);
-	Assert.assertEquals(expected, clean);
+	actual = filter.doFilter(dirty);
+	assertEquals(expected, actual);
 }
 ```
 
-* XssFilter : SAX
+For more information, please see User guide
 
-``` java
-@Test
-public void testSuperSetFix() {
-	XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
-	String clean = "<TABLE class=\"NHN_Layout_Main\" style=\"TABLE-LAYOUT: fixed\" cellSpacing=\"0\" cellPadding=\"0\" width=\"743\">" + "</TABLE>" + "<SPAN style=\"COLOR: #66cc99\"></SPAN>";
-	String filtered = filter.doFilter(clean);
-	Assert.assertEquals(clean, filtered);
-}
-```
+* [Korean Guide](http://naver.github.io/lucy-xss-filter/kr/) 
 
-For more information, please see ....doc
-
-## Contributing to Lucy
+## Contributing to Lucy-XSS
 Want to hack on Lucy-XSS? Awesome! There are instructions to get you started here.
 They are probably not perfect, please let us know if anything feels wrong or incomplete.
 (Please wait. We are preparing for contribution guide.)
 
-## Other Lucy Related Projects
+## Other Lucy-XSS Related Projects
 
 - [lucy-xss-servlet-filter](https://github.com/naver/lucy-xss-servlet-filter) : java servlet filter library to protect Web applications from XSS attacks.
 

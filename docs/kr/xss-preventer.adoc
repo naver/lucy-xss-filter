@@ -1,0 +1,27 @@
+= XssPreventer
+
+`com.nhncorp.lucy.security.xss.XssPreventer` 는 모든 HTML 요소를 무력화 시키는 기능을 제공한다.
+apache-common-lang의 `StringEscapeUtils` 를 내부적으로 사용하고 있다.
+
+XssPreventer에서 에스케이프하는 문자열은 아래와 같다.
+
+* Apache Commons Lang에서 정의된 문자열
+** https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/text/translate/EntityArrays.java#L377[BASIC_ESCAPE] : `\`, `&`, `<`, `>`
+** https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/text/translate/EntityArrays.java#L41[ISO8859_1_ESCAPE]
+** https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/text/translate/EntityArrays.java#L160[HTML40_EXTENDED_ESCAPE]
+* 추가 문자열 : `'`
+
+
+아래와 같이 `escape` 메서드를 호출해서 HTML의 모든 태그를 무력화시킨 문자열로 변환한다.
+
+[source,java]
+----
+String clean = XssPreventer.escape(dirty);
+----
+
+치환된 문자열에서 다시 원본 메시지를 복구하려면 아래와 같이 unescape 메서드를 호출한다.
+
+[source,java]
+----
+String origin = XssPreventer.unescape(clean);
+----
