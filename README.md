@@ -50,7 +50,7 @@ public void testXssPreventer() {
 	String dirty = "\"><script>alert('xss');</script>";
 	String clean = XssPreventer.escape(dirty);
 
-	assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39xss&#39);&lt;/script&gt;");
+	assertEquals(clean, "&quot;&gt;&lt;script&gt;alert(&#39;xss&#39;);&lt;/script&gt;");
 	assertEquals(dirty, XssPreventer.unescape(clean));
 }
 ```
