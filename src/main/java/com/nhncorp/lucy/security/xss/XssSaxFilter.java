@@ -171,7 +171,6 @@ public final class XssSaxFilter implements LucyXssFilter {
 				filter.blockingPrefixEnabled = filter.config.isEnableBlockingPrefix();
 				filter.blockingPrefix = filter.config.getBlockingPrefix();
 
-				filter.withoutComment = withoutComment;
 			/*	filter.neloElementMSG = ELELMENT_NELO_MSG;
 				filter.neloAttrMSG = ATTRIBUTE_NELO_MSG;
 				filter.neloElementRemoveMSG = ELELMENT_REMOVE_NELO_MSG;*/
