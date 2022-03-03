@@ -5,7 +5,7 @@
 ** HTML 4.0을 기본으로 하며, HTML 5.0과 Internet Explorer에 특화된 몇 가지 명세를 추가한 기본 설정 파일이다.
 ** lucy-xss-x.x.x.jar 파일 내부에 포함되어 배포된다.
 * lucy-xss-superset-sax.xml :
-** lucy-xss-default-sax.xml을 상속받아 작성된 파일이다. 회사의 보안부서에서 기초 정책을 저으이하고 있다.
+** lucy-xss-default-sax.xml을 상속받아 작성된 파일이다. 회사의 보안부서에서 기초 정책을 정의하고 있다.
 ** 이 저장소의 conf 디렉토리 아래에서 배포된다.
 
 `XssSaxFilter.getInstance()` 메서드로 설정 파일을 지정하지 않은 경우에는 `lucy-xss-superset-sax.xml` 파일을 클래스패스에서 찾아 읽는다.
