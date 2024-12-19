@@ -157,8 +157,10 @@ public class SecurityUtils {
 				}
 
 				if (StringUtils.isEmpty(extension)) {
-					// 확장자가 없어서 MIME TYPE 을 식별할 수 없으면, 해당 url 을 head HTTP Method 를 이용해 content-type 식별
-					type = getContentTypeFromUrlConnection(url, contentTypeCacheRepo);
+					// URLConnection을 통해 Mimetype을 결정하면 SSRF 취약점 / JDK 버전 정보 노출이 발생합니다. 
+					// 입력 받은 URL을 통해 Type을 결정하기 힘든 경우, default로 'application/octet-stream'로 설정합니다.
+					//type = getContentTypeFromUrlConnection(url, contentTypeCacheRepo);
+					type = "application/octet-stream";
 
 					//허용된 type 인가?
 					if (!isAllowedType(type)) {
