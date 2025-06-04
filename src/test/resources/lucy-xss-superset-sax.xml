@@ -39,5 +39,6 @@
 			<notAllowedPattern><![CDATA[&(?:Tab|NewLine|colon);]]></notAllowedPattern>
 		</attribute>
 		<attribute name="formaction" disable="true"/>
+		<attribute name="action" disable="true"/>
 	</attributeRule>
 </config>

@@ -1519,6 +1519,15 @@ public class XssFilterTest extends XssFilterTestCase {
 		assertEquals(expected, clean);
 	}
 
+	@Test
+	public void formActionOnSuperset() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<form action=\"javascript:alert('XSS')\"><div><button>xss</button></div></form>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( action=\"javascript:alert('XSS')\") --><form><div><button>xss</button></div></form>";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
 	/**
 	 * Iehack 태그는 어느 태그 밑에도 올 수 있어야 한다.
 	 */

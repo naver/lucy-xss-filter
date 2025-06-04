@@ -97,7 +97,7 @@ public class XssFilterSaxSimpleTest extends XssFilterTestCase {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = readString(INVALID_HTML_FILE1);
 		String clean = filter.doFilter(dirty);
-		String expected = "<html><head><title>제품 정보</title></head><!-- Not Allowed Tag Filtered -->&lt;body&gt;<form name=\"myform\" action=\"\" method=\"post\"><h2 align=\"center\">제품 정보</h2><input type=\"submit\" value=\"등록하기\"> &nbsp; <input type=\"reset\">value=\"취소\"&gt;</p>&lt;/body&gt;</html>";
+		String expected = "<html><head><title>제품 정보</title></head><!-- Not Allowed Tag Filtered -->&lt;body&gt;<!-- Not Allowed Attribute Filtered ( action=\"\") --><form name=\"myform\" method=\"post\"><h2 align=\"center\">제품 정보</h2><input type=\"submit\" value=\"등록하기\"> &nbsp; <input type=\"reset\">value=\"취소\"&gt;</p>&lt;/body&gt;</html>";
 		assertEquals(expected, clean);
 
 		dirty = readString(INVALID_HTML_FILE2);
@@ -1386,6 +1386,15 @@ public class XssFilterSaxSimpleTest extends XssFilterTestCase {
 		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
 		String dirty = "<input type=\"submit\" formaction=\"http://serviceapi.nmv.naver.com/\">";
 		String expected = "<!-- Not Allowed Attribute Filtered ( formaction=\"http://serviceapi.nmv.naver.com/\") --><input type=\"submit\">";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
+	@Test
+	public void formActionOnSuperset() {
+		XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<form action=\"javascript:alert('XSS')\"><button>xss</button>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( action=\"javascript:alert('XSS')\") --><form><button>xss</button>";
 		String clean = filter.doFilter(dirty);
 		assertEquals(expected, clean);
 	}

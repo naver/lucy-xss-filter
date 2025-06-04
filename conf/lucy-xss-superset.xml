@@ -33,6 +33,9 @@
 		<element name="input" endTag="true">
 			<attribute name="formaction" disable="true"/>
 		</element>
+		<element name="form" endTag="true">
+			<attribute name="action" disable="true"/>
+		</element>
 	</elementRule>
 	<attributeRule>
 		<attribute name="data" base64Decoding="true">
