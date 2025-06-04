@@ -28,6 +28,10 @@
 				<ref name="formnovalidate"/>
 				<ref name="formtarget"/>
 			</attributes>
+			<attribute name="formaction" disable="true"/>
+		</element>
+		<element name="input" endTag="true">
+			<attribute name="formaction" disable="true"/>
 		</element>
 	</elementRule>
 	<attributeRule>

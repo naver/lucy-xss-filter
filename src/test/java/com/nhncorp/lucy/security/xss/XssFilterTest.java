@@ -1504,8 +1504,17 @@ public class XssFilterTest extends XssFilterTestCase {
 	@Test
 	public void buttonFormactionOnSuperset() {
 		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
-		String dirty = "<button formaction=\"http://serviceapi.nmv.naver.com/\">";
-		String expected = "<!-- Not Allowed Tag Filtered -->&lt;button formaction=\"http://serviceapi.nmv.naver.com/\"&gt;";
+		String dirty = "<button formaction=\"http://serviceapi.nmv.naver.com/\"></button>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( formaction=\"http://serviceapi.nmv.naver.com/\") --><button></button>";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
+	@Test
+	public void inputFormactionOnSuperset() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset.xml");
+		String dirty = "<input type=\"submit\" formaction=\"http://serviceapi.nmv.naver.com/\"></input>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( formaction=\"http://serviceapi.nmv.naver.com/\") --><input type=\"submit\"></input>";
 		String clean = filter.doFilter(dirty);
 		assertEquals(expected, clean);
 	}
