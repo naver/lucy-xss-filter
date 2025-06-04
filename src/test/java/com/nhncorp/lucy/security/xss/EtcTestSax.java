@@ -137,6 +137,24 @@ public class EtcTestSax {
 		assertEquals(expected, clean);
 	}
 
+	@Test
+	public void hrefPatternJavaScriptControlCharacters() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<a href=\"j\ravas\ncript\t:alert('XSS');\"></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href=\"j\ravas\ncript\t:alert('XSS');\") --><a></a>";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
+	@Test
+	public void hrefPatternJavaScriptNamedEntities() {
+		XssFilter filter = XssFilter.getInstance("lucy-xss-superset-sax.xml");
+		String dirty = "<a href=\"javas&Tab;cript&NewLine;&colon;alert('XSS');\"></a>";
+		String expected = "<!-- Not Allowed Attribute Filtered ( href=\"javas&Tab;cript&NewLine;&colon;alert('XSS');\") --><a></a>";
+		String clean = filter.doFilter(dirty);
+		assertEquals(expected, clean);
+	}
+
 	@Ignore
 	@Test
 	public void hexCodeAttackPaatern1() {
