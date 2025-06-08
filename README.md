@@ -1,3 +1,11 @@
+# **Deprecated**
+
+OWASP Java HTML Sanitizer is recommended as an alternative.
+
+https://owasp.org/www-project-java-html-sanitizer/
+
+----------------
+
 [![logo](images/logo/LUCYXSS_792x269px_white.jpg)](https://github.com/naver/lucy-xss-filter)
 
 ## Lucy-XSS : XssFilter, XssPreventer  
