@@ -69,8 +69,9 @@ public void testXssPreventer() {
 @Test
 public void testSuperSetFix() {
 	XssSaxFilter filter = XssSaxFilter.getInstance("lucy-xss-superset-sax.xml");
+	String dirty = "..."; // omitted
 	String expected = "<TABLE class=\"Naver_Layout_Main\" style=\"TABLE-LAYOUT: fixed\" cellSpacing=\"0\" cellPadding=\"0\" width=\"743\">" + "</TABLE>" + "<SPAN style=\"COLOR: #66cc99\"></SPAN>";
-	String actual = filter.doFilter(clean);
+	String actual = filter.doFilter(dirty);
 	assertEquals(expected, actual);
 }
 ```
